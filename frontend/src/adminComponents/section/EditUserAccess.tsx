@@ -6,7 +6,7 @@ import { selectUserDetails, userDetail, userDetailTemplate, userProfile, userPro
 import { UserProfile } from '../../common/UserProfile';
 import authService from '../../services/authService';
 import { toast } from 'react-hot-toast';
-import { User } from './EditUserAccountRequest';
+import { User } from '../../interfaces/interfaces';
 import { useAppSelector } from '../../reduxStore/hooks';
 import { selectSystemVariables } from '../../reduxStore/reducers/systemVariables';
 

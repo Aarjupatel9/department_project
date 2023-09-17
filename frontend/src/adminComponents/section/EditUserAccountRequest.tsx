@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import adminService from '../../services/adminService';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { userDetail, userDetailTemplate } from '../../reduxStore/reducers/userDetailSlice';
-
+import { User } from '../../interfaces/interfaces';
 
 export default function EditUserAccountRequest() {
 
@@ -17,7 +17,6 @@ export default function EditUserAccountRequest() {
   }, [newUsers]);
 
   useEffect(() => {
-
   }, []);
 
   const [userBasicDetail, setUserBasicDetail] = useState<userDetail>(userDetailTemplate);
@@ -143,13 +142,3 @@ export default function EditUserAccountRequest() {
   )
 }
 
-export interface User {
-  isApproved: boolean
-  isEmailVerified: boolean
-  isVerified: boolean
-  verifiedBy: string | "not verified"
-  role: string
-  __v: number
-  _id: string
-  email: string;
-}

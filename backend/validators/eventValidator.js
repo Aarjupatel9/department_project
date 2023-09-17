@@ -1,7 +1,8 @@
 const joi = require('joi');
 
 exports.eventValidator = joi.object({
-    title: joi.string().max(30).required(),
+    userId: joi.string(),
+    title: joi.string().max(100).required(),
     description: joi.string().max(300).required(),
     isOrganizedByBVM: joi.boolean().required(),
     eventType: joi.string().max(30).required(),
@@ -12,11 +13,10 @@ exports.eventValidator = joi.object({
     eventDate: joi.object({
         startDate: joi.date()
             .required()
-            .less(joi.ref('endDate'))
+            .max(joi.ref('endDate')) // Start date should not be greater than end date
             .messages({
                 'date.base': 'Start date should be a valid date',
-                'date.max': 'Start date should not be greater than today',
-                'date.less': 'Start date should be less than end date',
+                'date.max': 'Start date should not be greater than end date',
             }),
         endDate: joi.date()
             .required()
@@ -30,5 +30,10 @@ exports.eventValidator = joi.object({
         state: joi.string().min(2).max(30).required(),
         country: joi.string().min(2).max(30).required(),
         zip: joi.string().length(6).required(),
-    })
+    }),
+    report: joi.array().items(
+        joi.object({
+            title: joi.string().min(3).max(100).required(),
+            url: joi.string().min(0).max(200).required(),
+        })),
 });

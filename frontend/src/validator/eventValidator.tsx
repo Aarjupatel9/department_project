@@ -30,7 +30,7 @@ export const eventDetailValidator = Joi.object({
     report: Joi.array().items(
         Joi.object({
             title: Joi.string().min(3).max(100).required(),
-            url: Joi.string().uri().required(),
+            url: Joi.string().min(3).max(200).required(),
         })
     ),
 });

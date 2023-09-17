@@ -4,6 +4,7 @@ import {
   setUserDetail,
   selectUserDetails, userDetailTemplate
 } from '../reduxStore/reducers/userDetailSlice';
+import { loginCredentials } from '../interfaces/interfaces';
 import { handleRejectResponse } from './systemService';
 class AuthService {
 
@@ -144,7 +145,3 @@ class AuthService {
 }
 export default new AuthService();
 
-export interface loginCredentials{
-  email: String
-  password :String
-}
