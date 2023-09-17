@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from '../reduxStore/hooks';
+import routes from "../services/routes";
 import {
     setUserDetail,
     selectUserDetails, userDetailTemplate
@@ -9,6 +10,8 @@ import {
 import "../css//Home.css";
 import Navbar from './Navbar'
 import AdminSidebar from '../adminComponents/Sidebar'
+import Paper from "./Paper";
+import AddPaper from "./AddPaper";
 import Sidebar from '../components/Sidebar'
 import TmpCpm from './TmpCpm'
 import { UserProfile } from './UserProfile'
@@ -20,17 +23,17 @@ import { Setting } from './Setting';
 import Events from '../components/Events';
 import { selectSystemVariables } from '../reduxStore/reducers/systemVariables';
 import AddEvents from '../components/AddEvents';
+import EmailVerifier from '../components/EmailVerifier';
 export default function Home() {
-
     const SystemVariables = useAppSelector(selectSystemVariables);
     const userDetail = useAppSelector(selectUserDetails);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     useEffect(() => {
         console.log("route hanged");
-        if (!userDetail.isProfile) {
-            navigate("/editProfile");
-        }
+        // if (!userDetail.isProfile) {
+        //     navigate("/editProfile");
+        // }
         console.log("approve status : ", userDetail.isApproved);
         if (!userDetail.isApproved) {
             toast.custom((t) => (
@@ -72,6 +75,21 @@ export default function Home() {
     return (
         <div className='Home'>
             <Navbar />
+            {/* {
+                routes.map((r) => {
+                    console.log("r: ", r);
+                    console.log("Role: ", userDetail.role);
+                    if (r.role === userDetail.role) {
+                        return r.routes.map((route) => {
+                            return (
+                                <>
+                                    <Route path={route.path} element={route.element} />
+                                </>
+                            )
+                        });
+                    }
+                })
+            } */}
             {userDetail.role == SystemVariables.ROLES.STD_USER || userDetail.role == SystemVariables.ROLES.STAFF ?
                 <div className='NotMyNavbar'>
                     <Sidebar />
@@ -85,6 +103,7 @@ export default function Home() {
                                     <Route path="/addEvent" element={<AddEvents />} />
                                 </> : <></>}
                             <Route path="/settings" element={<Setting />} />
+                            <Route path="/verifyemail" element={<EmailVerifier />} />
                             <Route path="/editProfile" element={<EditUserProfile />} />
                             <Route path="*" element={<UserProfile readOnly={false} />} />
                         </Routes>
@@ -98,6 +117,8 @@ export default function Home() {
                                 {userDetail.isProfile && userDetail.isApproved ?
                                     <><Route path="/" element={<TmpCpm />} />
                                         <Route path="/event" element={<Events />} />
+                                        <Route path="/paper" element={<Paper />} />
+                                        <Route path="/addPaper" element={<AddPaper />} />
                                         <Route path="/addEvent" element={<AddEvents />} />
                                         <Route path="/userAccounts" element={<EditUserAccountRequest />} />
                                         <Route path="/userAccounts/:id" element={<EditUserAccountRequest />} />
