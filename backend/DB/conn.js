@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const HOST = process.env.MONGODB_URI_LOCAL;
+const HOST = process.env.MONGODB_URI;
 
 // Connect to the database using async/await
 (async () => {
