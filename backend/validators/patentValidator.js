@@ -9,9 +9,9 @@ exports.patentValidator = joi.object({
     applicationNumber: joi.string().required(),
     filingDate: joi.date().required(),
     grantDate: joi.date().required(),
-    reports: joi.array.items(
+    reports: joi.array().items(
         joi.object({
-            title: joi.string.required(),
+            title: joi.string().required(),
             url: joi.string().required()
         })
     )

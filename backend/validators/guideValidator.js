@@ -9,9 +9,9 @@ exports.guideValidator = joi.object({
         name: joi.string().min(3).max(60).required(),
         idNumber: joi.string().length(7)
     }),
-    reports: joi.array.items(
+    reports: joi.array().items(
         joi.object({
-            title: joi.string.required(),
+            title: joi.string().required(),
             url: joi.string().required()
         })
     )

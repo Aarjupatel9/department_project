@@ -11,9 +11,9 @@ exports.qualificationValidator = joi.object({
     institute: joi.string().required(),
     status: joi.string().valid(...Object.values(QUALIFICATION_STATUS)),
     completionYear: joi.number().integer().min(1900).max(new Date().getFullYear()).required(),
-    certificates: joi.array.items(
+    certificates: joi.array().items(
         joi.object({
-            title: joi.string.required(),
+            title: joi.string().required(),
             url: joi.string().required()
         })
     )

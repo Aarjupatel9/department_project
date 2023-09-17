@@ -31,9 +31,9 @@ exports.eventValidator = joi.object({
         country: joi.string().min(2).max(30).required(),
         zip: joi.string().length(6).required(),
     }),
-    reports: joi.array.items(
+    reports: joi.array().items(
         joi.object({
-            title: joi.string.required(),
+            title: joi.string().required(),
             url: joi.string().required()
         })
     )
