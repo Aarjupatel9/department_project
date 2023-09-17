@@ -77,7 +77,7 @@ const eventSchema = mongoose.Schema({
             },
         },
     },
-    report: [{
+    reports: [{
         title: {
             type: String,
             required: true

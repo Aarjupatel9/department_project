@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const path = require('path');
 require("dotenv").config();
 
 
@@ -24,6 +25,9 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Serve static files from the 'uploads' folder -- temporary
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
 // view engine setup
 app.set('view engine', 'ejs');
 app.set('views', './view');
@@ -31,7 +35,15 @@ app.set('views', './view');
 app.get('/', (req, res) => {
 
     res.status(200).json({
-        message: "server is up and running 🛠"
+        message: "server is up and running 🛠",
+        serverTime: new Date(Date.now()).toLocaleString("en-US", {
+            hour: 'numeric',
+            minute: 'numeric',
+            second: "numeric",
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        })
     })
 
 });

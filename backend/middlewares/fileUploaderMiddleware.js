@@ -1,7 +1,8 @@
 const multer = require('multer');
 const path = require('path');
+const { HOST } = require('../utils/constants')
 
-const fileUploaderMiddleware = (fileType) => {
+const fileUploaderMiddleware = (fileType, fieldName, maxCount) => {
 
     var directory = `uploads/`;
 
@@ -9,50 +10,68 @@ const fileUploaderMiddleware = (fileType) => {
         case "profileImage":
             directory = directory + `profileImages`;
             break;
-        case "certificates":
+        case "certificate":
             directory = directory + `certificates`;
             break;
-        case "reports":
+        case "report":
             directory = directory + `reports`;
             break;
         default:
             break;
     }
 
+    const storage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, directory);
+        },
+        filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now();
+            const originalName = file.originalname;
+            const fileExtension = path.extname(originalName);
+            const filename = uniqueSuffix + '-' + req.user._id + fileExtension;
+            cb(null, filename);
+        }
+    });
+
+    const upload = multer({ storage });
 
     return (req, res, next) => {
 
-        const storage = multer.diskStorage({
-            destination: (req, file, cb) => {
-                cb(null, directory);
-            },
-            filename: (req, file, cb) => {
-                const uniqueSuffix = Date.now();
-                const originalName = file.originalname;
-                const fileExtension = path.extname(originalName);
-                const filename = uniqueSuffix + '-' + req.user._id + fileExtension;
-                cb(null, filename);
-            }
-        });
+        console.log(directory + " " + req.user._id + "  " + fieldName);
 
-        const upload = multer({ storage });
+        // upload.single('file')(req, res, (err) => {
+        //     if (err) {
+        //         console.log("err in mw : " + err);
+        //         return res.status(400).json({ success: false, message: 'File upload failed' });
+        //     }
 
-        console.log(directory + " " + req.user._id);
+        //     if (!req.file) {
+        //         return res.status(400).json({ success: false, message: 'No file uploaded!!' });
+        //     }
 
-        upload.single('file')(req, res, (err) => {
+        //     const fileUrl = `${HOST}/${directory}/${req.file.filename}`;
+        //     req.fileUrl = fileUrl;
+        //     next();
+        // });
+
+        upload.array(fieldName, maxCount)(req, res, (err) => {
             if (err) {
-                console.log("err in mw : " + err);
+                console.error("Error in middleware: " + err);
                 return res.status(400).json({ success: false, message: 'File upload failed' });
             }
 
-            if (!req.file) {
-                return res.status(400).json({ success: false, message: 'No file uploaded!!' });
+            console.log("files " + req.files);
+            if (!req.files || req.files.length === 0) {
+                return res.status(400).json({ success: false, message: 'No files uploaded!!' });
             }
 
-            const fileUrl = `http://localhost:8080/${directory}/${req.file.filename}`;
-            req.fileUrl = fileUrl;
+            if (req.files && req.files.length > 0) {
+                const fileUrls = req.files.map(file => `${HOST}/${directory}/${file.filename}`);
+                req.fileUrls = fileUrls;
+            }
             next();
         });
+
     };
 
 

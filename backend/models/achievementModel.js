@@ -15,7 +15,7 @@ const achievementSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    certificate: [{
+    certificates: [{
         title: {
             type: String,
             required: true

@@ -19,3 +19,8 @@ exports.getAllVariables = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error." });
     }
 }
+
+exports.uploadFile = async (req, res) => {
+    const uploadedFiles = req.fileUrls;
+    res.status(200).json({ success: true, uploadedFiles });
+}

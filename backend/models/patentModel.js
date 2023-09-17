@@ -38,7 +38,7 @@ const patentSchema = mongoose.Schema({
     grantDate: {
         type: Date,
     },
-    report: [{
+    reports: [{
         title: {
             type: String,
             required: true

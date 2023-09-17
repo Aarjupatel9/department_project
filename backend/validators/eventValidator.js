@@ -30,5 +30,11 @@ exports.eventValidator = joi.object({
         state: joi.string().min(2).max(30).required(),
         country: joi.string().min(2).max(30).required(),
         zip: joi.string().length(6).required(),
-    })
+    }),
+    reports: joi.array.items(
+        joi.object({
+            title: joi.string.required(),
+            url: joi.string().required()
+        })
+    )
 });

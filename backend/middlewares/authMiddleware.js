@@ -103,7 +103,7 @@ module.exports = (authorizedRoles) => {
         if (!token) {
             return res
                 .status(401)
-                .json({ success: false, message:"TokenExpiredError" ,specialMessage: "Not Authorized. Token not found !!!" });
+                .json({ success: false, message: "TokenExpiredError", specialMessage: "Not Authorized. Token not found !!!" });
         }
 
         try {
@@ -120,7 +120,7 @@ module.exports = (authorizedRoles) => {
                 if (!authorizedRoles.includes(user.role)) {
                     return res
                         .status(403)
-                        .json({ success: false, message: "Insufficient permissions." });
+                        .json({ success: false, message: "Insufficient permissions.", user, authorizedRoles });
                 }
 
                 req.user = user;
@@ -129,19 +129,19 @@ module.exports = (authorizedRoles) => {
                 console.log(error);
                 return res
                     .status(401)
-                    .json({ success: false, message: "Internal server error"});
+                    .json({ success: false, message: "Internal server error" });
             }
         } catch (error) {
             console.log(error);
             if (error.name == "TokenExpiredError") {
                 return res.clearCookie("token")
                     .status(401)
-                    .json({ success: false, message: error.name });
+                    .json({ success: false, message: error.message });
 
             } else {
                 return res
                     .status(401)
-                    .json({ success: false, message: error.name });
+                    .json({ success: false, message: error.message });
             }
         }
     };

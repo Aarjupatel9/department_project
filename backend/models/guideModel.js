@@ -32,7 +32,7 @@ const guideSchema = mongoose.Schema({
             type: String,
         }
     },
-    report: [{
+    reports: [{
         title: {
             type: String,
             required: true

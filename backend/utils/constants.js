@@ -46,6 +46,8 @@ const QUALIFICATION_TYPE = {
     PHD: "PhD"
 }
 
+const HOST = process.env.HOST;
+
 module.exports = {
     ROLES,
     AllRoles,
@@ -54,5 +56,6 @@ module.exports = {
     GUIDE_TYPE,
     PUBLICATION_TYPE,
     QUALIFICATION_STATUS,
-    QUALIFICATION_TYPE
+    QUALIFICATION_TYPE,
+    HOST
 };

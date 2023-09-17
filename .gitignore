@@ -15,6 +15,9 @@ build
 # documentation
 Documentation
 
+# uploads
+uploads
+
 # env
 .env
 
