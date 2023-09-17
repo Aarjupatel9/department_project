@@ -20,7 +20,7 @@ const fileUploaderMiddleware = (fileType) => {
     }
 
 
-    return (req, res, next) => {
+    return (req, res, next) => {    
 
         const storage = multer.diskStorage({
             destination: (req, file, cb) => {
