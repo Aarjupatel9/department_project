@@ -10,7 +10,9 @@ const router = express.Router();
 
 router.route("/verify-email/:token").get(VerifyEmail);
 
-// router.route("/resend-verification-email").post(authenticateJWT, ResendVerificationMail);
+router.route("/resend-verification-email")
+    .post(authenticateRoles(AllRoles),
+        ResendVerificationMail);
 
 // router.route("/contact-us").post(ContactUS);
 

@@ -58,7 +58,7 @@ exports.Login = async (req, res) => {
             // await user.save();
 
             const userProfile = await profileModel.findById(user._id);
-            
+
             const { password, ...userData } = user.toObject();
 
             res.status(200).
@@ -83,66 +83,66 @@ exports.Login = async (req, res) => {
 
     }
 }
-exports.ResendEmailVerificationLink = async (req, res) => {
-    try {
-        console.log("RegistrationLinkReSend request : ", req.body)
-        const { error } = userLoginValidator.validate(req.body);
+// exports.ResendEmailVerificationLink = async (req, res) => {
+//     try {
+//         console.log("RegistrationLinkReSend request : ", req.body)
+//         const { error } = userLoginValidator.validate(req.body);
 
-        if (error) {
-            return res
-                .status(400)
-                .json({ success: false, message: error.details[0].message });
-        }
+//         if (error) {
+//             return res
+//                 .status(400)
+//                 .json({ success: false, message: error.details[0].message });
+//         }
 
-        const { email, password } = req.body;
+//         const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
+//         const user = await User.findOne({ email });
 
-        if (!user) {
-            return res.status(404).json({ success: false, message: "This email is not register" });
-        }
-        const isMatch = await compareHash(password, user.password);
-        if (isMatch && !user.isEmailVerified) {
+//         if (!user) {
+//             return res.status(404).json({ success: false, message: "This email is not register" });
+//         }
+//         const isMatch = await compareHash(password, user.password);
+//         if (isMatch && !user.isEmailVerified) {
 
-            const verificationToken = genJWTToken({ email: user.email }, "verify-Email");
-            const verificationLink = `${hostName}/api/support/verify-email/${verificationToken}`;
+//             const verificationToken = genJWTToken({ email: user.email }, "verify-Email");
+//             const verificationLink = `${hostName}/api/support/verify-email/${verificationToken}`;
 
-            const template = fs.readFileSync(
-                path.join(__dirname, "../view/email-verification.ejs"),
-                "utf8");
+//             const template = fs.readFileSync(
+//                 path.join(__dirname, "../view/email-verification.ejs"),
+//                 "utf8");
 
-            const html = ejs.render(template, { verificationLink });
+//             const html = ejs.render(template, { verificationLink });
 
-            try {
-                await sendMail(user.email, "Email verification", "", html);
+//             try {
+//                 await sendMail(user.email, "Email verification", "", html);
 
-                res.status(200).
-                    json({
-                        success: true,
-                        message: "Email verification link has been resend to you on mail !!! please verify your email before time limit !!!",
-                        user: user
-                    });
+//                 res.status(200).
+//                     json({
+//                         success: true,
+//                         message: "Email verification link has been resend to you on mail !!! please verify your email before time limit !!!",
+//                         user: user
+//                     });
 
-            } catch (error) {
-                console.error("Error sending email:", error);
-                return res.
-                    status(500).
-                    json({
-                        success: false,
-                        message: "Error sending verification email! please try later!!!"
-                    });
-            }
+//             } catch (error) {
+//                 console.error("Error sending email:", error);
+//                 return res.
+//                     status(500).
+//                     json({
+//                         success: false,
+//                         message: "Error sending verification email! please try later!!!"
+//                     });
+//             }
 
-        } else {
-            return res
-                .status(400)
-                .json({ success: false, message: "Invalid Credentials !!!" });
-        }
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: "Internal server error" });
-    }
-}
+//         } else {
+//             return res
+//                 .status(400)
+//                 .json({ success: false, message: "Invalid Credentials !!!" });
+//         }
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ success: false, message: "Internal server error" });
+//     }
+// }
 
 exports.Register = async (req, res) => {
     try {

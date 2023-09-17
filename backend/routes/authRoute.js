@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.route("/login").post(Login);
 router.route("/register").post(Register);
-router.route("/resendEmailVerificationLink").post(ResendEmailVerificationLink);
+// router.route("/resendEmailVerificationLink").post(ResendEmailVerificationLink);
 
 // protected routes
 router.route("/logout").post(authenticateRoles(AllRoles), LogOut);

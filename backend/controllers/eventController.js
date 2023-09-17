@@ -2,6 +2,7 @@ const Event = require('../models/eventsModel');
 const { eventValidator } = require('../validators/eventValidator');
 
 exports.AddEvent = async (req, res) => {
+
     const { _id, ...eventData } = req.body;
 
     const { error } = eventValidator.validate(eventData);
@@ -12,11 +13,10 @@ exports.AddEvent = async (req, res) => {
             .json({ success: false, message: error.details[0].message });
     }
 
-    const userId = req.user._id;
+    const { _id: userId } = req.user;
 
     try {
-        eventData.userId = userId
-        const event = await Event(eventData);
+        const event = await Event({ userId: userId, ...eventData });
         await event.save();
         res.status(200).json({ success: true, event: event, message: "event added successfully" });
 
@@ -125,7 +125,7 @@ exports.EditEvent = async (req, res) => {
 }
 
 exports.DeleteEvent = async (req, res) => {
-    
+
     try {
         const { _id } = req.user;
 

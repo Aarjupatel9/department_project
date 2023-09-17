@@ -19,14 +19,7 @@ exports.AddPatent = async (req, res) => {
 
         const patent = await Patent({
             userId: _id,
-            title: patentData.title,
-            summary: patentData.summary,
-            inventors: patentData.inventors,
-            patentNumber: patentData.patentNumber,
-            patentDate: patentData.patentDate,
-            applicationNumber: patentData.applicationNumber,
-            filingDate: patentData.filingDate,
-            grantDate: patentData.grantDate,
+            ...patentData
         });
 
         await patent.save();
@@ -47,13 +40,7 @@ exports.GetPatents = async (req, res) => {
     try {
 
         const patents = await Patent.find({ userId: _id })
-            .populate({
-                path: 'userId',
-                populate: {
-                    path: 'profiles',
-                    select: 'name designation'
-                }
-            })
+            .populate('userId', 'firstName lastName designation')
             .exec();
 
         if (patents.length <= 0) {
@@ -77,13 +64,7 @@ exports.GetPatent = async (req, res) => {
     try {
 
         const patent = await Patent.findById(_id)
-            .populate({
-                path: 'userId',
-                populate: {
-                    path: 'profiles',
-                    select: 'name designation'
-                }
-            })
+            .populate('userId', 'firstName lastName designation')
             .exec();
 
         if (!patent) {
@@ -124,13 +105,7 @@ exports.EditPatent = async (req, res) => {
                 patentData,
                 { new: true }
             )
-            .populate({
-                path: 'userId',
-                populate: {
-                    path: 'profiles',
-                    select: 'name designation'
-                }
-            })
+            .populate('userId', 'firstName lastName designation')
             .exec();
 
         if (!patent) {

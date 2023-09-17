@@ -18,14 +18,9 @@ exports.AddQualification = async (req, res) => {
 
     try {
 
-        const qualification = new qualificationModel({
+        const qualification = new Qualification({
             userId: _id,
-            QUALIFICATION_TYPE: qualificationData.qualificationType,
-            thesisTitle: qualificationData.thesisTitle,
-            specialization: qualificationData.specialization,
-            institute: qualificationData.institute,
-            status: qualificationData.status,
-            completionYear: qualificationData.completionYear
+            ...qualificationData
         });
 
         await qualification.save();
@@ -46,14 +41,8 @@ exports.GetQualifications = async (req, res) => {
     try {
 
         const qualifications = await Qualification.find({ userId: _id })
-            .populate({
-                path: 'userId',
-                populate: {
-                    path: 'profiles',
-                    select: 'name designation'
-                }
-            })
-            .exec();;
+            .populate('userId', 'firstName lastName designation')
+            .exec();
 
         if (qualifications.length <= 0) {
             return res
@@ -115,13 +104,7 @@ exports.EditQualification = async (req, res) => {
                 qualificationData,
                 { new: true }
             )
-            .populate({
-                path: 'userId',
-                populate: {
-                    path: 'profiles',
-                    select: 'name designation'
-                }
-            })
+            .populate('userId', 'firstName lastName designation')
             .exec();
 
         if (!qualification) {
