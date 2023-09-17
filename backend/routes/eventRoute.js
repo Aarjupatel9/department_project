@@ -8,17 +8,16 @@ const router = express.Router();
 router.route("/add-event")
     .post(authenticateRoles(AllRoles), AddEvent);
 router.route("/event/:_id")
-    .get(authenticateRoles(AllRoles), GetEvent);
+    .post(authenticateRoles(AllRoles), GetEvent);
 router.route("/events")
-    .get(authenticateRoles(AllRoles), GetEvents);
-router.route("/update-event/:_id")
+    .post(authenticateRoles(AllRoles), GetEvents);
+router.route("/update-event")
     .post(authenticateRoles(AllRoles), EditEvent);
-router.route("/delete-event/:_id")
+router.route("/delete-event")
     .post(authenticateRoles(AllRoles), DeleteEvent);
 
-
 // other operations
-router.route("/Event/:_id").get(GetEvent); // public route to get user's Event details
+router.route("/Event").get(GetEvent); // public route to get user's Event details
 
 
 module.exports = router;

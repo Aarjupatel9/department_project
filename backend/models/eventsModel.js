@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const eventSchema = mongoose.Schema({
     userId: {
         type: mongoose.Types.ObjectId,
-        ref: 'users',
+        ref: 'profiles',
         index: true,
         required: true
     },
@@ -77,7 +77,7 @@ const eventSchema = mongoose.Schema({
             },
         },
     },
-    report: [{
+    reports: [{
         title: {
             type: String,
             required: true

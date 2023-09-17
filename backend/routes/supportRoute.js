@@ -1,6 +1,7 @@
 const express = require('express');
 const { ForgotPassword, ResetPassword, ResetPasswordPage, VerifyEmail, ResendVerificationMail, ContactUS } = require("../controllers/supportController");
-const authenticateJWT = require('../middlewares/authMiddleware');
+const authenticateRoles = require('../middlewares/authMiddleware');
+const { AllRoles } = require('../utils/constants');
 const router = express.Router();
 
 
@@ -10,7 +11,9 @@ const router = express.Router();
 
 router.route("/verify-email/:token").get(VerifyEmail);
 
-// router.route("/resend-verification-email").post(authenticateJWT, ResendVerificationMail);
+router.route("/resend-verification-email")
+    .post(authenticateRoles(AllRoles),
+        ResendVerificationMail);
 
 // router.route("/contact-us").post(ContactUS);
 

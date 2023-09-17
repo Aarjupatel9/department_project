@@ -1,9 +1,43 @@
-import authService from "./authService";
-import { userProfile } from "../reduxStore/reducers/userDetailSlice";
+
+import { IEvent } from "../interfaces/interfaces";
 import { handleRejectResponse } from "./systemService";
 class UserService {
+    addEvent(data: IEvent) {
+        return new Promise(function (resolve, reject) {
+            const options = {
+                method: "POST",
+                credentials: "include" as RequestCredentials,
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type,Authorization",
+                },
+                body: JSON.stringify(data)
+            };
+            fetch(process.env.REACT_APP_API_SERVER + "/api/event/add-event", options)
+                .then((response) => {
+                    console.log("fetch then response :", response);
+                    return response.json();
+                })
+                .then((res) => {
+                    console.log("response in updateProfile arrive : ", res);
+                    handleRejectResponse(res.message);
+                    if (res.success) {
+                        resolve(res);
+                    } else {
+                        reject(res.message);
+                    }
+                })
+                .catch((e) => {
+                    console.log("error : ", e);
+                    reject(e);
+                });
+        });
 
-    updateProfile(data : userProfile) {
+
+    }
+    updateEvent(data : IEvent) {
 
         return new Promise(function (resolve, reject) {
             const options = {
@@ -17,7 +51,7 @@ class UserService {
                 },
                 body: JSON.stringify(data)
             };
-            fetch(process.env.REACT_APP_API_SERVER + "/api/profile/updateProfile", options)
+            fetch(process.env.REACT_APP_API_SERVER + "/api/event/update-event/", options)
                 .then((response) => {
                     console.log("fetch then response :", response);
                     return response.json();
@@ -40,7 +74,7 @@ class UserService {
 
     }
 
-    getUserProfile(_id : String | undefined) {
+    getEvent(_id : String | undefined) {
 
         return new Promise(function (resolve, reject) {
             const options = {
@@ -54,7 +88,7 @@ class UserService {
                 },
                 body: JSON.stringify({ _id: _id }),
             };
-            fetch(process.env.REACT_APP_API_SERVER + "/api/profile/getProfile", options)
+            fetch(process.env.REACT_APP_API_SERVER + "/api/event/event/"+_id, options)
                 .then((response) => {
                     console.log("fetch then response :", response);
                     return response.json();
@@ -74,7 +108,7 @@ class UserService {
                 });
         });
     }
-    getAllVariables() {
+    getEvents() {
 
         return new Promise(function (resolve, reject) {
             const options = {
@@ -87,7 +121,7 @@ class UserService {
                     "Access-Control-Allow-Headers": "Content-Type,Authorization",
                 },
             };
-            fetch(process.env.REACT_APP_API_SERVER + "/api/system/getAllVariables", options)
+            fetch(process.env.REACT_APP_API_SERVER + "/api/event/events", options)
                 .then((response) => {
                     console.log("fetch then response :", response);
                     return response.json();
@@ -107,16 +141,42 @@ class UserService {
                 });
         });
     }
-    getUserPreferTheme() {
-        const localData = localStorage.getItem("getUserPreferTheme");
-        if (localData == null) {
-            return "white";
-        }
-        return JSON.parse(localData);
+    deleteEvent(_id :String) {
+
+        return new Promise(function (resolve, reject) {
+            const options = {
+                method: "POST",
+                credentials: "include" as RequestCredentials,
+                headers: {
+                    "Content-Type": "application/json;charset=UTF-8",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type,Authorization",
+                },
+                body: JSON.stringify({ _id: _id })
+            };
+            fetch(process.env.REACT_APP_API_SERVER + "/api/event/delete-event", options)
+                .then((response) => {
+                    console.log("fetch then response :", response);
+                    return response.json();
+                })
+                .then((res) => {
+                    console.log("response in getNewUserDetails arrive : ", res);
+                    if (res.success) {
+                        resolve(res);
+                    } else {
+                        handleRejectResponse(res.message);
+                        reject(res.message);
+                    }
+                })
+                .catch((e) => {
+                    console.log("error : ", e);
+                    reject(e);
+                });
+        });
     }
-    saveUserPreferTheme(themeName :String) {
-        localStorage.setItem("getUserPreferTheme", JSON.stringify(themeName));
-    }
+
 }
 
 export default new UserService();
+

@@ -20,11 +20,7 @@ exports.AddGuide = async (req, res) => {
 
         const guide = await Guide({
             userId: _id,
-            guideType: guideData.guideType,
-            description: guideData.description,
-            dissertationTitle: guideData.dissertationTitle,
-            guidedYear: guideData.guidedYear,
-            studentDetails: guideData.studentDetails
+            ...guideData
         });
 
         await guide.save();

@@ -20,10 +20,10 @@ import EditUserAccess from '../adminComponents/section/EditUserAccess'
 import EditUserProfile from './EditUserProfile'
 import { toast } from 'react-hot-toast';
 import { Setting } from './Setting';
-import Events from '../components/Events';
+import Events from '../common/Events';
 import { selectSystemVariables } from '../reduxStore/reducers/systemVariables';
-import AddEvents from '../components/AddEvents';
 import EmailVerifier from '../components/EmailVerifier';
+import AddEvents from './AddEvents';
 export default function Home() {
     const SystemVariables = useAppSelector(selectSystemVariables);
     const userDetail = useAppSelector(selectUserDetails);
@@ -58,17 +58,7 @@ export default function Home() {
                 </div>
             ), { duration: 200000 });
 
-            // toast.success('Please wait for admit to approve your account', {
-            //     style: {
-            //         border: '1px solid #713200',
-            //         padding: '16px',
-            //         color: '#713200',
-            //     },
-            //     iconTheme: {
-            //         primary: '#713200',
-            //         secondary: '#FFFAEE',
-            //     },
-            // });
+
         }
     }, []);
 
@@ -120,6 +110,7 @@ export default function Home() {
                                         <Route path="/paper" element={<Paper />} />
                                         <Route path="/addPaper" element={<AddPaper />} />
                                         <Route path="/addEvent" element={<AddEvents />} />
+                                        <Route path="/editEvent/:id" element={<AddEvents />} />
                                         <Route path="/userAccounts" element={<EditUserAccountRequest />} />
                                         <Route path="/userAccounts/:id" element={<EditUserAccountRequest />} />
                                         <Route path="/editUserAccess/:id" element={<EditUserAccess />} />

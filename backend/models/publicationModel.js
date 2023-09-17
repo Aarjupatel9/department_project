@@ -34,7 +34,7 @@ const publicationSchema = new mongoose.Schema({
             message: "Publication date cannot be in the future."
         }
     },
-    report: [{
+    reports: [{
         title: {
             type: String,
             required: true

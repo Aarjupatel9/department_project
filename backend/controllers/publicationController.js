@@ -17,9 +17,7 @@ exports.AddPublication = async (req, res) => {
 
     try {
 
-        const publication = await Publication({
-
-        });
+        const publication = await Publication({ userId: _id, ...publicationData });
 
         await publication.save();
 
@@ -40,13 +38,7 @@ exports.GetPublications = async (req, res) => {
     try {
 
         const publications = await Publication.find({ userId: _id })
-            .populate({
-                path: 'userId',
-                populate: {
-                    path: 'profiles',
-                    select: 'name designation'
-                }
-            })
+            .populate('userId', 'firstName lastName designation')
             .exec();
 
         if (!publications.length <= 0) {
@@ -70,13 +62,7 @@ exports.GetPublication = async (req, res) => {
     try {
 
         const Publication = await Publication.findById(_id)
-            .populate({
-                path: 'userId',
-                populate: {
-                    path: 'profiles',
-                    select: 'name designation'
-                }
-            })
+            .populate('userId', 'firstName lastName designation')
             .exec();
 
         if (!profile) {
@@ -117,13 +103,7 @@ exports.EditPublication = async (req, res) => {
                 publicationData,
                 { new: true }
             )
-            .populate({
-                path: 'userId',
-                populate: {
-                    path: 'profiles',
-                    select: 'name designation'
-                }
-            })
+            .populate('userId', 'firstName lastName designation')
             .exec();
 
         if (!publication) {

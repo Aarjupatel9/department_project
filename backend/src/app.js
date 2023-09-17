@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const path = require('path');
 require("dotenv").config();
 
 
@@ -11,6 +12,7 @@ const userRoute = require('../routes/userRoute');
 const profileRoute = require("../routes/profileRoute");
 const supportRoute = require('../routes/supportRoute');
 const systemRoute = require('../routes/systemRoute');
+const eventRoute = require("../routes/eventRoute");
 
 const app = express();
 
@@ -24,6 +26,9 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Serve static files from the 'uploads' folder -- temporary
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
 // view engine setup
 app.set('view engine', 'ejs');
 app.set('views', './view');
@@ -31,7 +36,15 @@ app.set('views', './view');
 app.get('/', (req, res) => {
 
     res.status(200).json({
-        message: "server is up and running 🛠"
+        message: "server is up and running 🛠",
+        serverTime: new Date(Date.now()).toLocaleString("en-US", {
+            hour: 'numeric',
+            minute: 'numeric',
+            second: "numeric",
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        })
     })
 
 });
@@ -41,6 +54,7 @@ app.use("/api/user", userRoute);
 app.use("/api/profile", profileRoute);
 app.use("/api/support", supportRoute);
 app.use("/api/system", systemRoute);
+app.use("/api/event", eventRoute);
 
 app.get('*', (req, res) => {
     return res.status(404).json({ message: 'Not found, Check the URL properly !!!' });

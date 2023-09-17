@@ -1,10 +1,43 @@
 const Profile = require('../models/profileModel');
 const { profileValidator } = require('../validators/profileValidator');
 
+exports.uploadProfileImage = async (req, res) => {
+
+    var { _id } = req.user;
+
+    const profileImage = req.fileUrls[0];
+
+    try {
+        const updatedProfileImage = await Profile
+            .findByIdAndUpdate(
+                _id,
+                {
+                    profileImage: profileImage
+                },
+                {
+                    new: true,
+                    upsert: true
+                })
+            .select("profileImage");
+
+        if (!updatedProfileImage) {
+            return res
+                .status(404)
+                .json({ success: false, message: "User profile not found." });
+        }
+
+        res.status(200).json({ success: true, updatedProfileImage });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server Error." });
+    }
+
+}
+
 exports.GetProfile = async (req, res) => {
     var { _id } = req.user;
     if (req.body._id) {
-        _id = req.body._id;
+        _id = req.params._id;
     }
     try {
         const profile = await Profile.findById(_id).select("-_id -__v");
@@ -35,6 +68,9 @@ exports.EditProfile = async (req, res) => {
 
     const profileData = req.body;
 
+    if (req.fileUrls && req.fileUrls.length > 0) {
+        profileData.profileImage = req.fileUrls[0];
+    }
 
     try {
         const profile = await Profile

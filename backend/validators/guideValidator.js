@@ -8,5 +8,11 @@ exports.guideValidator = joi.object({
     studentDetails: joi.object({
         name: joi.string().min(3).max(60).required(),
         idNumber: joi.string().length(7)
-    })
+    }),
+    reports: joi.array().items(
+        joi.object({
+            title: joi.string().required(),
+            url: joi.string().required()
+        })
+    )
 });

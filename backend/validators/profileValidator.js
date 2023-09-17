@@ -25,6 +25,5 @@ exports.profileValidator = joi.object({
         zip: joi.string().required()
     }),
     joiningDate: joi.date().max('now').required(),
-    experience: joi.number().min(0).required(),
-    profileImage: joi.string().allow(null, '')
+    experience: joi.number().min(0).required()
 });

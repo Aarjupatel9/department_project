@@ -8,6 +8,13 @@ exports.publicationValidator = joi.object({
     publicationType: joi.string().valid(...Object.values(PUBLICATION_TYPE)).required(),
     publicationDate: joi.date().format('DD-MM-YYYY').max('now').required(),
 
+    reports: joi.array().items(
+        joi.object({
+            title: joi.string().required(),
+            url: joi.string().required()
+        })
+    ),
+
     publisher: joi.when('publicationType', {
         is: PUBLICATION_TYPE.JOURNALS,
         then: joi.string().required()

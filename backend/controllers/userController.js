@@ -174,7 +174,7 @@ exports.EditUser = async (req, res) => {
                 email: email,
                 password: hash
             }, { new: true })
-            .select("userName email isEmailVerified registeredOn lastLoggedInTime");
+            .select("userName email isEmailVerified");
 
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found." });

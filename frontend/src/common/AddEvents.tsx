@@ -3,10 +3,13 @@ import toast from 'react-hot-toast';
 import { selectUserDetails } from '../reduxStore/reducers/userDetailSlice';
 import { selectSystemVariables } from '../reduxStore/reducers/systemVariables';
 import { useAppDispatch, useAppSelector } from '../reduxStore/hooks';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { profileDetailValidator } from '../validator/profileValidator';
-import { IEvent, IEventTemplate } from '../reduxStore/reducers/eventsSlice';
+import { IEventTemplate } from '../reduxStore/reducers/eventsSlice';
+import { IEvent } from '../interfaces/interfaces';
 import { eventDetailValidator } from '../validator/eventValidator';
+import eventService from '../services/eventService';
+import authService from '../services/authService';
 
 export default function AddEvents() {
 
@@ -19,13 +22,67 @@ export default function AddEvents() {
         contributors: string, experts: string, report: { title: string; url: string; }
     }>({ contributors: "", experts: "", report: { title: "", url: "" } });
 
-    const handelProfileUpload = () => {
+    const { id } = useParams<{ id: string }>();;
+    useEffect(() => {
+        if (id != undefined) {
+            var eventPromise = eventService.getEvent(id) as Promise<{ event: IEvent, message: string }>;
+            eventPromise.then((res) => {
+                var resEvent = res.event;
+                console.log("getEvent : ", resEvent);
+                // const temp = resEvent.userId._id;
+                resEvent.userId = resEvent.userId._id
+
+                setEventDetail(res.event);
+            })
+            setEventDetail((prevData) => ({ ...prevData, _id: id }));
+        }
+
+    }, [id]);
+    const handelEventAdd = () => {
         console.log('Form Data:', eventDetail);
-        const { error } = eventDetailValidator.validate(eventDetail);
+        const { _id, ...restEventDetails } = eventDetail;
+        const { error } = eventDetailValidator.validate(restEventDetails);
         if (error) {
             toast.error(error.toString());
             return;
         }
+        console.log("error : ", error);
+        var eventPromise;
+        if (id) {
+            console.log("update event");
+            eventPromise = eventService.updateEvent(eventDetail) as Promise<{ event: IEvent, message: string }>;;
+        } else {
+            console.log("add event");
+            eventPromise = eventService.addEvent(eventDetail) as Promise<{ event: IEvent, message: string }>;;
+        }
+        eventPromise.then((res) => {
+            if (!id) {
+                setEventDetail(IEventTemplate);
+            }
+        }).catch((error) => {
+        });
+        toast.promise(
+            eventPromise,
+            {
+                loading: 'please wait while we updating event data',
+                success: (data) => data.message,
+                error: (err) => err,
+            },
+            {
+                style: {
+                    minWidth: '250px',
+                },
+                success: {
+                    duration: 5000,
+                    icon: '🔥',
+                },
+                error: {
+                    duration: 5000,
+                    icon: '🔥',
+                },
+            }
+        );
+
     };
     const handleRowDataInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = event.target;
@@ -84,7 +141,6 @@ export default function AddEvents() {
             }));
         }
     };
-
 
     function formatDateToDdMmYyyy(inputDateString: string) {
         const date = new Date(inputDateString);
@@ -166,8 +222,10 @@ export default function AddEvents() {
     };
 
     useEffect(() => {
-        console.log("event detaitls changed : ", eventDetail);
-    }, [eventDetail]);
+        setEventDetail((prevData) => ({ ...prevData, userId: authService.getCurrentUserId() }));
+    }, []);
+
+
     return (
         <div className=" flex flex-col shadow-md sm:rounded-lg">
             <h1 className='text-3xl mx-auto  font-medium text-gray-900 dark:text-white'>Event Entry </h1>
@@ -176,22 +234,22 @@ export default function AddEvents() {
 
                 {/* personalDetails */}
                 <div className='flex flex-col'>
-                    <h3 className='mt-4 mx-auto text-xl font-medium text-gray-900 dark:text-white'>personalDetails</h3>
+                    <h3 className='mt-4 mx-auto text-xl font-medium text-gray-900 dark:text-white'>Event Details</h3>
                     <hr className='w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700' />
                     <div className="mt-2 grid md:grid-cols-2 md:gap-6">
                         <div className="relative z-0 w-full mb-6 group">
-                            <input onChange={handleInputChange} value={eventDetail.title} type="text" name="title" id="title" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" required />
+                            <input onChange={handleInputChange} value={eventDetail.title} type="text" name="title" id="title" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" required />
                             <label htmlFor="title" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Event Name</label>
                         </div>
                         <div className="relative z-0 w-full mb-6 group">
-                            <input onChange={handleInputChange} value={eventDetail.organizedUnder} type="text" name="organizedUnder" id="organizedUnder" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" required />
+                            <input onChange={handleInputChange} value={eventDetail.organizedUnder} type="text" name="organizedUnder" id="organizedUnder" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" required />
                             <label htmlFor="organizedUnder" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Organized Under</label>
                         </div>
                     </div>
                     <div className="mt-2 grid md:grid-cols-2 md:gap-6">
                         <div className="relative z-0 w-full mb-6 group">
-                            <textarea onChange={handleInputChange} value={String(eventDetail.description)} name="description" id="description" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required ></textarea>
-                            <label htmlFor="description" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Description</label>
+                            <input onChange={handleInputChange} value={eventDetail.eventType} type="text" name="eventType" id="eventType" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" required />
+                            <label htmlFor="eventType" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Event Type</label>
                         </div>
                         <div className="mt-4 mb-6 flex items-center">
                             <input
@@ -210,6 +268,13 @@ export default function AddEvents() {
                             </label>
                         </div>
                     </div>
+                    <div className="mt-2 grid md:grid-cols-2 md:gap-6">
+                        <div className="relative z-0 w-full mb-6 group">
+                            <textarea onChange={handleInputChange} value={String(eventDetail.description)} name="description" id="description" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required ></textarea>
+                            <label htmlFor="description" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Description</label>
+                        </div>
+
+                    </div>
                 </div>
 
                 {/* address */}
@@ -218,21 +283,21 @@ export default function AddEvents() {
                     <hr className='w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700' />
                     <div className="grid md:grid-cols-2 md:gap-6">
                         <div className="relative z-0 w-full mb-6 group">
-                            <input onChange={handleInputChange} value={String(eventDetail.address.city)} type="text" name="address.city" id="address.city" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                            <input onChange={handleInputChange} value={String(eventDetail.address.city)} type="text" name="address.city" id="address.city" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                             <label htmlFor="address.city" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">City</label>
                         </div>
                         <div className="relative z-0 w-full mb-6 group">
-                            <input onChange={handleInputChange} value={String(eventDetail.address.state)} type="text" name="address.state" id="address.state" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                            <input onChange={handleInputChange} value={String(eventDetail.address.state)} type="text" name="address.state" id="address.state" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                             <label htmlFor="address.state" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">State </label>
                         </div>
                     </div>
                     <div className="grid md:grid-cols-2 md:gap-6">
                         <div className="relative z-0 w-full mb-6 group">
-                            <input onChange={handleInputChange} value={String(eventDetail.address.country)} type="text" name="address.country" id="address.country" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                            <input onChange={handleInputChange} value={String(eventDetail.address.country)} type="text" name="address.country" id="address.country" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                             <label htmlFor="address.country" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">country</label>
                         </div>
                         <div className="relative z-0 w-full mb-6 group">
-                            <input onChange={handleInputChange} value={String(eventDetail.address.zip)} type="tel" name="address.zip" id="address.zip" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                            <input onChange={handleInputChange} value={String(eventDetail.address.zip)} type="tel" name="address.zip" id="address.zip" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                             <label htmlFor="address.zip" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">zip Code </label>
                         </div>
                     </div>
@@ -243,16 +308,17 @@ export default function AddEvents() {
                     <h3 className='mt-4 mx-auto  text-xl font-medium text-gray-900 dark:text-white'>Contributors</h3>
                     <hr className='w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700' />
                     <div className='my-6 mx-10'>
-                        <div className="relative w-full mb-4 group">
+                        <div className="relative z-0 w-full mb-4 group">
                             <input
                                 onChange={handleRowDataInputChange}
                                 value={rowData.contributors}
                                 type="text"
                                 name="contributors"
                                 id="contributors"
-                                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder="Enter a Contributor"
                             />
+                            {/* <label htmlFor="contributors" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Contributors </label> */}
                             <button
                                 onClick={handleAddContributors} name='contributors'
                                 className="absolute right-2 top-2 px-2 py-1 rounded-lg focus:bg-gray-300 text-blue-700 dark:text-blue-500 hover:text-blue-900  dark:hover:text-blue-700 focus:outline-none"
@@ -266,7 +332,7 @@ export default function AddEvents() {
                                     {index + 1}) {expert}
                                     <button
                                         onClick={() => handleRemoveContributors(index)}
-                                        className="ml-2 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
+                                        className="ml-5 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
                                     >
                                         Remove
                                     </button>
@@ -288,7 +354,7 @@ export default function AddEvents() {
                                 type="text"
                                 name="experts"
                                 id="experts"
-                                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                 placeholder="Enter an expert"
                             />
                             <button
@@ -328,7 +394,8 @@ export default function AddEvents() {
                                         type="text"
                                         name="report.title"
                                         id="report.title"
-                                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder="Enter an Title"
+                                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                        placeholder="Enter Report's Title"
                                     />
                                 </div>
                                 <div className=" z-0 w-full mb-6 group">
@@ -338,7 +405,7 @@ export default function AddEvents() {
                                         type="file"
                                         name="report.url"
                                         id="report.url"
-                                        className="block  p-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                        className="block  p-0 w-full text-sm text-gray-900 bg-transparent border-0 border-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                         placeholder="Upload report"
                                     />
                                 </div>
@@ -367,16 +434,16 @@ export default function AddEvents() {
 
                 <div className="mt-10 grid md:grid-cols-2 md:gap-6">
                     <div className="relative z-0 w-full mb-6 group">
-                        <input onChange={handleInputChange} value={formatDateToDdMmYyyy(String(eventDetail.eventDate.startDate))} type="date" name="eventDate.startDate" id="eventDate.startDate" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                        <input onChange={handleInputChange} value={formatDateToDdMmYyyy(String(eventDetail.eventDate.startDate))} type="date" name="eventDate.startDate" id="eventDate.startDate" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                         <label htmlFor="eventDate.startDate" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">startDate</label>
                     </div>
                     <div className="relative z-0 w-full mb-6 group">
-                        <input onChange={handleInputChange} value={formatDateToDdMmYyyy(String(eventDetail.eventDate.endDate))} type="date" name="eventDate.endDate" id="eventDate.endDate" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                        <input onChange={handleInputChange} value={formatDateToDdMmYyyy(String(eventDetail.eventDate.endDate))} type="date" name="eventDate.endDate" id="eventDate.endDate" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                         <label htmlFor="eventDate.endDate" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">endDate</label>
                     </div>
                 </div>
 
-                <button type="button" onClick={handelProfileUpload} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
+                <button type="button" onClick={handelEventAdd} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
             </div>
         </div>
     )

@@ -8,8 +8,8 @@ const ejs = require("ejs");
 const fs = require("fs");
 const path = require("path");
 
-const hostName = process.env.IS_DEV === "true" ?
-    `http://${process.env.WEB_HOST}:${process.env.PORT}` : process.env.DOMAIN_NAME;
+const hostName = process.env.NODE_ENV === "dev" ?
+    `http://${process.env.HOST}` : process.env.DOMAIN_NAME;
 
 // exports.ForgotPassword = async (req, res) => {
 
@@ -134,52 +134,55 @@ const hostName = process.env.IS_DEV === "true" ?
 
 // }
 
-// exports.ResendVerificationMail = async (req, res) => {
+exports.ResendVerificationMail = async (req, res) => {
 
-//     try {
+    try {
+        const user = await User.findById(req.user._id).select("email isEmailVerified");
 
-//         const user = await User.findById(req.user._id).select("email isEmailVerified");
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User with this email does not exists." });
+        }
 
-//         if (user.isEmailVerified) {
-//             return res.status(400).
-//                 json({
-//                     success: false,
-//                     message: "Email is already verified"
-//                 });
-//         }
+        if (user.isEmailVerified) {
+            return res.status(400).
+                json({
+                    success: false,
+                    message: "Email is already verified"
+                });
+        }
 
-//         const verificationToken = genJWTToken({ email: user.email }, "verify-Email");
-//         const verificationLink = `${hostName}/api/support/verify-email/${verificationToken}`;
+        const verificationToken = genJWTToken({ email: user.email }, "verify-Email");
+        const verificationLink = `${hostName}/api/support/verify-email/${verificationToken}`;
 
-//         const template = fs.readFileSync(
-//             path.join(__dirname, "../view/email-verification.ejs"),
-//             "utf8");
+        const template = fs.readFileSync(
+            path.join(__dirname, "../view/email-verification.ejs"),
+            "utf8");
 
-//         const html = ejs.render(template, { verificationLink });
+        const html = ejs.render(template, { verificationLink });
 
-//         try {
-//             await sendMail(user.email, "Email verification", "", html);
-//         } catch (error) {
-//             console.error("Error sending email:", error);
-//             return res.
-//                 status(500).
-//                 json({
-//                     success: false,
-//                     message: "Error sending Email verification mail ! please try later!!!"
-//                 });
-//         }
+        try {
+            await sendMail(user.email, "Email verification", "", html);
+        } catch (error) {
+            console.error("Error sending email:", error);
+            return res.
+                status(500).
+                json({
+                    success: false,
+                    message: "Error sending Email verification mail ! please try later!!!"
+                });
+        }
 
-//         res.status(200).
-//             json({
-//                 success: true,
-//                 message: "An Email verification link has been send to your mail !!! please verify your email !!!"
-//             });
+        res.status(200).
+            json({
+                success: true,
+                message: "An Email verification link has been send to your mail !!! please verify your email !!!"
+            });
 
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ success: false, message: "Internal Server Error." });
-//     }
-// }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Internal Server Error." });
+    }
+}
 
 exports.VerifyEmail = async (req, res) => {
 

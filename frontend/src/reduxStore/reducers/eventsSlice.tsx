@@ -1,39 +1,16 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../store';
+import { IEvent } from '../../interfaces/interfaces';
 
 
 export interface EventsState {
   value: IEvent[],
   status: 'idle' | 'loading' | 'failed';
 }
-export interface IEvent {
-  userId: string;
-  title: string;
-  description: string;
-  isOrganizedByBVM: boolean;
-  eventType: string;
-  contributors: string[];
-  experts: string[];
-  numberOfParticipants: number;
-  totalExpenses: number;
-  eventDate: {
-    startDate: Date;
-    endDate: Date;
-  };
-  organizedUnder: string;
-  address: {
-    city: string;
-    state: string;
-    country: string;
-    zip: string;
-  };
-  report: {
-    title: string;
-    url: string;
-  }[];
-}
+
 
 export const IEventsTemplate = [{
+  _id:"",
   userId: "",
   title: "",
   description: "",
@@ -60,11 +37,12 @@ export const IEventsTemplate = [{
   }],
 }];
 export const IEventTemplate = {
+  _id:"",
   userId: "",
   title: "",
   description: "",
   isOrganizedByBVM: false,
-  eventType: ",",
+  eventType: "",
   contributors: [],
   experts: [],
   numberOfParticipants: 0,

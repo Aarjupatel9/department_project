@@ -20,9 +20,7 @@ exports.AddAchievement = async (req, res) => {
 
         const achievement = await Achievement({
             userId: _id,
-            achievementType: achievementData.achievementType,
-            description: achievementData.description,
-            achievedOn: achievementData.achievedOn
+            ...achievementData
         });
 
         await achievement.save();
@@ -43,13 +41,7 @@ exports.GetAchievements = async (req, res) => {
     try {
 
         const achievements = await Achievement.find({ userId: _id })
-            .populate({
-                path: 'userId',
-                populate: {
-                    path: 'profiles',
-                    select: 'name designation'
-                }
-            })
+            .populate('userId', 'firstName lastName designation')
             .exec();
 
         // const achievements = await Achievement.find({ userId: _id });
@@ -76,13 +68,7 @@ exports.GetAchievement = async (req, res) => {
 
         // const achievement = await Achievement.findById(_id);
         const achievement = await Achievement.findById(_id)
-            .populate({
-                path: 'userId',
-                populate: {
-                    path: 'profiles',
-                    select: 'name designation'
-                }
-            })
+            .populate('userId', 'firstName lastName designation')
             .exec();
 
         if (!achievement) {
@@ -132,14 +118,8 @@ exports.EditAchievement = async (req, res) => {
                 achievementData,
                 { new: true }
             )
-            .populate({
-                path: 'userId',
-                populate: {
-                    path: 'profiles',
-                    select: 'name designation'
-                }
-            })
             .select("userId name designation achievementType description achievedOn")
+            .populate('userId', 'firstName lastName designation')
             .exec();
 
 

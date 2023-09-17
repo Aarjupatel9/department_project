@@ -38,7 +38,7 @@ const qualificationSchema = mongoose.Schema({
         min: 4,
         max: 4
     },
-    certificate: [{
+    certificates: [{
         title: {
             type: String,
             required: true
