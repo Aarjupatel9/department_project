@@ -1,6 +1,7 @@
 const express = require('express');
 const { ForgotPassword, ResetPassword, ResetPasswordPage, VerifyEmail, ResendVerificationMail, ContactUS } = require("../controllers/supportController");
-const authenticateJWT = require('../middlewares/authMiddleware');
+const authenticateRoles = require('../middlewares/authMiddleware');
+const { AllRoles } = require('../utils/constants');
 const router = express.Router();
 
 
