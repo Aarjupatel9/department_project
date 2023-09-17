@@ -12,6 +12,7 @@ const userRoute = require('../routes/userRoute');
 const profileRoute = require("../routes/profileRoute");
 const supportRoute = require('../routes/supportRoute');
 const systemRoute = require('../routes/systemRoute');
+const eventRoute = require("../routes/eventRoute");
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use("/api/user", userRoute);
 app.use("/api/profile", profileRoute);
 app.use("/api/support", supportRoute);
 app.use("/api/system", systemRoute);
+app.use("/api/event", eventRoute);
 
 app.get('*', (req, res) => {
     return res.status(404).json({ message: 'Not found, Check the URL properly !!!' });

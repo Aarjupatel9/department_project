@@ -35,7 +35,7 @@ const fileUploaderMiddleware = (fileType, fieldName, maxCount) => {
 
     const upload = multer({ storage });
 
-    return (req, res, next) => {
+    return (req, res, next) => {    
 
         console.log(directory + " " + req.user._id + "  " + fieldName);
 
