@@ -62,35 +62,35 @@ export const userDetailTemplate = {
 //   profileImage: string
 // }
 
-// export const userProfileTemplate = {
-//   userId: "",
-//   firstName: "",
-//   lastName: "",
-//   personalDetails: {
-//     mobileNo: "",
-//     employeeId: "",
-//     aadharNumber: 0,
-//     panNumber: "",
-//     dateOfBirth: new Date(),
-//   },
-//   bankDetails: {
-//     accNumber: 0,
-//     bankName: "",
-//     branch: "",
-//     IFSC_code: "",
-//   },
-//   designation: "",
-//   address: {
-//     city: "",
-//     state: "",
-//     country: "",
-//     zip: "",
-//   },
-//   experience: 0,
-//   joiningDate: new Date(),
-//   __v: 0,
-//   profileImage: ""
-// };
+export const userProfileTemplate = {
+  userId: "",
+  firstName: "",
+  lastName: "",
+  personalDetails: {
+    mobileNo: "",
+    employeeId: "",
+    aadharNumber: 0,
+    panNumber: "",
+    dateOfBirth: new Date(),
+  },
+  bankDetails: {
+    accNumber: 0,
+    bankName: "",
+    branch: "",
+    IFSC_code: "",
+  },
+  designation: "",
+  address: {
+    city: "",
+    state: "",
+    country: "",
+    zip: "",
+  },
+  experience: 0,
+  joiningDate: new Date(),
+  __v: 0,
+  profileImage: ""
+};
 
 
 const initialState = {

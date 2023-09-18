@@ -15,7 +15,7 @@ export default function EditUserProfile() {
     const userDetail = useAppSelector(selectUserDetails);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [userProfile, setUserProfile] = useState();
+    const [userProfile, setUserProfile] = useState(userProfileTemplate);
 
     function imageUploadHandle(event) {
         console.log("image upload handle enter ");
