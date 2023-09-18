@@ -3,14 +3,9 @@ import { RootState, AppThunk } from '../store';
 import { IEvent } from '../../interfaces/interfaces';
 
 
-export interface EventsState {
-  value: IEvent[],
-  status: 'idle' | 'loading' | 'failed';
-}
-
 
 export const IEventsTemplate = [{
-  _id:"",
+  _id: "",
   userId: "",
   title: "",
   description: "",
@@ -37,7 +32,7 @@ export const IEventsTemplate = [{
   }],
 }];
 export const IEventTemplate = {
-  _id:"",
+  _id: "",
   userId: "",
   title: "",
   description: "",
@@ -62,7 +57,7 @@ export const IEventTemplate = {
 };
 
 
-const initialState: EventsState = {
+const initialState = {
   value: IEventsTemplate,
   status: 'idle'
 };
@@ -72,7 +67,7 @@ export const EventsSlice = createSlice({
   name: 'events',
   initialState,
   reducers: {
-    setEventsDetail: (state, action: PayloadAction<IEvent[]>) => {
+    setEventsDetail: (state, action) => {
       // console.log("setAction method called : ", action.payload);
       state.value = action.payload;
     },
@@ -81,7 +76,7 @@ export const EventsSlice = createSlice({
 
 export const { setEventsDetail } = EventsSlice.actions;
 
-export const selectEventsDetails = (state: RootState) => state.userDetail.value;
+export const selectEventsDetails = (state) => state.userDetail.value;
 
 export default EventsSlice.reducer;
 

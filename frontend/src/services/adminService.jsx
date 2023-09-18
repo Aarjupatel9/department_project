@@ -3,12 +3,12 @@ import { handleRejectResponse } from "./systemService";
 
 class adminService {
 
-    getUserDetails(_id : String | undefined) {
-        var cred = {_id : _id}
+    getUserDetails(_id) {
+        var cred = { _id: _id }
         return new Promise(function (resolve, reject) {
             const options = {
                 method: "POST",
-                credentials: "include" as RequestCredentials,
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json;charset=UTF-8",
                     "Access-Control-Allow-Origin": "*",
@@ -38,11 +38,11 @@ class adminService {
                 });
         });
     }
-    updateUserAccountRole(data: { _id: string; role: string; }) {
+    updateUserAccountRole(data) {
         return new Promise(function (resolve, reject) {
             const options = {
                 method: "POST",
-                credentials: "include" as RequestCredentials,
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json;charset=UTF-8",
                     "Access-Control-Allow-Origin": "*",
@@ -72,13 +72,13 @@ class adminService {
                 });
         });
     }
-    verifyUserAccount(_id: string | undefined) {
-        const userId =  authService.getCurrentUserId();
-        var cred = {_id : _id}
+    verifyUserAccount(_id) {
+        const userId = authService.getCurrentUserId();
+        var cred = { _id: _id }
         return new Promise(function (resolve, reject) {
             const options = {
                 method: "POST",
-                credentials: "include" as RequestCredentials,
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json;charset=UTF-8",
                     "Access-Control-Allow-Origin": "*",
@@ -108,13 +108,13 @@ class adminService {
                 });
         });
     }
-    approveUserAccount(_id: string | undefined) {
-        const userId =  authService.getCurrentUserId();
-        var cred = {_id : _id}
+    approveUserAccount(_id) {
+        const userId = authService.getCurrentUserId();
+        var cred = { _id: _id }
         return new Promise(function (resolve, reject) {
             const options = {
                 method: "POST",
-                credentials: "include" as RequestCredentials,
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json;charset=UTF-8",
                     "Access-Control-Allow-Origin": "*",
@@ -148,7 +148,7 @@ class adminService {
         return new Promise(function (resolve, reject) {
             const options = {
                 method: "POST",
-                credentials: "include" as RequestCredentials, 
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json;charset=UTF-8",
                     "Access-Control-Allow-Origin": "*",
@@ -180,7 +180,7 @@ class adminService {
         return new Promise(function (resolve, reject) {
             const options = {
                 method: "POST",
-                credentials: "include" as RequestCredentials,
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json;charset=UTF-8",
                     "Access-Control-Allow-Origin": "*",

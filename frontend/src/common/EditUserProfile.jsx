@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import adminService from '../services/adminService';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { selectUserDetails, setUserDetail, userDetail, userDetailTemplate, userProfile, userProfileTemplate } from '../reduxStore/reducers/userDetailSlice';
+import { selectUserDetails, setUserDetail, userDetail, userProfile, userProfileTemplate } from '../reduxStore/reducers/userDetailSlice';
 import { profileDetailValidator } from '../validator/profileValidator';
 import { toast } from 'react-hot-toast';
 import userService from '../services/userService';
 import { useAppDispatch, useAppSelector } from '../reduxStore/hooks';
 import authService from '../services/authService';
-import { selectSystemVariables } from '../reduxStore/reducers/systemVariables';
+import { selectSystemVariables } from '../reduxStore/reducers/systemVariables.jsx';
 
 export default function EditUserProfile() {
 
@@ -15,13 +15,13 @@ export default function EditUserProfile() {
     const userDetail = useAppSelector(selectUserDetails);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [userProfile, setUserProfile] = useState<userProfile>(userProfileTemplate);
+    const [userProfile, setUserProfile] = useState();
 
-    function imageUploadHandle(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    function imageUploadHandle(event) {
         console.log("image upload handle enter ");
     }
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleInputChange = (event) => {
         const { name, value } = event.target;
 
         if (name == "profileImage") {
@@ -73,12 +73,11 @@ export default function EditUserProfile() {
             toast.error(error.toString());
             return;
         }
-        const profileUpdatePromise = userService.updateProfile(userProfile) as Promise<{ user: userDetail, message: string }>;
+        const profileUpdatePromise = userService.updateProfile(userProfile);
         profileUpdatePromise.then((res) => {
             if (!userDetail.isProfile) {
                 toast.success("please login again");
-                console.log("val : ", userDetailTemplate);
-                dispatch(setUserDetail(userDetailTemplate));
+                dispatch(setUserDetail());
                 authService.logout();
                 navigate("/");
                 window.location.reload();
@@ -113,7 +112,7 @@ export default function EditUserProfile() {
 
     useEffect(() => {
         userService.getUserProfile(authService.getCurrentUserId()).then((unTypedRes) => {
-            const res = unTypedRes as { profile: userProfile };
+            const res = unTypedRes;
             const userProfile = res.profile;
             console.log("userProfile : ", userProfile);
             if (userProfile) {
@@ -123,7 +122,7 @@ export default function EditUserProfile() {
             console.log("error : ", error);
         })
     }, []);
-    function formatDateToDdMmYyyy(inputDateString: string) {
+    function formatDateToDdMmYyyy(inputDateString) {
         const date = new Date(inputDateString);
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -139,7 +138,7 @@ export default function EditUserProfile() {
                 <div className='m-1 p-5 flex flex-col'>
 
                     {/* personalDetails */}
-                    <h3 className='mt-4 mx-auto text-xl font-medium text-gray-900 dark:text-white'>personalDetails</h3>
+                    <h3 className='mt-4 mx-auto text-xl font-medium text-gray-900 dark:text-white'>Personal Details</h3>
                     <hr className='w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700' />
 
                     <div className="mt-2 grid md:grid-cols-2 md:gap-6">
@@ -177,7 +176,7 @@ export default function EditUserProfile() {
                     <h3 className='mt-4 mx-auto text-xl font-medium text-gray-900 dark:text-white'>Communication Details</h3>
                     <hr className='w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700' />
 
-                    <div className="grid md:grid-cols-2 md:gap-6">
+                    <div className="grid md:grid-cols-2 mt-4 md:gap-6">
                         <div className="relative z-0 w-full mb-6 group">
                             <input onChange={handleInputChange} value={String(userProfile.personalDetails.mobileNo)} type="text" name="personalDetails.mobileNo" id="personalDetails.mobileNo" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                             <label htmlFor="personalDetails.mobileNo" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Mobile No</label>
@@ -189,9 +188,9 @@ export default function EditUserProfile() {
                     </div>
 
                     {/* bankDetails */}
-                    <h3 className='mt-4 mx-auto  text-xl font-medium text-gray-900 dark:text-white'>bankDetails</h3>
+                    <h3 className='mt-4 mx-auto  text-xl font-medium text-gray-900 dark:text-white'>Bank Details</h3>
                     <hr className='w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700' />
-                    <div className="grid md:grid-cols-2 md:gap-6">
+                    <div className="grid md:grid-cols-2 mt-4 md:gap-6">
                         <div className="relative z-0 w-full mb-6 group">
                             <input onChange={handleInputChange} value={String(userProfile.bankDetails.bankName)} type="text" name="bankDetails.bankName" id="bankDetails.bankName" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                             <label htmlFor="bankDetails.bankName" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Bank name</label>
@@ -212,9 +211,9 @@ export default function EditUserProfile() {
                         </div>
                     </div>
                     {/* address */}
-                    <h3 className='mt-4 mx-auto  text-xl font-medium text-gray-900 dark:text-white'>address</h3>
+                    <h3 className='mt-4 mx-auto  text-xl font-medium text-gray-900 dark:text-white'>Address</h3>
                     <hr className='w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700' />
-                    <div className="grid md:grid-cols-2 md:gap-6">
+                    <div className="grid md:grid-cols-2 mt-4 md:gap-6">
                         <div className="relative z-0 w-full mb-6 group">
                             <input onChange={handleInputChange} value={String(userProfile.address.city)} type="text" name="address.city" id="address.city" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                             <label htmlFor="address.city" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">City</label>
@@ -235,7 +234,7 @@ export default function EditUserProfile() {
                         </div>
                     </div>
                     {/* Other information  */}
-                    <h3 className='mt-4 mx-auto text-xl font-medium text-gray-900 dark:text-white'>Other information </h3>
+                    <h3 className='mt-4 mx-auto text-xl font-medium text-gray-900 dark:text-white'>Other Information </h3>
                     <hr className='w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700' />
                     <div className="grid md:grid-cols-2 md:gap-6">
                         <div className="relative z-0 w-full mb-6 group">

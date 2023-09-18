@@ -14,7 +14,7 @@ export function Setting() {
     }
   }, []);
 
-  const handleThemeChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleThemeChanged = (event) => {
     console.log("handleThemeChanged mode : ", isDarkMode);
     const { checked } = event.target;
     if (checked) {
@@ -40,11 +40,4 @@ export function Setting() {
       </label>
     </div>
   );
-}
-
-
-export interface loginCredentials {
-  email: string
-  password: string
-  roll: string
 }
