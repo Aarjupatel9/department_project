@@ -10,8 +10,8 @@ import toast from 'react-hot-toast';
 export default function Events() {
 
     const [searchInput, setSearchInput] = useState("");
-    const [events, setEvents] = useState<IEvent[]>([]);
-    const [filteredEvents, setFilteredEvents] = useState<IEvent[]>([]);
+    const [events, setEvents] = useState([]);
+    const [filteredEvents, setFilteredEvents] = useState([]);
     const navigate = useNavigate();
     useEffect(() => {
         console.log(events);
@@ -25,7 +25,7 @@ export default function Events() {
 
     useEffect(() => {
 
-        const eventPromise = eventService.getEvents() as Promise<{ events: IEvent[], message: string }>;
+        const eventPromise = eventService.getEvents();
         eventPromise.then((res) => {
             console.log("users : ", res.events);
             setEvents(res.events);
@@ -36,14 +36,14 @@ export default function Events() {
 
     }, []);
 
-    function setFilterList(input: String) {
+    function setFilterList(input) {
         const tmp = events.filter((event) => {
             return event;
         })
         setFilteredEvents(tmp);
     }
 
-    function formatDateToDdMmYyyy(inputDateString: string) {
+    function formatDateToDdMmYyyy(inputDateString) {
         const date = new Date(inputDateString);
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -51,13 +51,13 @@ export default function Events() {
         return `${year}-${month}-${day}`;
     }
 
-    const handelEventDelete = (_id: String) => {
-        const eventPromise = eventService.deleteEvent(_id) as Promise<{  message: string }>;
+    const handelEventDelete = (_id) => {
+        const eventPromise = eventService.deleteEvent(_id);
         eventPromise.then((res) => {
             console.log("users : ", res);
             const tmp = events.filter((event) => {
                 if (event._id != _id) {
-                    return event;                   
+                    return event;
                 }
             })
             setFilteredEvents(tmp);
@@ -89,7 +89,7 @@ export default function Events() {
         );
     }
 
-   
+
 
     return (
         <div>
@@ -97,9 +97,9 @@ export default function Events() {
                 <div className="flex  flex-wrap items-center justify-between mx-auto px-3 py-1">
                     <div className="flex items-center justify-between  w-full md:flex md:w-auto md:order-0" id="navbar-language">
                         <div className='mx-3'>
-                            <Link to={"/addEvent"} className="block py-2 pl-3 pr-4 bg-gray-300 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Add</Link>
+                            <Link to={"/addEvent"} className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Add</Link>
                         </div>
-                      
+
                         <div className='mx-3'>
                             <div className=" z-0 w-full  group">
                                 <select name='designation' id="designation" className="bg-gray-50 h-8 py-0  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">

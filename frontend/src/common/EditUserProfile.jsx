@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import adminService from '../services/adminService';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { selectUserDetails, setUserDetail, userDetail, userDetailTemplate, userProfile, userProfileTemplate } from '../reduxStore/reducers/userDetailSlice';
+import { selectUserDetails, setUserDetail, userDetail, userProfile, userProfileTemplate } from '../reduxStore/reducers/userDetailSlice';
 import { profileDetailValidator } from '../validator/profileValidator';
 import { toast } from 'react-hot-toast';
 import userService from '../services/userService';
 import { useAppDispatch, useAppSelector } from '../reduxStore/hooks';
 import authService from '../services/authService';
-import { selectSystemVariables } from '../reduxStore/reducers/systemVariables';
+import { selectSystemVariables } from '../reduxStore/reducers/systemVariables.jsx';
 
 export default function EditUserProfile() {
 
@@ -15,13 +15,13 @@ export default function EditUserProfile() {
     const userDetail = useAppSelector(selectUserDetails);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [userProfile, setUserProfile] = useState<userProfile>(userProfileTemplate);
+    const [userProfile, setUserProfile] = useState();
 
-    function imageUploadHandle(event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    function imageUploadHandle(event) {
         console.log("image upload handle enter ");
     }
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleInputChange = (event) => {
         const { name, value } = event.target;
 
         if (name == "profileImage") {
@@ -73,12 +73,11 @@ export default function EditUserProfile() {
             toast.error(error.toString());
             return;
         }
-        const profileUpdatePromise = userService.updateProfile(userProfile) as Promise<{ user: userDetail, message: string }>;
+        const profileUpdatePromise = userService.updateProfile(userProfile);
         profileUpdatePromise.then((res) => {
             if (!userDetail.isProfile) {
                 toast.success("please login again");
-                console.log("val : ", userDetailTemplate);
-                dispatch(setUserDetail(userDetailTemplate));
+                dispatch(setUserDetail());
                 authService.logout();
                 navigate("/");
                 window.location.reload();
@@ -113,7 +112,7 @@ export default function EditUserProfile() {
 
     useEffect(() => {
         userService.getUserProfile(authService.getCurrentUserId()).then((unTypedRes) => {
-            const res = unTypedRes as { profile: userProfile };
+            const res = unTypedRes;
             const userProfile = res.profile;
             console.log("userProfile : ", userProfile);
             if (userProfile) {
@@ -123,7 +122,7 @@ export default function EditUserProfile() {
             console.log("error : ", error);
         })
     }, []);
-    function formatDateToDdMmYyyy(inputDateString: string) {
+    function formatDateToDdMmYyyy(inputDateString) {
         const date = new Date(inputDateString);
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');

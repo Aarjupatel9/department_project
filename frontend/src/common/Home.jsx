@@ -20,8 +20,8 @@ import EditUserAccess from '../adminComponents/section/EditUserAccess'
 import EditUserProfile from './EditUserProfile'
 import { toast } from 'react-hot-toast';
 import { Setting } from './Setting';
-import Events from '../common/Events';
-import { selectSystemVariables } from '../reduxStore/reducers/systemVariables';
+import Events from './Events';
+import { selectSystemVariables } from '../reduxStore/reducers/systemVariables.jsx';
 import EmailVerifier from '../components/EmailVerifier';
 import AddEvents from './AddEvents';
 export default function Home() {
@@ -42,7 +42,7 @@ export default function Home() {
                     <div className="flex-1 w-0 p-4">
                         <div className="flex items-start">
                             <div className="ml-3 flex-1">
-                                <p className="text-sm text-red-900 font-medium text-gray-900">
+                                <p className="text-sm text-red-900 font-medium">
                                     Please wait for admit to approve your account
                                 </p>
                             </div>

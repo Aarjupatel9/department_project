@@ -5,12 +5,12 @@ import {
   selectUserDetails,
 } from './reduxStore/reducers/userDetailSlice';
 import { useAppSelector, useAppDispatch } from './reduxStore/hooks';
-import { Login } from "./common/Login"
+import { Login } from "./common/Login.jsx"
 import authService from './services/authService';
 import { Toaster } from 'react-hot-toast';
 import Home from './common/Home';
 import userService from './services/userService';
-import { selectSystemVariables, setSystemVariable, systemVariables } from './reduxStore/reducers/systemVariables';
+import { selectSystemVariables, setSystemVariable, systemVariables } from './reduxStore/reducers/systemVariables.jsx';
 
 export default function App() {
 
@@ -45,7 +45,7 @@ export default function App() {
     setRole(userDetail.role);
     if (Object.values(SystemVariables.ROLES).includes(userDetail.role)) {
       userService.getAllVariables().then((unTypedRes) => {
-        const res = unTypedRes as { success: boolean, variables: systemVariables };
+        const res = unTypedRes;
         console.log(res.variables);
         dispatch(setSystemVariable(res.variables));
       }).catch((error) => {

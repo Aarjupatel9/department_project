@@ -1,73 +1,70 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import adminService from '../../services/adminService';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { userDetail, userDetailTemplate } from '../../reduxStore/reducers/userDetailSlice';
 import { User } from '../../interfaces/interfaces';
 
 export default function EditUserAccountRequest() {
-
   const [searchInput, setSearchInput] = useState("");
-  const [newUsers, setNewUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [newUsers, setNewUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const navigate = useNavigate();
+
   useEffect(() => {
     console.log(newUsers);
     setSearchInput("");
     setFilterList("");
   }, [newUsers]);
 
-  useEffect(() => {
-  }, []);
+  const [userBasicDetail, setUserBasicDetail] = useState(userDetailTemplate);
 
-  const [userBasicDetail, setUserBasicDetail] = useState<userDetail>(userDetailTemplate);
   useEffect(() => {
     console.log(userBasicDetail);
   }, [userBasicDetail]);
-  const { id } = useParams<{ id: string }>();;
+
+  const { id } = useParams();
 
   useEffect(() => {
     console.log("id : ", id);
-    if (id == "new") {
+    if (id === "new") {
       adminService.getNewUserDetails().then((unTypedUsers) => {
-        const users = unTypedUsers as User[];
+        const users = unTypedUsers;
         console.log("users : ", users);
-        const usersWithDefaults = users.map((user: User) => ({
+        const usersWithDefaults = users.map((user) => ({
           ...user,
           verifiedBy: user.verifiedBy || "not verified",
         }));
         setNewUsers(usersWithDefaults);
       }).catch((error) => {
         console.log("error : ", error);
-      })
+      });
     } else {
       adminService.getAllUserDetails().then((unTypedUsers) => {
-        const users = unTypedUsers as User[];
+        const users = unTypedUsers;
         console.log("users : ", users);
-        const usersWithDefaults = users.map((user: User) => ({
+        const usersWithDefaults = users.map((user) => ({
           ...user,
           verifiedBy: user.verifiedBy || "not verified",
         }));
         setNewUsers(usersWithDefaults);
       }).catch((error) => {
         console.log("error : ", error);
-      })
+      });
     }
   }, [id]);
 
-  function setFilterList(input:String) {
+  function setFilterList(input) {
     const tmp = newUsers.filter((user) => {
       return user;
-    })
-
+    });
     setFilteredUsers(tmp);
   }
 
   return (
     <div>
       <nav className="bg-gray-300 border-gray-200 dark:bg-gray-900">
-        <div className="flex  flex-wrap items-center justify-end mx-auto px-3 py-1">
+        <div className="flex flex-wrap items-center justify-end mx-auto px-3 py-1">
           <div className="flex md:order-2">
-            
             <div className="relative hidden md:block">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -78,7 +75,6 @@ export default function EditUserAccountRequest() {
               <input value={searchInput} onChange={(e) => { setFilterList(e.target.value); setSearchInput(e.target.value); }} type="text" id="search-navbar" className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search..." />
             </div>
           </div>
-
         </div>
       </nav>
       <div className='flex flex-col pt-4 '>
@@ -129,16 +125,13 @@ export default function EditUserAccountRequest() {
                     <td className="px-6 py-4 text-right dark:text-white dark:bg-gray-700">
                       <div onClick={() => { navigate("/editUserAccess/" + user._id); }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</div>
                     </td>
-                  </tr>)
-              })
-              }
-
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
-  )
+  );
 }
-

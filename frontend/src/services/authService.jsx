@@ -8,12 +8,12 @@ import { loginCredentials } from '../interfaces/interfaces';
 import { handleRejectResponse } from './systemService';
 class AuthService {
 
-  resendVerificationLink(credential: loginCredentials) {
+  resendVerificationLink(credential) {
     console.log(credential);
     return new Promise(function (resolve, reject) {
       const options = {
         method: "POST",
-        credentials: "include" as RequestCredentials,
+        credentials: "include",
         // mode: "no-cors",
         headers: {
           "Content-Type": "application/json;charset=UTF-8",
@@ -43,12 +43,12 @@ class AuthService {
         });
     });
   }
-  register(credential: loginCredentials) {
+  register(credential) {
     console.log(credential);
     return new Promise(function (resolve, reject) {
       const options = {
         method: "POST",
-        credentials: "include" as RequestCredentials,
+        credentials: "include",
         // mode: "no-cors",
         headers: {
           "Content-Type": "application/json;charset=UTF-8",
@@ -78,12 +78,12 @@ class AuthService {
         });
     });
   }
-  login(credential: loginCredentials) {
+  login(credential) {
     console.log(credential);
     return new Promise(function (resolve, reject) {
       const options = {
         method: "POST",
-        credentials: "include" as RequestCredentials,
+        credentials: "include",
         // mode: "no-cors",
         headers: {
           "Content-Type": "application/json;charset=UTF-8",

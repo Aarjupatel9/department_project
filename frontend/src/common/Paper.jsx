@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Paper: React.FC = () => {
+const Paper = () => {
     return (
         <div>
             <nav className="bg-gray-300 border-gray-200 dark:bg-gray-900">

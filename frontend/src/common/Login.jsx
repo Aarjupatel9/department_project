@@ -37,7 +37,7 @@ export function Login() {
       return;
     }
 
-    const loginPromise = authService.login(cred) as Promise<{ message: string }>;
+    const loginPromise = authService.login(cred);
     toast.promise(
       loginPromise,
       {
@@ -63,7 +63,7 @@ export function Login() {
     );
 
     loginPromise.then((unTypedRes) => {
-      const response = unTypedRes as { userProfile: userProfile, user: userDetail, message: string };
+      const response = unTypedRes;
       if (response.userProfile) {
         response.user.isProfile = true;
       } else {
@@ -95,7 +95,7 @@ export function Login() {
       return;
     }
 
-    const registerPromise = authService.register(cred) as Promise<{ message: string }>;
+    const registerPromise = authService.register(cred);
     toast.promise(
       registerPromise,
       {
@@ -141,7 +141,7 @@ export function Login() {
       return;
     }
 
-    const resendEmailVerificationLinkPromise = authService.resendVerificationLink(cred) as Promise<{ message: string }>;
+    const resendEmailVerificationLinkPromise = authService.resendVerificationLink(cred);
     toast.promise(
       resendEmailVerificationLinkPromise,
       {
@@ -225,11 +225,4 @@ export function Login() {
 
     </div>
   );
-}
-
-
-export interface loginCredentials {
-  email: string
-  password: string
-  roll: string
 }

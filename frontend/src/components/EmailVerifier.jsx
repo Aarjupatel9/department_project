@@ -1,6 +1,6 @@
 import React from 'react';
 
-const EmailVerifier: React.FC = () => {
+const EmailVerifier = () => {
     console.log("IN verifyemail");
     return (
         <div className="flex justify-center items-center h-screen bg-gray-100">
