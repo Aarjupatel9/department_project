@@ -3,37 +3,33 @@ import React, { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../reduxStore/hooks';
 import {
   setUserDetail,
-  selectUserDetails, userDetailTemplate, userProfile, userProfileTemplate
+  selectUserDetails, userDetailTemplate, userProfile
 } from '../reduxStore/reducers/userDetailSlice';
 import { Link, useParams } from 'react-router-dom';
 import "../css/login.css";
 import userService from '../services/userService';
 import authService from '../services/authService';
-interface UserProfileProps {
-  readOnly: boolean;
-}
-export const UserProfile: React.FC<UserProfileProps> = ({ readOnly }) => {
 
-
+export const UserProfile = ({ readOnly }) => {
   const userDetail = useAppSelector(selectUserDetails);
 
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userProfile, setUserProfile] = useState<userProfile>(userProfileTemplate);
+  const [userProfile, setUserProfile] = useState();
 
   useEffect(() => {
 
   }, []);
 
 
-  const { id } = useParams<{ id: string }>();;
+  const { id } = useParams();
 
   useEffect(() => {
     console.log("id : ", id);
     if (id) {
       userService.getUserProfile(id).then((unTypedRes) => {
-        const res = unTypedRes as { profile: userProfile };
+        const res = unTypedRes;
         const userProfile = res.profile;
         console.log("userProfile : ", userProfile);
         if (userProfile) {
@@ -44,7 +40,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ readOnly }) => {
       })
     } else {
       userService.getUserProfile(authService.getCurrentUserId()).then((unTypedRes) => {
-        const res = unTypedRes as { profile: userProfile };
+        const res = unTypedRes;
         const userProfile = res.profile;
         console.log("userProfile : ", userProfile);
         if (userProfile) {
@@ -71,7 +67,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ readOnly }) => {
             </div>
           </div>
         </nav> : <></>}
-      {userProfile != userProfileTemplate ? (
+      {userProfile ? (
 
         <div className={`flex px-2 flex-col mt-5 ${readOnly ? "" : "shadow-md sm:rounded-lg"}`}>
           <h1 className="text-3xl mx-auto font-medium text-gray-900 dark:text-white">Profile</h1>
@@ -150,8 +146,8 @@ export const UserProfile: React.FC<UserProfileProps> = ({ readOnly }) => {
 }
 
 
-export interface loginCredentials {
-  email: string
-  password: string
-  roll: string
-}
+// export interface loginCredentials {
+//   email: string
+//   password: string
+//   roll: string
+// }

@@ -33,5 +33,5 @@ export const profileDetailValidator = joi.object({
     }),
     joiningDate: joi.date().max('now').required(),
     experience: joi.number().min(0).required(),
-    profileImage: joi.string().required()
+    profileImage: joi.any()
 })

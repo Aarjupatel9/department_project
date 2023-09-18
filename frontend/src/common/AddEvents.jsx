@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import { selectUserDetails } from '../reduxStore/reducers/userDetailSlice';
-import { selectSystemVariables } from '../reduxStore/reducers/systemVariables';
+import { selectSystemVariables } from '../reduxStore/reducers/systemVariables.jsx';
 import { useAppDispatch, useAppSelector } from '../reduxStore/hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import { profileDetailValidator } from '../validator/profileValidator';
@@ -17,15 +17,13 @@ export default function AddEvents() {
     const userDetail = useAppSelector(selectUserDetails);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [eventDetail, setEventDetail] = useState<IEvent>(IEventTemplate);
-    const [rowData, setRowData] = useState<{
-        contributors: string, experts: string, report: { title: string; url: string; }
-    }>({ contributors: "", experts: "", report: { title: "", url: "" } });
+    const [eventDetail, setEventDetail] = useState(IEventTemplate);
+    const [rowData, setRowData] = useState({ contributors: "", experts: "", report: { title: "", url: "" } });
 
-    const { id } = useParams<{ id: string }>();;
+    const { id } = useParams();
     useEffect(() => {
         if (id != undefined) {
-            var eventPromise = eventService.getEvent(id) as Promise<{ event: IEvent, message: string }>;
+            var eventPromise = eventService.getEvent(id);
             eventPromise.then((res) => {
                 var resEvent = res.event;
                 console.log("getEvent : ", resEvent);
@@ -50,10 +48,10 @@ export default function AddEvents() {
         var eventPromise;
         if (id) {
             console.log("update event");
-            eventPromise = eventService.updateEvent(eventDetail) as Promise<{ event: IEvent, message: string }>;;
+            eventPromise = eventService.updateEvent(eventDetail);
         } else {
             console.log("add event");
-            eventPromise = eventService.addEvent(eventDetail) as Promise<{ event: IEvent, message: string }>;;
+            eventPromise = eventService.addEvent(eventDetail);
         }
         eventPromise.then((res) => {
             if (!id) {
@@ -84,7 +82,7 @@ export default function AddEvents() {
         );
 
     };
-    const handleRowDataInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleRowDataInputChange = (event) => {
         const { name, value } = event.target;
         if (name.startsWith("report.")) {
             const [parent, child] = name.split(".");
@@ -102,7 +100,7 @@ export default function AddEvents() {
             }));
         }
     };
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (event) => {
         const { name, value } = event.target;
         console.log("enter in handle input change");
         // If the input is nested within personalDetails or bankDetails, update accordingly
@@ -142,7 +140,7 @@ export default function AddEvents() {
         }
     };
 
-    function formatDateToDdMmYyyy(inputDateString: string) {
+    function formatDateToDdMmYyyy(inputDateString) {
         const date = new Date(inputDateString);
 
         const day = String(date.getDate()).padStart(2, '0');
@@ -163,7 +161,7 @@ export default function AddEvents() {
             }));
         }
     };
-    const handleRemoveExpert = (index: number) => {
+    const handleRemoveExpert = (index) => {
         const updatedExperts = [...eventDetail.experts];
         updatedExperts.splice(index, 1);
         setEventDetail((prevData) => ({
@@ -197,7 +195,7 @@ export default function AddEvents() {
             }));
         }
     };
-    const handleRemoveReport = (index: number) => {
+    const handleRemoveReport = (index) => {
         const updatedReports = [...eventDetail.report];
         updatedReports.splice(index, 1);
         setEventDetail((prevData) => ({
@@ -205,7 +203,7 @@ export default function AddEvents() {
             report: updatedReports,
         }));
     };
-    const handleRemoveContributors = (index: number) => {
+    const handleRemoveContributors = (index) => {
         const updatedContributors = [...eventDetail.contributors];
         updatedContributors.splice(index, 1);
         setEventDetail((prevData) => ({
@@ -213,7 +211,7 @@ export default function AddEvents() {
             contributors: updatedContributors,
         }));
     };
-    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleCheckboxChange = (e) => {
         const { name, checked } = e.target;
         setEventDetail({
             ...eventDetail,
