@@ -27,7 +27,7 @@ export const eventDetailValidator = Joi.object({
         country: Joi.string().min(3).max(50).required(),
         zip: Joi.string().min(3).max(20).required(),
     }).required(),
-    report: Joi.array().items(
+    reports: Joi.array().items(
         Joi.object({
             title: Joi.string().min(3).max(100).required(),
             url: Joi.string().min(3).max(200).required(),

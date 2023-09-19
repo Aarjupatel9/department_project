@@ -4,6 +4,7 @@ const { eventValidator } = require('../validators/eventValidator');
 exports.AddEvent = async (req, res) => {
 
     const { _id, ...eventData } = req.body;
+    // console.log("eventData : ", eventData);
 
     const { error } = eventValidator.validate(eventData);
 
@@ -62,9 +63,9 @@ exports.GetEvent = async (req, res) => {
 
         const modifiedEvent = {
             ...event._doc, // Copy other fields from the input object
-            report: event._doc.report.map((report) => {
+            reports: event._doc.reports.map((report) => {
                 const { title, url } = report;
-                console.log({ title, url });
+                // console.log({ title, url });
                 return { title, url };
             }),
         };
@@ -97,7 +98,7 @@ exports.EditEvent = async (req, res) => {
 
     const userId = req.user._id;
 
-    console.log(eventData);
+    // console.log(eventData);
 
     try {
 

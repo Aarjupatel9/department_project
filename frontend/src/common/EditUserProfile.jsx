@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import adminService from '../services/adminService';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { selectUserDetails, setUserDetail, userDetail, userProfile, userProfileTemplate } from '../reduxStore/reducers/userDetailSlice';
+import { selectUserDetails, setUserDetail, userDetail, userDetailTemplate, userProfile, userProfileTemplate } from '../reduxStore/reducers/userDetailSlice';
 import { profileDetailValidator } from '../validator/profileValidator';
 import { toast } from 'react-hot-toast';
 import userService from '../services/userService';
 import { useAppDispatch, useAppSelector } from '../reduxStore/hooks';
 import authService from '../services/authService';
 import { selectSystemVariables } from '../reduxStore/reducers/systemVariables.jsx';
+import { defaultUserProfileImage } from '../services/constants';
 
 export default function EditUserProfile() {
 
@@ -15,19 +16,13 @@ export default function EditUserProfile() {
     const userDetail = useAppSelector(selectUserDetails);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [userProfile, setUserProfile] = useState();
+    const [userProfile, setUserProfile] = useState(userProfileTemplate);
 
-    function imageUploadHandle(event) {
-        console.log("image upload handle enter ");
-    }
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
 
-        if (name == "profileImage") {
-            imageUploadHandle(event);
-            return;
-        }
+
         console.log("enter in handle input change");
         // If the input is nested within personalDetails or bankDetails, update accordingly
         if (name.startsWith("personalDetails.")) {
@@ -77,18 +72,19 @@ export default function EditUserProfile() {
         profileUpdatePromise.then((res) => {
             if (!userDetail.isProfile) {
                 toast.success("please login again");
-                dispatch(setUserDetail());
+                dispatch(setUserDetail(userDetailTemplate));
                 authService.logout();
                 navigate("/");
                 window.location.reload();
             }
-        })
+        }).catch((error) => {
+        });
         toast.promise(
             profileUpdatePromise,
             {
                 loading: 'please wait while we updating your profile',
                 success: (data) => data.message,
-                error: (err) => err,
+                error: (err) => err.toString(),
             },
             {
                 style: {
@@ -107,8 +103,9 @@ export default function EditUserProfile() {
     };
 
     useEffect(() => {
-        console.log(userProfile);
-    }, [userProfile]);
+        console.log("userProfile : ", userProfile);
+        console.log("userDetails : ", userDetail);
+    }, [userDetail, userProfile]);
 
     useEffect(() => {
         userService.getUserProfile(authService.getCurrentUserId()).then((unTypedRes) => {
@@ -130,12 +127,110 @@ export default function EditUserProfile() {
         return `${year}-${month}-${day}`;
     }
 
+
+
+    const [image, setImage] = useState(null);
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setImage(file);
+        }
+        if (!file) {
+            toast.error('Please select an image to upload.');
+            return;
+        }
+        const formData = new FormData();
+        formData.append('profileImage', file);
+
+        console.log("formData : ", formData);
+
+        const imagePromise = userService.uploadUserProfileImage(formData);
+        imagePromise.then((res) => {
+
+            var url = res.updatedProfileImage.profileImage;
+            var tmp = { ...userDetail };
+            console.log("imagePromise then : ", tmp);
+            tmp["profileImage"] = url
+            console.log("imagePromise then after : ", tmp);
+            localStorage.setItem("userDetail", JSON.stringify(tmp));
+            dispatch(setUserDetail(tmp));
+            // dispatch(setUserDetail((prevData) => ({ ...prevData, profileImage: url })));
+
+        }).catch((error) => {
+        })
+        toast.promise(
+            imagePromise,
+            {
+                loading: 'please wait while we updating your profile Image',
+                success: (data) => data.message,
+                error: (err) => err.toString(),
+            },
+            {
+                style: {
+                    minWidth: '250px',
+                },
+                success: {
+                    duration: 5000,
+                    icon: '🔥',
+                },
+                error: {
+                    duration: 5000,
+                    icon: '🔥',
+                },
+            }
+        );
+
+    };
+
+
+    const [showOptions, setShowOptions] = useState(false); // State to show/hide options
+    const removeImage = () => {
+        // console.log("removeImage  : || ", process.env.REACT_APP_DEFAULT_PROFILE_IMAGE);
+        // setImage(process.env.REACT_APP_DEFAULT_PROFILE_IMAGE);
+        // setShowOptions(false);
+    };
+
     return (
         <div>
             <div className=" flex flex-col shadow-md sm:rounded-lg">
                 <h1 className='text-3xl mx-auto  font-medium text-gray-900 dark:text-white'>Profile </h1>
                 <hr className='mt-2' />
-                <div className='m-1 p-5 flex flex-col'>
+                <div className='m-1 p-5 flex flex-col '>
+
+                    <div
+                        className="mb-12 w-48 h-auto mt-2 mx-auto "
+                        onMouseEnter={() => setShowOptions(true)}
+                        onMouseLeave={() => setShowOptions(false)}
+                    >
+                        <img className="rounded-full w-48 h-48"
+
+                            alt="profile image"
+                            src={ userDetail.profileImage}
+                            onError={(e) => {
+                                e.target.src = defaultUserProfileImage;
+                                console.log("error in image setting");
+                            }}
+                        />
+
+                        <input
+                            type="file"
+                            id="file-input"
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            onChange={handleFileChange}
+                        />
+                        {showOptions && (
+                            <div className="flex flex-row space-x-4">
+                                <label htmlFor="file-input" className="px-2 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    Change Image
+                                </label>
+                                <div className="px-2 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={removeImage}>
+                                    Remove Image
+                                </div>
+                            </div>
+                        )}
+
+                    </div>
 
                     {/* personalDetails */}
                     <h3 className='mt-4 mx-auto text-xl font-medium text-gray-900 dark:text-white'>Personal Details</h3>
@@ -237,11 +332,7 @@ export default function EditUserProfile() {
                     <h3 className='mt-4 mx-auto text-xl font-medium text-gray-900 dark:text-white'>Other Information </h3>
                     <hr className='w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700' />
                     <div className="grid md:grid-cols-2 md:gap-6">
-                        <div className="relative z-0 w-full mb-6 group">
-                            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="profileImage">Profile Image</label>
-                            <input onChange={handleInputChange} name='profileImage' className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" aria-describedby="user_avatar_help" id="profileImage" type="file" />
-                            <div className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="user_avatar_help">profile picture is useful to identify your account</div>
-                        </div>
+
                         <div className="relative z-0 w-full mb-6 group">
                             <label htmlFor="designation" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Choose designation</label>
                             <select onChange={handleInputChange} defaultValue={"-"} name='designation' id="designation" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">

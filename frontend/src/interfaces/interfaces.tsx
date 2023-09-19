@@ -52,3 +52,4 @@ export interface IEvent {//made for eventSlice
         url: string;
     }[];
 }
+

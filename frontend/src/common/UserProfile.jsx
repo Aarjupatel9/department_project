@@ -14,8 +14,6 @@ export const UserProfile = ({ readOnly }) => {
   const userDetail = useAppSelector(selectUserDetails);
 
   const dispatch = useAppDispatch();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [userProfile, setUserProfile] = useState();
 
   useEffect(() => {
@@ -59,8 +57,8 @@ export const UserProfile = ({ readOnly }) => {
         <nav className="bg-gray-300 border-gray-200 dark:bg-gray-900">
           <div className="flex flex-wrap   items-center justify-end mx-auto px-3 py-1">
             <div className="flex md:order-2  p-2">
-              <ul className="flex flex-col  font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                <li className=''>
+              <ul className="flex flex-col  font-medium p-2 md:p-0 mt-2 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                <li className='p-2'>
                   <Link to={"/editProfile"} className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Update Profile</Link>
                 </li>
               </ul>
@@ -72,7 +70,22 @@ export const UserProfile = ({ readOnly }) => {
         <div className={`flex px-2 flex-col mt-5 ${readOnly ? "" : "shadow-md sm:rounded-lg"}`}>
           <h1 className="text-3xl mx-auto font-medium text-gray-900 dark:text-white">Profile</h1>
           <hr className="my-2" />
-          <div className="m-1 p-5 flex flex-col">
+          <div className="m-1 p-5 flex flex-col ">
+
+            <div
+              className="mb-12 w-48 h-auto mt-2 mx-auto " >
+              <img className="rounded-full w-48 h-48"
+
+                alt="profile image"
+                src={userProfile.profileImage}
+                onError={(e) => {
+                  e.target.src = "https://massengeruserprofileimage.s3.ap-south-1.amazonaws.com/general-contact-icon.jpg";
+                  console.log("error in image setting");
+                }}
+              />
+            </div>
+
+
             <div className="grid md:grid-cols-2 md:gap-6">
               <div className="w-full mb-6">
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400">First name</p>

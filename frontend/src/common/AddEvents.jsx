@@ -19,6 +19,7 @@ export default function AddEvents() {
     const navigate = useNavigate();
     const [eventDetail, setEventDetail] = useState(IEventTemplate);
     const [rowData, setRowData] = useState({ contributors: "", experts: "", report: { title: "", url: "" } });
+    const [reportFormData, setReportFormData] = useState(null);
 
     const { id } = useParams();
     useEffect(() => {
@@ -86,6 +87,17 @@ export default function AddEvents() {
         const { name, value } = event.target;
         if (name.startsWith("report.")) {
             const [parent, child] = name.split(".");
+            if (child == "url") {
+                const file = event.target.files[0];
+
+                if (!file) {
+                    toast.error('Please select an image to upload.');
+                    return;
+                }
+                const formData = new FormData();
+                formData.append('reports', file);
+                setReportFormData(formData)
+            }
             setRowData((prevData) => ({
                 ...prevData,
                 report: {
@@ -122,15 +134,15 @@ export default function AddEvents() {
                     [child]: value,
                 },
             }));
-        } else if (name.startsWith("report.")) {
-            const [parent, child] = name.split(".");
-            setEventDetail((prevData) => ({
-                ...prevData,
-                report: {
-                    ...prevData.report,
-                    [child]: value,
-                },
-            }));
+        // } else if (name.startsWith("report.")) {
+        //     const [parent, child] = name.split(".");
+        //     setEventDetail((prevData) => ({
+        //         ...prevData,
+        //         report: {
+        //             ...prevData.report,
+        //             [child]: value,
+        //         },
+        //     }));
         } else {
             console.log("handleInputChange else change : ", name)
             setEventDetail((prevData) => ({
@@ -185,22 +197,37 @@ export default function AddEvents() {
     const handleAddReport = () => {
         const report = rowData.report;
         if (report.title.trim() !== '') {
-            setEventDetail((prevData) => ({
-                ...prevData,
-                report: [...prevData.report, { title: report.title, url: report.url }],
-            }));
-            setRowData((prevData) => ({
-                ...prevData,
-                report: { title: "", url: "" },
-            }));
+            if (!reportFormData) {
+                toast.error("please select report file ");
+                return;
+            }
+
+            console.log("reportFormData : ", reportFormData);
+            const reportPromise = eventService.uploadReportOfEvent(reportFormData);
+            reportPromise.then((res) => {
+                console.log("report upload response : ", res.uploadedFiles);
+                setEventDetail((prevData) => ({
+                    ...prevData,
+                    reports: [...prevData.reports, { title: report.title, url: res.uploadedFiles[0] }],
+                }));
+                setRowData((prevData) => ({
+                    ...prevData,
+                    report: { title: "", url: "" },
+                }));
+                setReportFormData(null);
+            }).catch((error) => {
+                // setReportFormData(null);
+            })
+
+
         }
     };
     const handleRemoveReport = (index) => {
-        const updatedReports = [...eventDetail.report];
+        const updatedReports = [...eventDetail.reports];
         updatedReports.splice(index, 1);
         setEventDetail((prevData) => ({
             ...prevData,
-            report: updatedReports,
+            reports: updatedReports,
         }));
     };
     const handleRemoveContributors = (index) => {
@@ -222,6 +249,10 @@ export default function AddEvents() {
     useEffect(() => {
         setEventDetail((prevData) => ({ ...prevData, userId: authService.getCurrentUserId() }));
     }, []);
+
+    useEffect(() => {
+        console.log("eventDetails : ", eventDetail);
+    }, [eventDetail])
 
 
     return (
@@ -415,7 +446,7 @@ export default function AddEvents() {
                             > Add </button>
                         </div>
                         <div className='w-full flex flex-col '>
-                            {eventDetail.report.map((report, index) => (
+                            {eventDetail.reports.map((report, index) => (
                                 <div key={index} className="text-sm text-gray-900 dark:text-white">
                                     {index + 1}) title : {report.title}  fileName : {report.url}
                                     <button

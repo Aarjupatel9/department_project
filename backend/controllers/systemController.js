@@ -22,5 +22,5 @@ exports.getAllVariables = async (req, res) => {
 
 exports.uploadFile = async (req, res) => {
     const uploadedFiles = req.fileUrls;
-    res.status(200).json({ success: true, uploadedFiles });
+    res.status(200).json({ success: true, uploadedFiles, message: "file successfully uploaded" });
 }
