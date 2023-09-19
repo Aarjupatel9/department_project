@@ -71,6 +71,7 @@ export function Login() {
       }
       localStorage.setItem("userDetail", JSON.stringify(response.user));
       dispatch(setUserDetail(response.user));
+      navigate("/");
     }).catch((message) => {
       console.error(message);
 

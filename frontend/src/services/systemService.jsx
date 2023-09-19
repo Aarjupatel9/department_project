@@ -5,6 +5,6 @@ export function handleRejectResponse(message) {
     if (message == "TokenExpiredError" || message == "JsonWebTokenError") {
         console.log("handleRejectResponse called inside");
         authService.logout();
-        window.location.reload();
+        // window.location.reload();
     }
 }

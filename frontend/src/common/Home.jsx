@@ -6,7 +6,7 @@ import {
     setUserDetail,
     selectUserDetails, userDetailTemplate
 } from '../reduxStore/reducers/userDetailSlice';
-
+import { setSystemVariable } from '../reduxStore/reducers/systemVariables.jsx';
 import "../css//Home.css";
 import Navbar from './Navbar'
 import AdminSidebar from '../adminComponents/Sidebar'
@@ -24,16 +24,22 @@ import Events from './Events';
 import { selectSystemVariables } from '../reduxStore/reducers/systemVariables.jsx';
 import EmailVerifier from '../components/EmailVerifier';
 import AddEvents from './AddEvents';
+import { Login } from './Login';
+import userService from '../services/userService';
+
 export default function Home() {
     const SystemVariables = useAppSelector(selectSystemVariables);
     const userDetail = useAppSelector(selectUserDetails);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     useEffect(() => {
-        console.log("route hanged");
-        // if (!userDetail.isProfile) {
-        //     navigate("/editProfile");
-        // }
+        console.log("userDetails : ", userDetail)
+        if (userDetail._id == "id") {
+            return;
+        }
+        if (!userDetail.isProfile) {
+            navigate("/editProfile");
+        }
         console.log("approve status : ", userDetail.isApproved);
         if (!userDetail.isApproved) {
             toast.custom((t) => (
@@ -57,14 +63,36 @@ export default function Home() {
                     </div>
                 </div>
             ), { duration: 200000 });
-
-
         }
     }, []);
 
+
+    useEffect(() => {
+        console.log("userDetails changed : ", userDetail);
+        if (userDetail._id == "id") {
+            return;
+        }
+        if (userDetail._id === "id") {
+            console.log("enter in /login redirect");
+            navigate("/login");
+            return;
+        }
+
+        if (Object.values(SystemVariables.ROLES).includes(userDetail.role)) {
+            userService.getAllVariables().then((unTypedRes) => {
+                const res = unTypedRes;
+                console.log(res.variables);
+                dispatch(setSystemVariable(res.variables));
+            }).catch((error) => {
+                console.log(error);
+            })
+        }
+
+    }, [userDetail])
+
     return (
         <div className='Home'>
-            <Navbar />
+            {/* <Navbar /> */}
             {/* {
                 routes.map((r) => {
                     console.log("r: ", r);
@@ -80,9 +108,14 @@ export default function Home() {
                     }
                 })
             } */}
+
+            {Object.values(SystemVariables.ROLES).includes(userDetail.role) ? <Navbar /> : <></>}
+
+
             {userDetail.role == SystemVariables.ROLES.STD_USER || userDetail.role == SystemVariables.ROLES.STAFF ?
                 <div className='NotMyNavbar'>
-                    <Sidebar />
+
+                    {Object.values(SystemVariables.ROLES).includes(userDetail.role) ? <Sidebar /> : <></>}
                     <div className="MainComponents ">
                         <Routes>
                             {userDetail.isProfile && userDetail.isApproved ?
@@ -95,13 +128,15 @@ export default function Home() {
                             <Route path="/settings" element={<Setting />} />
                             <Route path="/verifyemail" element={<EmailVerifier />} />
                             <Route path="/editProfile" element={<EditUserProfile />} />
+                            <Route path="/login" element={<Login />} />
                             <Route path="*" element={<UserProfile readOnly={false} />} />
                         </Routes>
                     </div>
                 </div>
                 : userDetail.role == SystemVariables.ROLES.HEAD || userDetail.role == SystemVariables.ROLES.SYSTEM_COORDINATOR ?
                     <div className='NotMyNavbar'>
-                        <AdminSidebar />
+                        {Object.values(SystemVariables.ROLES).includes(userDetail.role) ? <AdminSidebar /> : <></>}
+
                         <div className="MainComponents  dark:bg-gray-600">
                             <Routes>
                                 {userDetail.isProfile && userDetail.isApproved ?
@@ -118,10 +153,11 @@ export default function Home() {
                                     </> : <></>}
                                 <Route path="/settings" element={<Setting />} />
                                 <Route path="/editProfile" element={<EditUserProfile />} />
+                                <Route path="/login" element={<Login />} />
                                 <Route path="*" element={<UserProfile readOnly={false} />} />
                             </Routes>
                         </div>
-                    </div> : <></>
+                    </div> : <Login />
             }
         </div>
     )

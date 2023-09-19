@@ -53,7 +53,7 @@ export const IEventTemplate = {
     country: "",
     zip: "",
   },
-  report: [],
+  reports: [],
 };
 
 
