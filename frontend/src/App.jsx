@@ -11,13 +11,14 @@ import { Toaster } from 'react-hot-toast';
 import Home from './common/Home';
 import userService from './services/userService';
 import { selectSystemVariables, setSystemVariable, systemVariables } from './reduxStore/reducers/systemVariables.jsx';
-
+import { defaultUserProfileImage } from './services/constants';
+import { useNavigate } from 'react-router-dom';
 export default function App() {
 
   const userDetail = useAppSelector(selectUserDetails);
   const SystemVariables = useAppSelector(selectSystemVariables);
   const dispatch = useAppDispatch();
-  const [role, setRole] = useState("");
+  const navigate = useNavigate();
 
   // Theme selector 
   useEffect(() => {
@@ -27,6 +28,7 @@ export default function App() {
     } else {
       document.documentElement.classList.remove('dark')
     }
+
   }, []);
 
   // Fetches the user detail from the authservice, if the user is null it sets some default values which are hard coded as a template and sets those details as the UserDetail
@@ -34,29 +36,28 @@ export default function App() {
     const localUserDetail = authService.getCurrentUser();
     console.log("localUSerDetails : ", localUserDetail);
     dispatch(setUserDetail(localUserDetail));
+
+    if (userDetail._id === "id") {
+      return;
+    }
+
+    userService.getUserProfile(authService.getCurrentUserId()).then((res) => {
+      const localUserDetail = authService.getCurrentUser();
+      const updatedUserDetail = { ...localUserDetail, profileImage: res.profile.profileImage };
+      console.log("imagePromise then after : ", updatedUserDetail);
+      localStorage.setItem("userDetail", JSON.stringify(updatedUserDetail));
+      dispatch(setUserDetail(updatedUserDetail));
+    }).catch((error) => {
+      console.log("Home profile error : ", error);
+    })
+
   }, [])
 
-  // useEffect(() => {
-  //   console.log("SystemVariables : ", SystemVariables);
-  // }, [SystemVariables]);
-
-  // as the userDetail is set, it sets the role of the user based on the same
-  useEffect(() => {
-    setRole(userDetail.role);
-    if (Object.values(SystemVariables.ROLES).includes(userDetail.role)) {
-      userService.getAllVariables().then((unTypedRes) => {
-        const res = unTypedRes;
-        console.log(res.variables);
-        dispatch(setSystemVariable(res.variables));
-      }).catch((error) => {
-        console.log(error);
-      })
-    }
-  }, [userDetail])
 
   return (<>
     <div><Toaster position="top-center" reverseOrder={false} /></div>
-    {Object.values(SystemVariables.ROLES).includes(role) ? <Home /> : <Login />}
+    {/* {Object.values(SystemVariables.ROLES).includes(userDetail.role) ? <Home /> : <Login />} */}
+    <Home />
   </>);
 }
 

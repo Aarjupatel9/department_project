@@ -36,9 +36,11 @@ exports.uploadProfileImage = async (req, res) => {
 
 exports.GetProfile = async (req, res) => {
     var { _id } = req.user;
-    if (req.body._id) {
+    console.log("getProfile : ", _id);
+    if (req.params._id) {
         _id = req.params._id;
     }
+    console.log("getProfile : ", _id);
     try {
         const profile = await Profile.findById(_id).select("-_id -__v");
         if (!profile) {
@@ -61,7 +63,7 @@ exports.EditProfile = async (req, res) => {
     if (error) {
         return res
             .status(400)
-            .json({ success: false, error: error.details[0].message });
+            .json({ success: false, message: error.details[0].message });
     }
 
     const _id = req.user;

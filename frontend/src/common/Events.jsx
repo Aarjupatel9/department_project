@@ -26,6 +26,27 @@ export default function Events() {
     useEffect(() => {
 
         const eventPromise = eventService.getEvents();
+        toast.promise(
+            eventPromise,
+            {
+                loading: 'fetching events data',
+                success: "",
+                error: (err) => err,
+            },
+            {
+                style: {
+                    minWidth: '250px',
+                },
+                success: {
+                    duration: 1,
+                    icon: '🔥',
+                },
+                error: {
+                    duration: 2000,
+                    icon: '🔥',
+                },
+            }
+        );
         eventPromise.then((res) => {
             console.log("users : ", res.events);
             setEvents(res.events);
@@ -97,18 +118,21 @@ export default function Events() {
                 <div className="flex  flex-wrap items-center justify-between mx-auto px-3 py-1">
                     <div className="flex items-center justify-between  w-full md:flex md:w-auto md:order-0" id="navbar-language">
                         <div className='mx-3'>
-                            <Link to={"/addEvent"} className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Add</Link>
+                            <Link to={"/addEvent"} className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">
+                                Add Event</Link>
                         </div>
 
                         <div className='mx-3'>
                             <div className=" z-0 w-full  group">
-                                <select name='designation' id="designation" className="bg-gray-50 h-8 py-0  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                <select name='designation' id="designation" defaultValue={"filter"} className="bg-gray-50 h-8 py-0  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    <option value="">-</option>
                                     <option value="hod">hod</option>
                                     <option value="associate professor">associate professor</option>
                                     <option value="assistant professor">assistant professor</option>
                                 </select>
                             </div>
                         </div>
+
                     </div>
                     <div className="flex md:order-2">
                         <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search" aria-expanded="false" className="md:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 mr-1" >
@@ -132,7 +156,7 @@ export default function Events() {
             </nav>
 
             <div className='flex flex-col pt-4 '>
-                <h1 className='mx-auto  text-2xl font-medium text-gray-900 dark:text-white' >Pending Account details</h1>
+                <h1 className='mx-auto  text-2xl font-medium text-gray-900 dark:text-white' >Event Details</h1>
                 <div className="mt-4 relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead className="text-xs text-gray-700 uppercase  dark:text-gray-400">
