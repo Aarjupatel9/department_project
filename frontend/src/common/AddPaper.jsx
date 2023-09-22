@@ -1,13 +1,35 @@
 import React, { useState } from 'react';
 import { Formik, Form, Field, FieldArray } from 'formik';
 import * as Yup from 'yup';
+import toast from 'react-hot-toast';
+import { publicationValidator } from '../validator/publicationValidator';
+import { selectSystemVariables } from '../reduxStore/reducers/systemVariables';
+import { useAppDispatch, useAppSelector } from '../reduxStore/hooks';
+import { useNavigate } from 'react-router-dom';
 
 const AddPaper = () => {
+
+
+    const SystemVariables = useAppSelector(selectSystemVariables);
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
     const [authorCount, setAuthorCount] = useState(0);
-    const [paperValue, setPaperValue] = useState('journal');
+    const [paperValue, setPaperValue] = useState(SystemVariables.PUBLICATION_TYPE.JOURNALS);
     const handleSelectChange = (e) => {
         console.log("Value: ", e.target.value);
         setPaperValue(e.target.value);
+    }
+
+    function handlePaperAdd(values) {
+        values.publicationType = paperValue;
+        const { error } = publicationValidator.validate(values);
+        console.log(error);
+        if (error) {
+            toast.error(error.toSting());
+            return;
+        }
+        toast.success("paper addded ");
     }
 
     return (
@@ -18,8 +40,8 @@ const AddPaper = () => {
                 <Formik
                     initialValues={{}}
                     onSubmit={(values, { setSubmitting }) => {
-                        alert("The form is submitted");
                         console.log("Values: ", values);
+                        handlePaperAdd(values);
                     }}
                 >
                     {({ values }) => (
@@ -32,8 +54,8 @@ const AddPaper = () => {
                                         className="bg-gray-50 h-8 py-0 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         onChange={handleSelectChange}
                                     >
-                                        <option value="journal" >Journal</option>
-                                        <option value="conference">Conference</option>
+                                        <option value={SystemVariables.PUBLICATION_TYPE.JOURNALS} >{SystemVariables.PUBLICATION_TYPE.JOURNALS}</option>
+                                        <option value={SystemVariables.PUBLICATION_TYPE.CONFERENCE}>{SystemVariables.PUBLICATION_TYPE.CONFERENCE} </option>
                                     </Field>
                                 </div>
                                 <div className="m-1 p-1 flex flex-col">
@@ -81,14 +103,15 @@ const AddPaper = () => {
                                             <div className="mt-2 grid md:grid-cols-2 md:gap-6">
                                                 <div className="relative z-0 w-full mb-6 group">
                                                     <FieldArray
-                                                        name="friends"
+                                                        name="authors"
+                                                        className=""
                                                         render={arrayHelpers => (
                                                             <div>
-                                                                {values.friends && values.friends.length > 0 ? (
-                                                                    values.friends.map((friend, index) => (
+                                                                {values.authors && values.authors.length > 0 ? (
+                                                                    values.authors.map((friend, index) => (
                                                                         <div key={index}>
                                                                             <Field
-                                                                                name={`friends.${index}`}
+                                                                                name={`authors.${index}`}
                                                                                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                                                             />
                                                                             <button
@@ -186,7 +209,7 @@ const AddPaper = () => {
 
                                     </div>
                                     {
-                                        paperValue == "journal" ? (
+                                        paperValue == SystemVariables.PUBLICATION_TYPE.JOURNALS ? (
                                             <>
                                                 <div className="flex flex-col">
                                                     <div className="mt-2 grid md:grid-cols-3 md:gap-6">
@@ -209,14 +232,14 @@ const AddPaper = () => {
                                                         <div className="relative z-0 w-full mb-6 group">
                                                             <Field
                                                                 type="text"
-                                                                name="volumeno"
-                                                                id="volumeno"
+                                                                name="volumeNo"
+                                                                id="volumeNo"
                                                                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                                                 placeholder=""
                                                                 required
                                                             />
                                                             <label
-                                                                htmlFor="volumeno"
+                                                                htmlFor="volumeNo"
                                                                 className="peer-focus:font-medium absolute text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                                             >
                                                                 Volume No.
@@ -245,14 +268,14 @@ const AddPaper = () => {
                                                         <div className="relative z-0 w-full mb-6 group">
                                                             <Field
                                                                 type="number"
-                                                                name="startPageNo"
-                                                                id="startPageNo"
+                                                                name="pageNoRange.startPageNo"
+                                                                id="pageNoRange.startPageNo"
                                                                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                                                 placeholder=""
                                                                 required
                                                             />
                                                             <label
-                                                                htmlFor="startPageNo"
+                                                                htmlFor="pageNoRange.startPageNo"
                                                                 className="peer-focus:font-medium absolute text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                                             >
                                                                 Start Page No.
@@ -261,14 +284,14 @@ const AddPaper = () => {
                                                         <div className="relative z-0 w-full mb-6 group">
                                                             <Field
                                                                 type="number"
-                                                                name="endPageNo"
-                                                                id="endPageNo"
+                                                                name="pageNoRange.endPageNo"
+                                                                id="pageNoRange.endPageNo"
                                                                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                                                 placeholder=""
                                                                 required
                                                             />
                                                             <label
-                                                                htmlFor="endPageNo"
+                                                                htmlFor="pageNoRange.endPageNo"
                                                                 className="peer-focus:font-medium absolute text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                                             >
                                                                 End Page No.
@@ -285,31 +308,31 @@ const AddPaper = () => {
                                                     <div className="grid md:grid-cols-2 md:gap-6">
                                                         <div className="relative z-0 w-full mb-6 group">
                                                             <Field
-                                                                as="text"
-                                                                name="city"
-                                                                id="city"
+                                                                type="text"
+                                                                name="address.city"
+                                                                id="address.city"
                                                                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                                                 placeholder=" "
                                                                 required
                                                             />
                                                             <label
-                                                                htmlFor="city"
+                                                                htmlFor="address.city"
                                                                 className="peer-focus:font-medium absolute text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                                             >
-                                                                City
+                                                                address.city
                                                             </label>
                                                         </div>
                                                         <div className="relative z-0 w-full mb-6 group">
                                                             <Field
-                                                                as="text"
-                                                                name="state"
-                                                                id="state"
+                                                                type="text"
+                                                                name="address.state"
+                                                                id="address.state"
                                                                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                                                 placeholder=" "
                                                                 required
                                                             />
                                                             <label
-                                                                htmlFor="state"
+                                                                htmlFor="address.state"
                                                                 className="peer-focus:font-medium absolute text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                                             >
                                                                 State
@@ -319,15 +342,15 @@ const AddPaper = () => {
                                                     <div className="grid md:grid-cols-2 md:gap-6">
                                                         <div className="relative z-0 w-full mb-6 group">
                                                             <Field
-                                                                as="text"
-                                                                name="country"
-                                                                id="country"
+                                                                type="text"
+                                                                name="address.country"
+                                                                id="address.country"
                                                                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                                                 placeholder=" "
                                                                 required
                                                             />
                                                             <label
-                                                                htmlFor="country"
+                                                                htmlFor="address.country"
                                                                 className="peer-focus:font-medium absolute text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                                             >
                                                                 Country
@@ -335,15 +358,15 @@ const AddPaper = () => {
                                                         </div>
                                                         <div className="relative z-0 w-full mb-6 group">
                                                             <Field
-                                                                as="text"
-                                                                name="zip"
-                                                                id="zip"
+                                                                type="text"
+                                                                name="address.zip"
+                                                                id="address.zip"
                                                                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                                                 placeholder=" "
                                                                 required
                                                             />
                                                             <label
-                                                                htmlFor="zip"
+                                                                htmlFor="address.zip"
                                                                 className="peer-focus:font-medium absolute text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                                                             >
                                                                 Zip Code

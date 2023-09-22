@@ -2,9 +2,10 @@ const mongoose = require("mongoose");
 const { PUBLICATION_TYPE } = require('../utils/constants');
 
 const publicationSchema = new mongoose.Schema({
-    userID: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        index: true,
     },
     title: {
         type: String,
