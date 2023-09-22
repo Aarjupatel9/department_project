@@ -1,13 +1,15 @@
 const joi = require("joi");
-const { PUBLICATION_TYPE } = require("../utils/constants");
-
-
-exports.publicationValidator = joi.object({
+// const { PUBLICATION_TYPE } = require("../utils/constants");
+const PUBLICATION_TYPE = {
+    JOURNALS: "journals",
+    CONFERENCE: "conference",
+}
+export const publicationValidator = joi.object({
     title: joi.string().min(3).max(30).required(),
     description: joi.string().min(10).max(300).required(),
     authors: joi.array().items(joi.string().min(3).max(60)),
     publicationType: joi.string().valid(...Object.values(PUBLICATION_TYPE)).required(),
-    publicationDate: joi.date().format('DD-MM-YYYY').max('now').required(),
+    publicationDate: joi.date().max('now').required(),
 
     reports: joi.array().items(
         joi.object({
