@@ -1,6 +1,7 @@
 const joi = require("joi");
 const { PUBLICATION_TYPE } = require("../utils/constants");
 
+
 exports.publicationValidator = joi.object({
     userId:joi.string().required(),
     title: joi.string().min(3).max(30).required(),
