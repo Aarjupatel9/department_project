@@ -43,8 +43,8 @@ export const IEventTemplate = {
   numberOfParticipants: 0,
   totalExpenses: 0,
   eventDate: {
-    startDate: new Date(),
-    endDate: new Date(),
+    startDate: "",
+    endDate: ""
   },
   organizedUnder: "",
   address: {

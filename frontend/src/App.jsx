@@ -37,19 +37,6 @@ export default function App() {
     console.log("localUSerDetails : ", localUserDetail);
     dispatch(setUserDetail(localUserDetail));
 
-    if (userDetail._id === "id") {
-      return;
-    }
-
-    userService.getUserProfile(authService.getCurrentUserId()).then((res) => {
-      const localUserDetail = authService.getCurrentUser();
-      const updatedUserDetail = { ...localUserDetail, profileImage: res.profile.profileImage };
-      console.log("imagePromise then after : ", updatedUserDetail);
-      localStorage.setItem("userDetail", JSON.stringify(updatedUserDetail));
-      dispatch(setUserDetail(updatedUserDetail));
-    }).catch((error) => {
-      console.log("Home profile error : ", error);
-    })
 
   }, [])
 

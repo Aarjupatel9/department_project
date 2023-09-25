@@ -10,7 +10,7 @@ export interface ApiRequestOptions {
     body: String
 }
 export interface loginCredentials {
-    email: String
+    email: String,
     password: String
 }
 
@@ -53,3 +53,46 @@ export interface IEvent {//made for eventSlice
     }[];
 }
 
+
+
+
+
+export interface systemVariablesState {
+    value: systemVariables,
+    status: 'idle' | 'loading' | 'failed';
+  }
+  export interface systemVariables {
+    ROLES: {
+      HEAD: String,
+      STD_USER: String,
+      STAFF: String,
+      SYSTEM_COORDINATOR: String,
+    },
+    DESIGNATIONS: {
+      HOD: String,
+      ASSOCIATE_PROFESSOR: String,
+      ASSISTANT_PROFESSOR: String,
+    },
+    GUIDE_TYPE: {
+      MTECH: String,
+      PHD: String,
+    },
+    PUBLICATION_TYPE: {
+      JOURNALS: String,
+      CONFERENCE: String,
+    },
+    GRANT_TYPES: {
+      FUNDING: String,
+      SCHOLARSHIP: String,
+      RESEARCH: String
+    },
+    QUALIFICATION_STATUS: {
+      COMPLETED: String,
+      PURSUING: String
+    },
+    QUALIFICATION_TYPE: {
+      BTECH: String,
+      MTECH: String,
+      PHD: String
+    }
+  }

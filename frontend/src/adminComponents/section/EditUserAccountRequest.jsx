@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import adminService from '../../services/adminService';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { userDetail, userDetailTemplate } from '../../reduxStore/reducers/userDetailSlice';
+import { userDetail } from '../../reduxStore/reducers/userDetailSlice';
 import { User } from '../../interfaces/interfaces';
+import { userDetailTemplate, userProfileTemplate } from '../../interfaces/tamplates';
 
 export default function EditUserAccountRequest() {
   const [searchInput, setSearchInput] = useState("");

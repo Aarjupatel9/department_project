@@ -9,6 +9,7 @@ import { Link, useParams } from 'react-router-dom';
 import "../css/login.css";
 import userService from '../services/userService';
 import authService from '../services/authService';
+import { defaultUserProfileImage } from '../services/constants';
 
 export const UserProfile = ({ readOnly }) => {
   const userDetail = useAppSelector(selectUserDetails);
@@ -79,8 +80,7 @@ export const UserProfile = ({ readOnly }) => {
                 alt="profile image"
                 src={userProfile.profileImage}
                 onError={(e) => {
-                  e.target.src = "https://massengeruserprofileimage.s3.ap-south-1.amazonaws.com/general-contact-icon.jpg";
-                  console.log("error in image setting");
+                  e.target.src = defaultUserProfileImage;
                 }}
               />
             </div>

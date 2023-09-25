@@ -1,10 +1,11 @@
-const joi = require("joi");
-// const { PUBLICATION_TYPE } = require("../utils/constants");
+import joi from "joi";
 const PUBLICATION_TYPE = {
     JOURNALS: "journals",
     CONFERENCE: "conference",
 }
+
 export const publicationValidator = joi.object({
+    userId:joi.string().required(),
     title: joi.string().min(3).max(30).required(),
     description: joi.string().min(10).max(300).required(),
     authors: joi.array().items(joi.string().min(3).max(60)),
@@ -53,7 +54,7 @@ export const publicationValidator = joi.object({
             city: joi.string().required(),
             state: joi.string().required(),
             country: joi.string().required(),
-            zip: joi.string().required()
+            zip: joi.string().length(6).required()
         })
     })
 });

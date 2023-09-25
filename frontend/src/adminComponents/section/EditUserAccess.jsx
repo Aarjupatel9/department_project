@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import adminService from '../../services/adminService';
 import { Link, useParams } from 'react-router-dom';
-import { selectUserDetails, userDetail, userDetailTemplate, userProfile } from '../../reduxStore/reducers/userDetailSlice';
+import { selectUserDetails, userDetai, userProfile } from '../../reduxStore/reducers/userDetailSlice';
+import { userDetailTemplate, userProfileTemplate } from '../../interfaces/tamplates';
+
 import { UserProfile } from '../../common/UserProfile';
 import authService from '../../services/authService';
 import { toast } from 'react-hot-toast';
 import { User } from '../../interfaces/interfaces';
 import { useAppSelector } from '../../reduxStore/hooks';
 import { selectSystemVariables } from '../../reduxStore/reducers/systemVariables.jsx';
+
 
 export default function EditUserAccess() {
   const SystemVariables = useAppSelector(selectSystemVariables);

@@ -1,10 +1,11 @@
 import authService from "./authService";
 
-export function handleRejectResponse(message) {
+export const  handleRejectResponse=(message)=> {
     console.log("handleRejectResponse called : ", message);
-    if (message == "TokenExpiredError" || message == "JsonWebTokenError") {
+    if (message == "TokenExpiredError" || message == "JsonWebTokenError"|| message=="jwt expired") {
         console.log("handleRejectResponse called inside");
         authService.logout();
-        // window.location.reload();
+        window.location.reload();
+        // checkLogin();
     }
 }

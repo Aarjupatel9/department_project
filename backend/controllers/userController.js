@@ -54,7 +54,7 @@ exports.GetNewUsers = async (req, res) => {
         const users = rowUsers.map((wholeUser) => {
             var user = wholeUser._doc;
             var muser;
-            console.log(user);
+            // console.log(user);
             if (user.verifiedBy) {
                 muser = {
                     ...user,
@@ -68,7 +68,7 @@ exports.GetNewUsers = async (req, res) => {
             }
             return muser
         });
-        console.log("user : ", users);
+        // console.log("user : ", users);
         if (!users) {
             return res.status(404).json({ message: "Users not found." });
         }
@@ -226,7 +226,7 @@ exports.ResetPass = async (req, res) => {
 
         const newHash = await hashPassword(password);
 
-        user.password = newHash;
+        user.password = newHash;             
         await user.save();
 
         res.status(200).json({ success: true, message: "Password reset successful." });
@@ -234,5 +234,5 @@ exports.ResetPass = async (req, res) => {
         console.log(error);
         res.status(500).json({ success: false, message: "Internal Server Error." });
     }
-
+    
 }

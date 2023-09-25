@@ -3,11 +3,12 @@ const { PUBLICATION_TYPE } = require("../utils/constants");
 
 
 exports.publicationValidator = joi.object({
+    userId:joi.string().required(),
     title: joi.string().min(3).max(30).required(),
     description: joi.string().min(10).max(300).required(),
     authors: joi.array().items(joi.string().min(3).max(60)),
     publicationType: joi.string().valid(...Object.values(PUBLICATION_TYPE)).required(),
-    publicationDate: joi.date().format('DD-MM-YYYY').max('now').required(),
+    publicationDate: joi.date().max('now').required(),
 
     reports: joi.array().items(
         joi.object({
@@ -51,7 +52,7 @@ exports.publicationValidator = joi.object({
             city: joi.string().required(),
             state: joi.string().required(),
             country: joi.string().required(),
-            zip: joi.string().required()
+            zip: joi.string().length(6).required()
         })
     })
 });
