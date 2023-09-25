@@ -85,25 +85,25 @@ const publicationSchema = new mongoose.Schema({
         city: {
             type: String,
             required: function () {
-                return this.typeOfPublication === publicationType.CONFERENCE;
+                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
             },
         },
         state: {
             type: String,
             required: function () {
-                return this.typeOfPublication === publicationType.CONFERENCE;
+                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
             },
         },
         country: {
             type: String,
             required: function () {
-                return this.typeOfPublication === publicationType.CONFERENCE;
+                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
             },
         },
         zip: {
             type: String,
             required: function () {
-                return this.typeOfPublication === publicationType.CONFERENCE;
+                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
             },
         },
     },

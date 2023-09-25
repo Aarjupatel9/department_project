@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import adminService from '../services/adminService';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { selectUserDetails, setUserDetail, userDetail, userDetailTemplate, userProfile, userProfileTemplate } from '../reduxStore/reducers/userDetailSlice';
+import { selectUserDetails, setUserDetail, userDetail, userProfile,  } from '../reduxStore/reducers/userDetailSlice';
+import { userDetailTemplate, userProfileTemplate } from '../interfaces/tamplates';
 import { profileDetailValidator } from '../validator/profileValidator';
 import { toast } from 'react-hot-toast';
 import userService from '../services/userService';
@@ -129,12 +130,12 @@ export default function EditUserProfile() {
 
 
 
-    const [image, setImage] = useState(null);
+    // const [image, setImage] = useState(null);
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        if (file) {
-            setImage(file);
-        }
+        // if (file) {
+        //     setImage(file);
+        // }
         if (!file) {
             toast.error('Please select an image to upload.');
             return;
@@ -170,7 +171,7 @@ export default function EditUserProfile() {
                     minWidth: '250px',
                 },
                 success: {
-                    duration: 5000,
+                    duration: 5,
                     icon: '🔥',
                 },
                 error: {
@@ -185,9 +186,6 @@ export default function EditUserProfile() {
 
     const [showOptions, setShowOptions] = useState(false); // State to show/hide options
     const removeImage = () => {
-        // console.log("removeImage  : || ", process.env.REACT_APP_DEFAULT_PROFILE_IMAGE);
-        // setImage(process.env.REACT_APP_DEFAULT_PROFILE_IMAGE);
-        // setShowOptions(false);
     };
 
     return (

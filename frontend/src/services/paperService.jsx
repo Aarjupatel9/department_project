@@ -1,20 +1,23 @@
 import { IEvent } from "../interfaces/interfaces";
 import { handleRejectResponse } from "./systemService";
+const fetchPostOptions = {
+  method: "POST",
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json;charset=UTF-8",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type,Authorization",
+  },
+};
 class UserService {
-  addEvent(data) {
+  addPaper(data) {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify(data),
-      };
-      fetch(process.env.REACT_APP_API_SERVER + "/api/event/add-event", options)
+      fetchPostOptions.body = JSON.stringify(data);
+      fetch(
+        process.env.REACT_APP_API_SERVER + "/api/publication/add-publication",
+        fetchPostOptions
+      )
         .then((response) => {
           console.log("fetch then response :", response);
           return response.json();
@@ -38,22 +41,14 @@ class UserService {
         });
     });
   }
-  updateEvent(data) {
+  updatePaper(_id, data) {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify(data),
-      };
+      fetchPostOptions.body = JSON.stringify(data);
       fetch(
-        process.env.REACT_APP_API_SERVER + "/api/event/update-event/",
-        options
+        process.env.REACT_APP_API_SERVER +
+          "/api/publication/update-publication/" +
+          _id,
+        fetchPostOptions
       )
         .then((response) => {
           console.log("fetch then response :", response);
@@ -79,9 +74,9 @@ class UserService {
     });
   }
 
-  getEvent(_id) {
+  getPaper(_id) {
     return new Promise(function (resolve, reject) {
-      const options = {
+      const fetchPostOptions = {
         method: "POST",
         credentials: "include",
         headers: {
@@ -93,8 +88,10 @@ class UserService {
         body: JSON.stringify({ _id: _id }),
       };
       fetch(
-        process.env.REACT_APP_API_SERVER + "/api/event/event/" + _id,
-        options
+        process.env.REACT_APP_API_SERVER +
+          "/api/publication/publication/" +
+          _id,
+        fetchPostOptions
       )
         .then((response) => {
           console.log("fetch then response :", response);
@@ -119,21 +116,17 @@ class UserService {
         });
     });
   }
-  getEvents() {
+  getPapers() {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-      };
-      fetch(process.env.REACT_APP_API_SERVER + "/api/event/events", options)
+      fetch(
+        process.env.REACT_APP_API_SERVER + "/api/publication/publications",
+        fetchPostOptions
+      )
         .then((response) => {
           console.log("fetch then response :", response);
+          if (response.status === 404) {
+            reject("path not found");
+          }
           return response.json();
         })
         .then((res) => {
@@ -155,25 +148,21 @@ class UserService {
         });
     });
   }
-  deleteEvent(_id) {
+  deletePaper(_id) {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify({ _id: _id }),
-      };
+      fetchPostOptions.body = JSON.stringify({ _id: _id });
+
       fetch(
-        process.env.REACT_APP_API_SERVER + "/api/event/delete-event",
-        options
+        process.env.REACT_APP_API_SERVER +
+          "/api/publication/delete-publication/" +
+          _id,
+        fetchPostOptions
       )
         .then((response) => {
           console.log("fetch then response :", response);
+          if (response.status === 404) {
+            reject("path not found");
+          }
           return response.json();
         })
         .then((res) => {
@@ -198,23 +187,16 @@ class UserService {
 
   uploadReportOfEvent(formData) {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          // "Content-Type": "multipart/form-data",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: formData,
-      };
+      fetchPostOptions.body = formData;
       fetch(
         process.env.REACT_APP_API_SERVER + "/api/system/upload-reports",
-        options
+        fetchPostOptions
       )
         .then((response) => {
           console.log("uploadReportOfEvent || fetch then response :", response);
+          if (response.status === 404) {
+            reject("path not found");
+          }
           return response.json();
         })
         .then((res) => {
