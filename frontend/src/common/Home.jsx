@@ -116,7 +116,7 @@ export default function Home() {
                 <div className='NotMyNavbar'>
 
                     {Object.values(SystemVariables.ROLES).includes(userDetail.role) ? <Sidebar /> : <></>}
-                    <div className="MainComponents ">
+                    <div className="MainComponents dark:bg-gray-600">
                         <Routes>
                             {userDetail.isProfile && userDetail.isApproved ?
                                 <>
@@ -129,6 +129,7 @@ export default function Home() {
                             <Route path="/verifyemail" element={<EmailVerifier />} />
                             <Route path="/editProfile" element={<EditUserProfile />} />
                             <Route path="/login" element={<Login />} />
+                            <Route path="/editEvent/:id" element={<AddEvents />} />
                             <Route path="*" element={<UserProfile readOnly={false} />} />
                         </Routes>
                     </div>

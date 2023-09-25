@@ -198,7 +198,7 @@ export default function Events() {
                                             {formatDateToDdMmYyyy(event.eventDate.startDate.toString())}
                                         </td>
                                         <td className="px-6 py-4 dark:text-white dark:bg-gray-700">
-                                            {event.isOrganizedByBVM ? "Yse" : "No"}
+                                            {event.isOrganizedByBVM ? "Yes" : "No"}
                                         </td>
                                         <td className="px-6 py-4 bg-gray-100 dark:bg-gray-800">
                                             {event.totalExpenses}
