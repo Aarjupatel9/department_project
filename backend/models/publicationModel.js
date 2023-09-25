@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { PUBLICATION_TYPE } = require('../utils/constants');
 
 const publicationSchema = new mongoose.Schema({
-    userID: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "users"
     },
@@ -84,25 +84,25 @@ const publicationSchema = new mongoose.Schema({
         city: {
             type: String,
             required: function () {
-                return this.typeOfPublication === publicationType.CONFERENCE;
+                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
             },
         },
         state: {
             type: String,
             required: function () {
-                return this.typeOfPublication === publicationType.CONFERENCE;
+                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
             },
         },
         country: {
             type: String,
             required: function () {
-                return this.typeOfPublication === publicationType.CONFERENCE;
+                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
             },
         },
         zip: {
             type: String,
             required: function () {
-                return this.typeOfPublication === publicationType.CONFERENCE;
+                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
             },
         },
     },

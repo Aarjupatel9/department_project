@@ -3,11 +3,12 @@ import React from 'react'
 import {
     setUserDetail,
     selectUserDetails,
-    userDetailTemplate
+    
 } from '../reduxStore/reducers/userDetailSlice';
 import { useAppSelector, useAppDispatch } from '../reduxStore/hooks';
 import { Navigate, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
+import { userDetailTemplate } from '../interfaces/tamplates';
 import logo from "../logo192.png"
 import "../css/Home.css";
 export default function Navbar() {
@@ -61,7 +62,6 @@ export default function Navbar() {
                                         src={userDetail.profileImage}
                                         onError={(e) => {
                                             e.target.src = "https://massengeruserprofileimage.s3.ap-south-1.amazonaws.com/general-contact-icon.jpg";
-                                            console.log("error in image setting");
                                         }}
                                     />
 

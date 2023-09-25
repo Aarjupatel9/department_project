@@ -1,13 +1,7 @@
-// import { loginCredentials } from "../common/Login";
 
-import {
-  setUserDetail,
-  selectUserDetails, userDetailTemplate
-} from '../reduxStore/reducers/userDetailSlice';
-import { loginCredentials } from '../interfaces/interfaces';
-import { handleRejectResponse } from './systemService';
+import { handleRejectResponse } from "./systemService";
+import { userDetailTemplate } from "../interfaces/tamplates";
 class AuthService {
-
   resendVerificationLink(credential) {
     console.log(credential);
     return new Promise(function (resolve, reject) {
@@ -23,23 +17,31 @@ class AuthService {
         },
         body: JSON.stringify(credential),
       };
-      fetch(process.env.REACT_APP_API_SERVER + "/api/auth/resendEmailVerificationLink", options)
+      fetch(
+        process.env.REACT_APP_API_SERVER +
+          "/api/auth/resendEmailVerificationLink",
+        options
+      )
         .then((response) => {
           console.log("fetch then response :", response);
           return response.json();
         })
         .then((res) => {
           console.log("response in register arrive : ", res);
-          handleRejectResponse(res.message);
           if (res.success) {
             resolve(res);
           } else {
-            reject(res.message);
+            handleRejectResponse(res.message);
+            if (typeof res.message == String) {
+              reject(res.message);
+            } else {
+              reject("server error");
+            }
           }
         })
         .catch((e) => {
           console.log("error : ", e);
-          reject(e);
+          reject(e.toString());
         });
     });
   }
@@ -65,16 +67,20 @@ class AuthService {
         })
         .then((res) => {
           console.log("response in register arrive : ", res);
-          handleRejectResponse(res.message);
           if (res.success) {
             resolve(res);
           } else {
-            reject(res.message);
+            handleRejectResponse(res.message);
+            if (typeof res.message == String) {
+              reject(res.message);
+            } else {
+              reject("server error");
+            }
           }
         })
         .catch((e) => {
           console.log("error : ", e);
-          reject(e);
+          reject(e.toString());
         });
     });
   }
@@ -100,20 +106,23 @@ class AuthService {
         })
         .then((res) => {
           console.log("response in register arrive : ", res);
-          handleRejectResponse(res.message);
           if (res.success) {
             resolve(res);
           } else {
-            reject(res.message);
+            handleRejectResponse(res.message);
+            if (typeof res.message == String) {
+              reject(res.message);
+            } else {
+              reject("server error");
+            }
           }
         })
         .catch((e) => {
           console.log("error : ", e);
-          reject(e);
+          reject(e.toString());
         });
     });
   }
-
 
   logout() {
     localStorage.removeItem("userDetail");
@@ -141,7 +150,5 @@ class AuthService {
     }
     return JSON.parse(localData).role;
   }
-
 }
 export default new AuthService();
-

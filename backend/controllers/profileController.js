@@ -2,11 +2,8 @@ const Profile = require('../models/profileModel');
 const { profileValidator } = require('../validators/profileValidator');
 
 exports.uploadProfileImage = async (req, res) => {
-
     var { _id } = req.user;
-
     const profileImage = req.fileUrls[0];
-
     try {
         const updatedProfileImage = await Profile
             .findByIdAndUpdate(
@@ -31,16 +28,13 @@ exports.uploadProfileImage = async (req, res) => {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error." });
     }
-
 }
 
 exports.GetProfile = async (req, res) => {
     var { _id } = req.user;
-    console.log("getProfile : ", _id);
     if (req.params._id) {
         _id = req.params._id;
     }
-    console.log("getProfile : ", _id);
     try {
         const profile = await Profile.findById(_id).select("-_id -__v");
         if (!profile) {

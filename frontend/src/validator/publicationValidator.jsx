@@ -1,7 +1,10 @@
-const joi = require("joi");
-const { PUBLICATION_TYPE } = require("../utils/constants");
+import joi from "joi";
+const PUBLICATION_TYPE = {
+    JOURNALS: "journals",
+    CONFERENCE: "conference",
+}
 
-exports.publicationValidator = joi.object({
+export const publicationValidator = joi.object({
     userId:joi.string().required(),
     title: joi.string().min(3).max(30).required(),
     description: joi.string().min(10).max(300).required(),
