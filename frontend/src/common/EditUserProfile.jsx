@@ -171,7 +171,7 @@ export default function EditUserProfile() {
                     minWidth: '250px',
                 },
                 success: {
-                    duration: 5000,
+                    duration: 5,
                     icon: '🔥',
                 },
                 error: {

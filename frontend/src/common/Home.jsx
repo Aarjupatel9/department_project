@@ -155,7 +155,7 @@ export default function Home() {
           ) : (
             <></>
           )}
-          <div className="MainComponents ">
+          <div className="MainComponents dark:bg-gray-600 ">
             <Routes>
               {userDetail.isProfile && userDetail.isApproved ? (
                 <>
@@ -164,8 +164,12 @@ export default function Home() {
                     path="/profile"
                     element={<UserProfile readOnly={false} />}
                   />
+                  <Route path="/paper" element={<Paper />} />
+                  <Route path="/addPaper" element={<AddPaper />} />
+                  <Route path="/editPaper/:id" element={<AddPaper />} />
                   <Route path="/event" element={<Events />} />
                   <Route path="/addEvent" element={<AddEvents />} />
+                  <Route path="/editEvent/:id" element={<AddEvents />} />
                 </>
               ) : (
                 <></>
