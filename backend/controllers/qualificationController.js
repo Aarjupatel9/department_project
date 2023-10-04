@@ -44,11 +44,7 @@ exports.GetQualifications = async (req, res) => {
             .populate('userId', 'firstName lastName designation')
             .exec();
 
-        if (qualifications.length <= 0) {
-            return res
-                .status(404)
-                .json({ success: false, message: "Qualifications details not found." });
-        }
+       
         res.status(200).json({ success: true, qualifications });
 
     } catch (error) {
@@ -68,7 +64,7 @@ exports.GetQualification = async (req, res) => {
 
         if (!qualification) {
             return res
-                .status(404)
+                .status(200)    
                 .json({ success: false, message: "Qualification details not found." });
         }
         res.status(200).json({ success: true, qualification });

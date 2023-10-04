@@ -40,11 +40,11 @@ exports.GetPublications = async (req, res) => {
       .exec();
     console.log("publication : ", publications);
 
-    if (publications.length <= 0) {
-      return res
-        .status(200)
-        .json({ success: false, message: "Publications details not found." });
-    }
+    // if (publications.length <= 0) {
+    //   return res
+    //     .status(200)
+    //     .json({ success: false, message: "Publications details not found." });
+    // }
 
     res.status(200).json({ success: true, publications });
   } catch (error) {
@@ -61,11 +61,11 @@ exports.GetPublication = async (req, res) => {
       .populate("userId", "firstName lastName designation")
       .exec();
 
-    if (!publication) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Publication details not found." });
-    }
+    // if (!publication) {
+    //   return res
+    //     .status(404)
+    //     .json({ success: false, message: "Publication details not found." });
+    // }
     res.status(200).json({ success: true, publication });
   } catch (error) {
     console.log(error);

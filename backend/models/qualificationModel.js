@@ -8,7 +8,7 @@ const qualificationSchema = mongoose.Schema({
         index: true,
         required: true
     },
-    QUALIFICATION_TYPE: {
+    qualificationType: {
         type: String,
         enum: Object.values(QUALIFICATION_TYPE),
         required: true
@@ -16,7 +16,7 @@ const qualificationSchema = mongoose.Schema({
     thesisTitle: {
         type: String,
         required: function () {
-            return this.QUALIFICATION_TYPE == QUALIFICATION_TYPE.PHD;
+            return this.qualificationType == QUALIFICATION_TYPE.PHD;
         }
     },
     specialization: {
@@ -34,9 +34,9 @@ const qualificationSchema = mongoose.Schema({
     },
     completionYear: {
         type: Number,
-        required: true,
-        min: 4,
-        max: 4
+        required: true, 
+        min: 1,
+        max: 10
     },
     certificates: [{
         title: {

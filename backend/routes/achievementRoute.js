@@ -8,9 +8,9 @@ const router = express.Router();
 router.route("/add-achievement")
     .post(authenticateRoles(AllRoles), AddAchievement);
 router.route("/achievement/:_id")
-    .get(authenticateRoles(AllRoles), GetAchievement);
+    .post(authenticateRoles(AllRoles), GetAchievement);
 router.route("/achievements")
-    .get(authenticateRoles(AllRoles), GetAchievements);
+    .post(authenticateRoles(AllRoles), GetAchievements);
 router.route("/update-achievement/:_id")
     .post(authenticateRoles(AllRoles), EditAchievement);
 router.route("/delete-achievement/:_id")
@@ -18,7 +18,7 @@ router.route("/delete-achievement/:_id")
 
 
 // other operations
-router.route("/achievement/:id").get(GetProfile); // public route to get user's achievement details
+router.route("/achievement/:id").get(GetAchievement); // public route to get user's achievement details
 
 
 module.exports = router;
