@@ -22,7 +22,7 @@ const hostName = process.env.HOST;
 
 exports.Login = async (req, res) => {
     try {
-        console.log("login request : ", req.body)
+        // console.log("login request : ", req.body)
         const { error } = userLoginValidator.validate(req.body);
 
         if (error) {
@@ -30,10 +30,12 @@ exports.Login = async (req, res) => {
                 .status(400)
                 .json({ success: false, message: error.details[0].message });
         }
+        // console.log("login error : ",error)
 
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
+        // console.log("login user : ", user)
 
         if (!user) {
             return res.status(404).json({ success: false, message: "User does not exist." });

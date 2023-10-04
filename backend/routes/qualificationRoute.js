@@ -1,24 +1,24 @@
 const express = require('express');
-const { Addqualification, Getqualification, Getqualifications, Editqualification, Deletequalification } = require('../controllers/qualificationController');
+const { AddQualification, GetQualification, GetQualifications, EditQualification, DeleteQualification } = require('../controllers/qualificationController');
 const authenticateRoles = require('../middlewares/authMiddleware');
 const { AllRoles } = require('../utils/constants')
 const router = express.Router();
 
 // user specific operations
 router.route("/add-qualification")
-    .post(authenticateRoles(AllRoles), Addqualification);
+    .post(authenticateRoles(AllRoles), AddQualification);
 router.route("/qualification/:_id")
-    .get(authenticateRoles(AllRoles), Getqualification);
+    .post(authenticateRoles(AllRoles), GetQualification);
 router.route("/qualifications")
-    .get(authenticateRoles(AllRoles), Getqualifications);
+    .post(authenticateRoles(AllRoles), GetQualifications);
 router.route("/update-qualification/:_id")
-    .post(authenticateRoles(AllRoles), Editqualification);
+    .post(authenticateRoles(AllRoles), EditQualification);
 router.route("/delete-qualification/:_id")
-    .post(authenticateRoles(AllRoles), Deletequalification);
+    .post(authenticateRoles(AllRoles), DeleteQualification);
 
 
 // other operations
-router.route("/qualification/:_id").get(Getqualification); // public route to get user's qualification details
+router.route("/qualification/:_id").get(GetQualification); // public route to get user's qualification details
 
 
 module.exports = router;

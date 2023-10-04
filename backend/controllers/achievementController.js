@@ -46,11 +46,7 @@ exports.GetAchievements = async (req, res) => {
 
         // const achievements = await Achievement.find({ userId: _id });
 
-        if (achievements.length <= 0) {
-            return res
-                .status(404)
-                .json({ success: false, message: "Achievements not found." });
-        }
+      
         res.status(200).json({ success: true, achievements });
 
     } catch (error) {
@@ -73,7 +69,7 @@ exports.GetAchievement = async (req, res) => {
 
         if (!achievement) {
             return res
-                .status(404)
+                .status(200)
                 .json({ success: false, message: "Achievement not found." });
         }
         res.status(200).json({ success: true, achievement });
@@ -125,7 +121,7 @@ exports.EditAchievement = async (req, res) => {
 
         if (!achievement) {
             return res
-                .status(404)
+                .status(200)
                 .json({ success: false, message: "Achievement not found." });
         }
         res.status(200).json({ success: true, message: "Achievement updated successfully." });
