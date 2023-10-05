@@ -1,45 +1,13 @@
-import authService from "./authService";
+import { IEvent } from "../interfaces/interfaces";
 import { handleRejectResponse } from "./systemService";
-
 import { fetchPostOptions } from "./constants";
 
-class adminService {
-  getUserDetails(_id) {
-    var cred = { _id: _id };
-    return new Promise(function (resolve, reject) {
-      fetchPostOptions.body = JSON.stringify(cred);
-      fetch(
-        process.env.REACT_APP_API_SERVER + "/api/user/getUser",
-        fetchPostOptions
-      )
-        .then((response) => {
-          console.log("fetch then response :", response);
-          return response.json();
-        })
-        .then((res) => {
-          console.log("response in getNewUserDetails arrive : ", res);
-          if (res.success) {
-            resolve(res);
-          } else {
-            handleRejectResponse(res.message);
-            if (typeof res.message == String) {
-              reject(res.message);
-            } else {
-              reject("server error");
-            }
-          }
-        })
-        .catch((e) => {
-          console.log("error : ", e);
-          reject(e.toString());
-        });
-    });
-  }
-  updateUserAccountRole(data) {
+class UserService {
+  addQualification(data) {
     return new Promise(function (resolve, reject) {
       fetchPostOptions.body = JSON.stringify(data);
       fetch(
-        process.env.REACT_APP_API_SERVER + "/api/user/updateUserAccountRole",
+        process.env.REACT_APP_API_SERVER + "/api/qualification/add-qualification",
         fetchPostOptions
       )
         .then((response) => {
@@ -47,7 +15,7 @@ class adminService {
           return response.json();
         })
         .then((res) => {
-          console.log("response in verifyUserAccount arrive : ", res);
+          console.log("response in updateProfile arrive : ", res);
           if (res.success) {
             resolve(res);
           } else {
@@ -65,13 +33,13 @@ class adminService {
         });
     });
   }
-  verifyUserAccount(_id) {
-    const userId = authService.getCurrentUserId();
-    var cred = { _id: _id };
+  updateQualification(_id, data) {
     return new Promise(function (resolve, reject) {
-      fetchPostOptions = JSON.stringify(cred);
+      fetchPostOptions.body = JSON.stringify(data);
       fetch(
-        process.env.REACT_APP_API_SERVER + "/api/user/updateUserVerification",
+        process.env.REACT_APP_API_SERVER +
+          "/api/qualification/update-qualification/" +
+          _id,
         fetchPostOptions
       )
         .then((response) => {
@@ -79,7 +47,7 @@ class adminService {
           return response.json();
         })
         .then((res) => {
-          console.log("response in verifyUserAccount arrive : ", res);
+          console.log("response in updateProfile arrive : ", res);
           if (res.success) {
             resolve(res);
           } else {
@@ -97,42 +65,14 @@ class adminService {
         });
     });
   }
-  approveUserAccount(_id) {
-    const userId = authService.getCurrentUserId();
-    var cred = { _id: _id };
+
+  getQualification(_id) {
     return new Promise(function (resolve, reject) {
-      fetchPostOptions.body = JSON.stringify(cred);
+      fetchPostOptions.body=JSON.stringify({ _id: _id });
       fetch(
-        process.env.REACT_APP_API_SERVER + "/api/user/updateAccountApproval",
-        fetchPostOptions
-      )
-        .then((response) => {
-          console.log("fetch then response :", response);
-          return response.json();
-        })
-        .then((res) => {
-          console.log("response in verifyUserAccount arrive : ", res);
-          if (res.success) {
-            resolve(res);
-          } else {
-            handleRejectResponse(res.message);
-            if (typeof res.message == String) {
-              reject(res.message);
-            } else {
-              reject("server error");
-            }
-          }
-        })
-        .catch((e) => {
-          console.log("error : ", e);
-          reject(e.toString());
-        });
-    });
-  }
-  getNewUserDetails() {
-    return new Promise(function (resolve, reject) {
-      fetch(
-        process.env.REACT_APP_API_SERVER + "/api/user/getNewUsers",
+        process.env.REACT_APP_API_SERVER +
+          "/api/qualification/qualification/" +
+          _id,
         fetchPostOptions
       )
         .then((response) => {
@@ -142,7 +82,7 @@ class adminService {
         .then((res) => {
           console.log("response in getNewUserDetails arrive : ", res);
           if (res.success) {
-            resolve(res.users);
+            resolve(res);
           } else {
             handleRejectResponse(res.message);
             if (typeof res.message == String) {
@@ -158,20 +98,93 @@ class adminService {
         });
     });
   }
-  getAllUserDetails() {
+  getQualifications() {
     return new Promise(function (resolve, reject) {
       fetch(
-        process.env.REACT_APP_API_SERVER + "/api/user/getUsers",
+        process.env.REACT_APP_API_SERVER + "/api/qualification/qualifications",
         fetchPostOptions
       )
         .then((response) => {
           console.log("fetch then response :", response);
+          if (response.status === 404) {
+            reject("path not found");
+          }
           return response.json();
         })
         .then((res) => {
           console.log("response in getNewUserDetails arrive : ", res);
           if (res.success) {
-            resolve(res.users);
+            resolve(res);
+          } else {
+            handleRejectResponse(res.message);
+            if (typeof res.message == String) {
+              reject(res.message);
+            } else {
+              reject("server error");
+            }
+          }
+        })
+        .catch((e) => {
+          console.log("error : ", e);
+          reject(e.toString());
+        });
+    });
+  }
+  deleteQualification(_id) {
+    return new Promise(function (resolve, reject) {
+      fetchPostOptions.body = JSON.stringify({ _id: _id });
+
+      fetch(
+        process.env.REACT_APP_API_SERVER +
+          "/api/qualification/delete-qualification/" +
+          _id,
+        fetchPostOptions
+      )
+        .then((response) => {
+          console.log("fetch then response :", response);
+          if (response.status === 404) {
+            reject("path not found");
+          }
+          return response.json();
+        })
+        .then((res) => {
+          console.log("response in getNewUserDetails arrive : ", res);
+          if (res.success) {
+            resolve(res);
+          } else {
+            handleRejectResponse(res.message);
+            if (typeof res.message == String) {
+              reject(res.message);
+            } else {
+              reject("server error");
+            }
+          }
+        })
+        .catch((e) => {
+          console.log("error : ", e);
+          reject(e.toString());
+        });
+    });
+  }
+
+  uploadReportOfEvent(formData) {
+    return new Promise(function (resolve, reject) {
+      fetchPostOptions.body = formData;
+      fetch(
+        process.env.REACT_APP_API_SERVER + "/api/system/upload-reports",
+        fetchPostOptions
+      )
+        .then((response) => {
+          console.log("uploadReportOfEvent || fetch then response :", response);
+          if (response.status === 404) {
+            reject("path not found");
+          }
+          return response.json();
+        })
+        .then((res) => {
+          console.log("uploadReportOfEvent ||response in arrive : ", res);
+          if (res.success) {
+            resolve(res);
           } else {
             handleRejectResponse(res.message);
             if (typeof res.message == String) {
@@ -189,4 +202,4 @@ class adminService {
   }
 }
 
-export default new adminService();
+export default new UserService();

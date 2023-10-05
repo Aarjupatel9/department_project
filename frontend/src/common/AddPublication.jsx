@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, FieldArray } from "formik";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
-import paperService from "../services/paperService";
+import publicationService from "../services/publicationService";
 import { selectSystemVariables } from "../reduxStore/reducers/systemVariables";
 import { useAppSelector } from "../reduxStore/hooks";
 import eventService from "../services/eventService";
@@ -10,7 +10,7 @@ import authService from "../services/authService";
 import { publicationValidator } from "../validator/publicationValidator";
 import { formatDateToDdMmYyyy } from "../utils/functions";
 
-const AddPaper = () => {
+const AddPublication = () => {
   const SystemVariables = useAppSelector(selectSystemVariables);
   // const { setFieldValue } = useFormikContext();
   const [rowData, setRowData] = useState({
@@ -24,30 +24,31 @@ const AddPaper = () => {
     SystemVariables.PUBLICATION_TYPE.JOURNALS
   );
 
-  const [papaerInit, setPaperInit] = useState({});
+  const [publicationInit, setPublicationInit] = useState({});
 
   const { id } = useParams();
   useEffect(() => {
     if (id != undefined) {
       setPublicationType("");
-      var eventPromise = paperService.getPaper(id);
+      var eventPromise = publicationService.getPublication(id);
       eventPromise.then((res) => {
         var publicationData = res.publication;
         console.log("useEffect publicationData : ", publicationData);
         // const temp = resEvent.userId._id;
         publicationData.userId = publicationData.userId._id;
-        publicationData.publicationDate =
-        formatDateToDdMmYyyy(publicationData.publicationDate.toString());
+        publicationData.publicationDate = formatDateToDdMmYyyy(
+          publicationData.publicationDate.toString()
+        );
         setPublicationType(publicationData.publicationType);
 
-        setPaperInit(publicationData);
+        setPublicationInit(publicationData);
         // setFieldValue("title",res.event.title);
         // setEventDetail(res.event);
       });
     }
   }, [id]);
 
-  function HandleAddPaper(values) {
+  function HandleAddPublication(values) {
     values.publicationType = publicationType;
     values.reports = reports;
     values.userId = authService.getCurrentUserId();
@@ -60,9 +61,12 @@ const AddPaper = () => {
       return;
     }
     if (_id) {
-      const paperPromise = paperService.updatePaper(_id, data);
+      const publicationPromise = publicationService.updatePublication(
+        _id,
+        data
+      );
       toast.promise(
-        paperPromise,
+        publicationPromise,
         {
           loading: "please wait while adding publication data",
           success: (data) => data.message,
@@ -82,18 +86,18 @@ const AddPaper = () => {
           },
         }
       );
-      paperPromise
+      publicationPromise
         .then((res) => {
           console.log("res: ", res);
-          //   toast.success("paper is added");
+          //   toast.success("publication is added");
         })
         .catch((error) => {
-          //   toast.error("paper is not added");
+          //   toast.error("publication is not added");
         });
     } else {
-      const paperPromise = paperService.addPaper(data);
+      const publicationPromise = publicationService.addPublication(data);
       toast.promise(
-        paperPromise,
+        publicationPromise,
         {
           loading: "please wait while adding publication data",
           success: (data) => data.message,
@@ -113,13 +117,13 @@ const AddPaper = () => {
           },
         }
       );
-      paperPromise
+      publicationPromise
         .then((res) => {
           console.log("res: ", res);
-          //   toast.success("paper is added");
+          //   toast.success("publication is added");
         })
         .catch((error) => {
-          //   toast.error("paper is not added");
+          //   toast.error("publication is not added");
         });
     }
   }
@@ -189,15 +193,15 @@ const AddPaper = () => {
   return (
     <>
       <div className="flex flex-col shadow-md sm:rounded-lg">
-        <h1 className="text-3xpapaerInitl mx-auto font-medium text-gray-900 dark:text-white">
-          Add Your Publication 
+        <h1 className="text-3xl  mx-auto  text-gray-900 font-bold dark:text-white">
+          Add Your Publication
         </h1>
         <hr className="mt-2" />
         <Formik
-          initialValues={papaerInit}
+          initialValues={publicationInit}
           enableReinitialize={true}
           onSubmit={(values, { setSubmitting }) => {
-            HandleAddPaper(values);
+            HandleAddPublication(values);
             setSubmitting(false);
           }}
         >
@@ -221,13 +225,9 @@ const AddPaper = () => {
                     </option>
                   </Field>
                 </div>
-                <div className="m-1 p-1 flex flex-col">
+                <div className="mt-10 m-10 flex flex-col">
                   {/* Event Details */}
                   <div className="flex flex-col">
-                    <h3 className="mt-1 mx-auto text-xl font-medium text-gray-900 dark:text-white">
-                      Details
-                    </h3>
-                    <hr className="w-20 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700" />
                     <div className="mt-2 grid md:grid-cols-2 md:gap-6">
                       <div className="relative z-0 w-full mb-6 group">
                         <Field
@@ -245,21 +245,21 @@ const AddPaper = () => {
                         </label>
                       </div>
                       <div className="relative z-0 w-full mb-6 group">
-                          <Field
-                            type="date"
-                            name="publicationDate"
-                            id="publicationDate"
-                            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300  appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            placeholder=""
-                            required
-                          />
-                          <label
-                            htmlFor="publicationDate"
-                            className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                          >
-                            Publication Date
-                          </label>
-                        </div>
+                        <Field
+                          type="date"
+                          name="publicationDate"
+                          id="publicationDate"
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300  appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=""
+                          required
+                        />
+                        <label
+                          htmlFor="publicationDate"
+                          className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Publication Date
+                        </label>
+                      </div>
                     </div>
                     <div className="mt-2 grid md:grid-cols-1 md:gap-6">
                       <div className="relative z-0 w-full mb-6 group">
@@ -281,83 +281,83 @@ const AddPaper = () => {
                     </div>
 
                     <div className="flex justify-center ">
-                        <div className="relative z-0 w-96 mb-6 group">
-                          <FieldArray
-                            name="authors"
-                            render={(arrayHelpers) => (
-                              <div className="flex flex-col justify-center">
-                                {values.authors && values.authors.length > 0 ? (
-                                  values.authors.map((friend, index) => (
-                                    <div key={index} >
-                                      <Field
-                                        name={`authors.${index}`} className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                      />
-                                      <button
-                                        type="button"
-                                        onClick={() =>
-                                          arrayHelpers.remove(index)
-                                        }
-                                        className="ml-2 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none transition-colors duration-300"
+                      <div className="relative z-0 w-96 mb-6 group">
+                        <FieldArray
+                          name="authors"
+                          render={(arrayHelpers) => (
+                            <div className="flex flex-col justify-center">
+                              {values.authors && values.authors.length > 0 ? (
+                                values.authors.map((friend, index) => (
+                                  <div key={index}>
+                                    <Field
+                                      name={`authors.${index}`}
+                                      className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => arrayHelpers.remove(index)}
+                                      className="ml-2 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none transition-colors duration-300"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-5 w-5 inline-block align-text-top"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
                                       >
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          className="h-5 w-5 inline-block align-text-top"
-                                          fill="none"
-                                          viewBox="0 0 24 24"
-                                          stroke="currentColor"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M20 12H4"
-                                          />
-                                        </svg>
-                                      </button>
-                                      <button
-                                        type="button"
-                                        onClick={() =>
-                                          arrayHelpers.insert(index, "")
-                                        }
-                                        className="px-2 py-1 rounded-lg focus:bg-gray-300 text-blue-700 dark:text-blue-500 hover:text-blue-900 dark:hover:text-blue-700 focus:outline-none transition-colors duration-300"
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth="2"
+                                          d="M20 12H4"
+                                        />
+                                      </svg>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        arrayHelpers.insert(index, "")
+                                      }
+                                      className="px-2 py-1 rounded-lg focus:bg-gray-300 text-blue-700 dark:text-blue-500 hover:text-blue-900 dark:hover:text-blue-700 focus:outline-none transition-colors duration-300"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-5 w-5 inline-block align-text-top"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
                                       >
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          className="h-5 w-5 inline-block align-text-top"
-                                          viewBox="0 0 20 20"
-                                          fill="currentColor"
-                                        >
-                                          <path
-                                            fillRule="evenodd"
-                                            d="M10 2a1 1 0 011 1v6h6a1 1 0 110 2h-6v6a1 1 0 11-2 0v-6H3a1 1 0 110-2h6V3a1 1 0 011-1z"
-                                            clipRule="evenodd"
-                                          />
-                                        </svg>
-                                      </button>
-                                    </div>
-                                  ))
-                                ) : (
-                                  <button
-                                    type="button"
-                                    onClick={() => arrayHelpers.push("")}
-                                    className="my-6 px-2 py-2 rounded-lg focus:bg-gray-300 text-blue-700 dark:text-blue-500 hover:text-blue-900 dark:bg-gray-700 dark:hover:text-blue-200 focus:outline-none"
-                                  >
-                                    Add an author
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                          />
-
+                                        <path
+                                          fillRule="evenodd"
+                                          d="M10 2a1 1 0 011 1v6h6a1 1 0 110 2h-6v6a1 1 0 11-2 0v-6H3a1 1 0 110-2h6V3a1 1 0 011-1z"
+                                          clipRule="evenodd"
+                                        />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                ))
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => arrayHelpers.push("")}
+                                  className="my-6 px-2 py-2 rounded-lg focus:bg-gray-300 text-blue-700 dark:text-blue-500 hover:text-blue-900 dark:bg-gray-700 dark:hover:text-blue-200 focus:outline-none"
+                                >
+                                  Add an author
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        />
+                        {values.authors && values.authors.length > 0 ? (
                           <label
                             htmlFor="author"
                             className="peer-focus:font-lg absolute text-2xl  text-gray-500 dark:text-gray-200 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                           >
                             Author
                           </label>
-                        </div>
-                     
-                        
+                        ) : (
+                          <></>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -534,8 +534,8 @@ const AddPaper = () => {
 
                   {/* reports */}
                   <div className="flex flex-col">
-                    <h3 className="mt-4 mx-auto  text-xl font-medium text-gray-900 dark:text-white">
-                      Reports
+                    <h3 className="mt-4 mx-auto  text-xl font-bold text-gray-900 dark:text-white">
+                      Upload Publication
                     </h3>
                     <hr className="w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700" />
                     <div className="my-6 mx-10 mb-4 px-10 w-full">
@@ -594,8 +594,7 @@ const AddPaper = () => {
 
                   <button
                     type="submit"
-                    onClick={() => {}}
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     Save
                   </button>
@@ -609,4 +608,4 @@ const AddPaper = () => {
   );
 };
 
-export default AddPaper;
+export default AddPublication;

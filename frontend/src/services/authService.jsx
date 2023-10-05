@@ -1,26 +1,17 @@
 
 import { handleRejectResponse } from "./systemService";
 import { userDetailTemplate } from "../interfaces/tamplates";
+
+import { fetchPostOptions } from "./constants";
 class AuthService {
   resendVerificationLink(credential) {
     console.log(credential);
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        // mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify(credential),
-      };
+      fetchPostOptions.body=JSON.stringify(credential);
       fetch(
         process.env.REACT_APP_API_SERVER +
           "/api/auth/resendEmailVerificationLink",
-        options
+          fetchPostOptions
       )
         .then((response) => {
           console.log("fetch then response :", response);
@@ -48,19 +39,9 @@ class AuthService {
   register(credential) {
     console.log(credential);
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        // mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify(credential),
-      };
-      fetch(process.env.REACT_APP_API_SERVER + "/api/auth/register", options)
+      fetchPostOptions.body=JSON.stringify(credential);
+
+      fetch(process.env.REACT_APP_API_SERVER + "/api/auth/register", fetchPostOptions)
         .then((response) => {
           console.log("fetch then response :", response);
           return response.json();
@@ -87,19 +68,9 @@ class AuthService {
   login(credential) {
     console.log(credential);
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        // mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify(credential),
-      };
-      fetch(process.env.REACT_APP_API_SERVER + "/api/auth/login", options)
+      fetchPostOptions.body=JSON.stringify(credential);
+
+      fetch(process.env.REACT_APP_API_SERVER + "/api/auth/login", fetchPostOptions)
         .then((response) => {
           console.log("fetch then response :", response);
           return response.json();

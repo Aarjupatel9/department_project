@@ -145,7 +145,6 @@ export default function AddEvents() {
     }
   };
 
- 
   const handleAddExpert = () => {
     const newExpert = rowData.experts;
     if (newExpert.trim() !== "") {
@@ -249,16 +248,11 @@ export default function AddEvents() {
   return (
     <div className=" flex flex-col shadow-md sm:rounded-lg">
       <h1 className="text-3xl mx-auto  font-medium text-gray-900 dark:text-white">
-        Event Entry{" "}
+        Event Entry
       </h1>
       <hr className="mt-2" />
-      <div className="m-1 p-5 flex flex-col">
-        {/* personalDetails */}
+      <div className="mt-10 m-5 p-5 flex flex-col">
         <div className="flex flex-col">
-          <h3 className="mt-4 mx-auto text-xl font-medium text-gray-900 dark:text-white">
-            Event Details
-          </h3>
-          <hr className="w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700" />
           <div className="mt-3 grid md:grid-cols-2 md:gap-6">
             <div className="relative z-0 w-full mb-6 group">
               <input
@@ -331,11 +325,9 @@ export default function AddEvents() {
                 Total Expense (INR)
               </label>
             </div>
-
           </div>
           <div className="grid md:grid-cols-2 md:gap-6">
-          
-          <div className="relative z-0 w-full mb-6 group">
+            <div className="relative z-0 w-full mb-6 group">
               <input
                 onChange={handleInputChange}
                 value={String(eventDetail.numberOfParticipants)}
@@ -366,10 +358,10 @@ export default function AddEvents() {
                 htmlFor="isOrganizedByBVM"
                 className="text-sm text-gray-900 dark:text-white cursor-pointer"
               >
-                Organized by BVM
+                Organized by me
+                {/* by BVM */}
               </label>
             </div>
-            
           </div>
           <div className="grid md:grid-cols-2 md:gap-6">
             <div className="relative z-0 w-full mb-6 group">
@@ -379,7 +371,7 @@ export default function AddEvents() {
                 name="description"
                 id="description"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
+                placeholder=""
                 required
               ></textarea>
               <label
@@ -388,10 +380,8 @@ export default function AddEvents() {
               >
                 Description
               </label>
-            </div>        
+            </div>
           </div>
-          
-
         </div>
 
         {/* address */}
@@ -478,90 +468,92 @@ export default function AddEvents() {
           </div>
         </div>
 
-        {/* contributors */}
-        <div className="flex flex-col">
-          <h3 className="mt-4 mx-auto  text-xl font-medium text-gray-900 dark:text-white">
-            Contributors
-          </h3>
-          <hr className="w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700" />
-          <div className="my-6 mx-10">
-            <div className="relative z-0 w-full mb-4 group">
-              <input
-                onChange={handleRowDataInputChange}
-                value={rowData.contributors}
-                type="text"
-                name="contributors"
-                id="contributors"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder="Enter a Contributor"
-              />
-              {/* <label htmlFor="contributors" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Contributors </label> */}
-              <button
-                onClick={handleAddContributors}
-                name="contributors"
-                className="absolute right-2 top-2 px-2 py-1 rounded-lg focus:bg-gray-300 text-blue-700 dark:text-blue-500 hover:text-blue-900  dark:hover:text-blue-700 focus:outline-none"
-              >
-                Add
-              </button>
-            </div>
-            <div className="w-full flex flex-col ">
-              {eventDetail.contributors.map((expert, index) => (
-                <div
-                  key={index}
-                  className="text-sm text-gray-900 dark:text-white"
+        <div className="flex  justify-center my-10 ">
+          {/* contributors */}
+          <div className="flex flex-col  border-0 border-r-2 border-gray-300 dark:border-gray-700">
+            <h3 className=" mx-auto  text-xl font-medium text-gray-900 dark:text-white">
+              Contributors
+            </h3>
+            <hr className="w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700" />
+            <div className="my-6 mx-10 flex flex-col items-center ">
+              <div className="flex flex-row w-96 mb-4 group">
+                <input
+                  onChange={handleRowDataInputChange}
+                  value={rowData.contributors}
+                  type="text"
+                  name="contributors"
+                  id="contributors"
+                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  placeholder="Enter a Contributor"
+                />
+                {/* <label htmlFor="contributors" className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Contributors </label> */}
+                <button
+                  onClick={handleAddContributors}
+                  name="contributors"
+                  className=" px-2 py-1 rounded-lg focus:bg-gray-300 text-blue-700 dark:text-blue-500 hover:text-blue-900  dark:hover:text-blue-700 focus:outline-none"
                 >
-                  {index + 1}) {expert}
-                  <button
-                    onClick={() => handleRemoveContributors(index)}
-                    className="ml-5 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
+                  Add
+                </button>
+              </div>
+              <div className="flex flex-col ">
+                {eventDetail.contributors.map((expert, index) => (
+                  <div
+                    key={index}
+                    className="text-medium text-gray-900 dark:text-white"
                   >
-                    Remove
-                  </button>
-                </div>
-              ))}
+                    {index + 1}) {expert}
+                    <button
+                      onClick={() => handleRemoveContributors(index)}
+                      className="ml-5 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* experts */}
-        <div className="flex flex-col">
-          <h3 className="mt-4 mx-auto  text-xl font-medium text-gray-900 dark:text-white">
-            Experts
-          </h3>
-          <hr className="w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700" />
-          <div className="my-6 mx-10">
-            <div className="relative w-full mb-4 group">
-              <input
-                onChange={handleRowDataInputChange}
-                value={rowData.experts}
-                type="text"
-                name="experts"
-                id="experts"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder="Enter an expert"
-              />
-              <button
-                onClick={handleAddExpert}
-                className="absolute right-2 top-2 px-2 py-1 rounded-lg focus:bg-gray-300 text-blue-700 dark:text-blue-500 hover:text-blue-900 dark:hover:text-blue-700 focus:outline-none"
-              >
-                Add
-              </button>
-            </div>
-            <div className="w-full flex flex-col ">
-              {eventDetail.experts.map((expert, index) => (
-                <div
-                  key={index}
-                  className="text-sm text-gray-900 dark:text-white"
+          {/* experts */}
+          <div className="flex flex-col">
+            <h3 className=" mx-auto text-xl font-medium text-gray-900 dark:text-white">
+              Experts
+            </h3>
+            <hr className="w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700" />
+            <div className="my-6 mx-10 flex flex-col items-center ">
+              <div className="flex flex-row w-96 mb-4 group">
+                <input
+                  onChange={handleRowDataInputChange}
+                  value={rowData.experts}
+                  type="text"
+                  name="experts"
+                  id="experts"
+                  className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  placeholder="Enter an expert"
+                />
+                <button
+                  onClick={handleAddExpert}
+                  className="px-2 py-1 rounded-lg focus:bg-gray-300 text-blue-700 dark:text-blue-500 hover:text-blue-900 dark:hover:text-blue-700 focus:outline-none"
                 >
-                  {index + 1}) {expert}
-                  <button
-                    onClick={() => handleRemoveExpert(index)}
-                    className="ml-2 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
+                  Add
+                </button>
+              </div>
+              <div className="flex flex-col ">
+                {eventDetail.experts.map((expert, index) => (
+                  <div
+                    key={index}
+                    className="text-medium text-gray-900 dark:text-white"
                   >
-                    Remove
-                  </button>
-                </div>
-              ))}
+                    {index + 1}) {expert}
+                    <button
+                      onClick={() => handleRemoveExpert(index)}
+                      className="ml-2 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

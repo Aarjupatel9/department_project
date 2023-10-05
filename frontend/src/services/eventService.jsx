@@ -1,20 +1,12 @@
-import { IEvent } from "../interfaces/interfaces";
+
 import { handleRejectResponse } from "./systemService";
+import { fetchPostOptions } from "./constants";
+
 class UserService {
   addEvent(data) {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify(data),
-      };
-      fetch(process.env.REACT_APP_API_SERVER + "/api/event/add-event", options)
+      fetchPostOptions.body = JSON.stringify(data);
+      fetch(process.env.REACT_APP_API_SERVER + "/api/event/add-event", fetchPostOptions)
         .then((response) => {
           console.log("fetch then response :", response);
           return response.json();
@@ -40,20 +32,10 @@ class UserService {
   }
   updateEvent(data) {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify(data),
-      };
+      fetchPostOptions.body = JSON.stringify(data);
       fetch(
         process.env.REACT_APP_API_SERVER + "/api/event/update-event/",
-        options
+        fetchPostOptions
       )
         .then((response) => {
           console.log("fetch then response :", response);
@@ -81,20 +63,10 @@ class UserService {
 
   getEvent(_id) {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify({ _id: _id }),
-      };
+      fetchPostOptions.body = JSON.stringify({ _id: _id });
       fetch(
         process.env.REACT_APP_API_SERVER + "/api/event/event/" + _id,
-        options
+        fetchPostOptions
       )
         .then((response) => {
           console.log("fetch then response :", response);
@@ -121,17 +93,10 @@ class UserService {
   }
   getEvents() {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-      };
-      fetch(process.env.REACT_APP_API_SERVER + "/api/event/events", options)
+      fetch(
+        process.env.REACT_APP_API_SERVER + "/api/event/events",
+        fetchPostOptions
+      )
         .then((response) => {
           console.log("fetch then response :", response);
           return response.json();
@@ -157,20 +122,10 @@ class UserService {
   }
   deleteEvent(_id) {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify({ _id: _id }),
-      };
+      fetchPostOptions.body = JSON.stringify({ _id: _id });
       fetch(
         process.env.REACT_APP_API_SERVER + "/api/event/delete-event",
-        options
+        fetchPostOptions
       )
         .then((response) => {
           console.log("fetch then response :", response);
@@ -198,20 +153,10 @@ class UserService {
 
   uploadReportOfEvent(formData) {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          // "Content-Type": "multipart/form-data",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: formData,
-      };
+      fetchPostOptions.body = formData;
       fetch(
         process.env.REACT_APP_API_SERVER + "/api/system/upload-reports",
-        options
+        fetchPostOptions
       )
         .then((response) => {
           console.log("uploadReportOfEvent || fetch then response :", response);

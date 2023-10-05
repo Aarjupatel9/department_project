@@ -270,7 +270,7 @@ export default function Events() {
                       )}
                     </td>
                     <td className="px-6 py-4 dark:text-white dark:bg-gray-700">
-                      {event.isOrganizedByBVM ? "Yse" : "No"}
+                      {event.isOrganizedByBVM ? "Yes" : "No"}
                     </td>
                     <td className="px-6 py-4 bg-gray-100 dark:bg-gray-800">
                       {event.numberOfParticipants}
@@ -293,7 +293,7 @@ export default function Events() {
                         onClick={() => {
                           handelEventDelete(event._id);
                         }}
-                        className="font-medium text-Red-600 dark:text-red-500 hover:underline"
+                        className="font-medium text-red-600 dark:text-red-500 hover:underline"
                       >
                         Delete
                       </div>

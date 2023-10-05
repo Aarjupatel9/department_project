@@ -1,21 +1,13 @@
 import { IEvent } from "../interfaces/interfaces";
 import { handleRejectResponse } from "./systemService";
-const fetchPostOptions = {
-  method: "POST",
-  credentials: "include",
-  headers: {
-    "Content-Type": "application/json;charset=UTF-8",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type,Authorization",
-  },
-};
+import { fetchPostOptions } from "./constants";
+
 class UserService {
-  addPaper(data) {
+  addAchievement(data) {
     return new Promise(function (resolve, reject) {
       fetchPostOptions.body = JSON.stringify(data);
       fetch(
-        process.env.REACT_APP_API_SERVER + "/api/publication/add-publication",
+        process.env.REACT_APP_API_SERVER + "/api/achievement/add-achievement",
         fetchPostOptions
       )
         .then((response) => {
@@ -41,12 +33,12 @@ class UserService {
         });
     });
   }
-  updatePaper(_id, data) {
+  updateAchievement(_id, data) {
     return new Promise(function (resolve, reject) {
       fetchPostOptions.body = JSON.stringify(data);
       fetch(
         process.env.REACT_APP_API_SERVER +
-          "/api/publication/update-publication/" +
+          "/api/achievement/update-achievement/" +
           _id,
         fetchPostOptions
       )
@@ -74,22 +66,12 @@ class UserService {
     });
   }
 
-  getPaper(_id) {
+  getAchievement(_id) {
     return new Promise(function (resolve, reject) {
-      const fetchPostOptions = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify({ _id: _id }),
-      };
+      fetchPostOptions.body = JSON.stringify({_id:_id});
       fetch(
         process.env.REACT_APP_API_SERVER +
-          "/api/publication/publication/" +
+          "/api/achievement/achievement/" +
           _id,
         fetchPostOptions
       )
@@ -116,10 +98,10 @@ class UserService {
         });
     });
   }
-  getPapers() {
+  getAchievements() {
     return new Promise(function (resolve, reject) {
       fetch(
-        process.env.REACT_APP_API_SERVER + "/api/publication/publications",
+        process.env.REACT_APP_API_SERVER + "/api/achievement/achievements",
         fetchPostOptions
       )
         .then((response) => {
@@ -148,13 +130,13 @@ class UserService {
         });
     });
   }
-  deletePaper(_id) {
+  deleteAchievement(_id) {
     return new Promise(function (resolve, reject) {
       fetchPostOptions.body = JSON.stringify({ _id: _id });
 
       fetch(
         process.env.REACT_APP_API_SERVER +
-          "/api/publication/delete-publication/" +
+          "/api/achievement/delete-achievement/" +
           _id,
         fetchPostOptions
       )
