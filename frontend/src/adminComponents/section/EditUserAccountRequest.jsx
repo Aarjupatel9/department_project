@@ -4,7 +4,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { userDetail } from '../../reduxStore/reducers/userDetailSlice';
 import { User } from '../../interfaces/interfaces';
 import { userDetailTemplate, userProfileTemplate } from '../../interfaces/tamplates';
-
+import toast from 'react-hot-toast';
 export default function EditUserAccountRequest() {
   const [searchInput, setSearchInput] = useState("");
   const [newUsers, setNewUsers] = useState([]);
@@ -27,8 +27,10 @@ export default function EditUserAccountRequest() {
 
   useEffect(() => {
     console.log("id : ", id);
+    var dataPromise;
     if (id === "new") {
-      adminService.getNewUserDetails().then((unTypedUsers) => {
+      dataPromise = adminService.getNewUserDetails();
+      dataPromise.then((unTypedUsers) => {
         const users = unTypedUsers;
         console.log("users : ", users);
         const usersWithDefaults = users.map((user) => ({
@@ -40,7 +42,8 @@ export default function EditUserAccountRequest() {
         console.log("error : ", error);
       });
     } else {
-      adminService.getAllUserDetails().then((unTypedUsers) => {
+      dataPromise = adminService.getAllUserDetails();
+      dataPromise.then((unTypedUsers) => {
         const users = unTypedUsers;
         console.log("users : ", users);
         const usersWithDefaults = users.map((user) => ({
@@ -52,6 +55,29 @@ export default function EditUserAccountRequest() {
         console.log("error : ", error);
       });
     }
+
+    toast.promise(
+      dataPromise,
+      {
+        loading: "fetching data",
+        success: (data) => data.message,
+        error: (err) => err,
+      },
+      {
+        style: {
+          minWidth: "250px",
+        },
+        success: {
+          duration: 5,
+          icon: "🔥",
+        },
+        error: {
+          duration: 2000,
+          icon: "🔥",
+        },
+      }
+    );
+
   }, [id]);
 
   function setFilterList(input) {
@@ -79,7 +105,7 @@ export default function EditUserAccountRequest() {
         </div>
       </nav>
       <div className='flex flex-col pt-4 '>
-        <h1 className='mx-auto  text-2xl font-medium text-gray-900 dark:text-white' >Pending Account details</h1>
+        <h1 className='mx-auto  text-2xl font-medium text-gray-900 dark:text-white' >Accounts</h1>
         <div className="mt-4 relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase  dark:text-gray-400">

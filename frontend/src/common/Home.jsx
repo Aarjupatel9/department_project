@@ -1,30 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../reduxStore/hooks";
-import routes from "../services/routes";
+import routes, { HEAD_ROUTES, STD_USER_ROUTES } from "../services/routes";
 import {
   setUserDetail,
   selectUserDetails,
-  userDetailTemplate,
 } from "../reduxStore/reducers/userDetailSlice";
 import { setSystemVariable } from "../reduxStore/reducers/systemVariables.jsx";
+import { selectSystemVariables } from "../reduxStore/reducers/systemVariables.jsx";
 import "../css//Home.css";
 import Navbar from "./Navbar";
 import AdminSidebar from "../adminComponents/Sidebar";
-import Paper from "./Paper";
-import AddPaper from "./AddPaper";
 import Sidebar from "../components/Sidebar";
-import TmpCpm from "./TmpCpm";
-import { UserProfile } from "./UserProfile";
-import EditUserAccountRequest from "../adminComponents/section/EditUserAccountRequest";
-import EditUserAccess from "../adminComponents/section/EditUserAccess";
-import EditUserProfile from "./EditUserProfile";
 import { toast } from "react-hot-toast";
-import { Setting } from "./Setting";
-import Events from "./Events";
-import { selectSystemVariables } from "../reduxStore/reducers/systemVariables.jsx";
-import EmailVerifier from "../components/EmailVerifier";
-import AddEvents from "./AddEvents";
 import { Login } from "./Login";
 import userService from "../services/userService";
 import authService from "../services/authService";
@@ -75,7 +63,6 @@ export default function Home() {
     }
   }, []);
 
-  var userDetailChangedCounter = 0;
   useEffect(() => {
     console.log("userDetails changed : ", userDetail);
     if (userDetail._id == "id") {
@@ -124,23 +111,6 @@ export default function Home() {
 
   return (
     <div className="Home">
-      {/* <Navbar /> */}
-      {/* {
-                routes.map((r) => {
-                    console.log("r: ", r);
-                    console.log("Role: ", userDetail.role);
-                    if (r.role === userDetail.role) {
-                        return r.routes.map((route) => {
-                            return (
-                                <>
-                                    <Route path={route.path} element={route.element} />
-                                </>
-                            )
-                        });
-                    }
-                })
-            } */}
-
       {Object.values(SystemVariables.ROLES).includes(userDetail.role) ? (
         <Navbar />
       ) : (
@@ -156,30 +126,7 @@ export default function Home() {
             <></>
           )}
           <div className="MainComponents dark:bg-gray-600 ">
-            <Routes>
-              {userDetail.isProfile && userDetail.isApproved ? (
-                <>
-                  <Route path="/" element={<TmpCpm />} />
-                  <Route
-                    path="/profile"
-                    element={<UserProfile readOnly={false} />}
-                  />
-                  <Route path="/paper" element={<Paper />} />
-                  <Route path="/addPaper" element={<AddPaper />} />
-                  <Route path="/editPaper/:id" element={<AddPaper />} />
-                  <Route path="/event" element={<Events />} />
-                  <Route path="/addEvent" element={<AddEvents />} />
-                  <Route path="/editEvent/:id" element={<AddEvents />} />
-                </>
-              ) : (
-                <></>
-              )}
-              <Route path="/settings" element={<Setting />} />
-              <Route path="/verifyemail" element={<EmailVerifier />} />
-              <Route path="/editProfile" element={<EditUserProfile />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="*" element={<UserProfile readOnly={false} />} />
-            </Routes>
+            {STD_USER_ROUTES({userDetail})}
           </div>
         </div>
       ) : userDetail.role == SystemVariables.ROLES.HEAD ||
@@ -192,41 +139,7 @@ export default function Home() {
           )}
 
           <div className="MainComponents  dark:bg-gray-600">
-            <Routes>
-              {userDetail.isProfile && userDetail.isApproved ? (
-                <>
-                  <Route path="/" element={<TmpCpm />} />
-                  <Route path="/paper" element={<Paper />} />
-                  <Route path="/addPaper" element={<AddPaper />} />
-                  <Route path="/editPaper/:id" element={<AddPaper />} />
-                  <Route path="/event" element={<Events />} />
-                  <Route path="/addEvent" element={<AddEvents />} />
-                  <Route path="/editEvent/:id" element={<AddEvents />} />
-                  <Route
-                    path="/userAccounts"
-                    element={<EditUserAccountRequest />}
-                  />
-                  <Route
-                    path="/userAccounts/:id"
-                    element={<EditUserAccountRequest />}
-                  />
-                  <Route
-                    path="/editUserAccess/:id"
-                    element={<EditUserAccess />}
-                  />
-                  <Route
-                    path="/profile"
-                    element={<UserProfile readOnly={false} />}
-                  />
-                </>
-              ) : (
-                <></>
-              )}
-              <Route path="/settings" element={<Setting />} />
-              <Route path="/editProfile" element={<EditUserProfile />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="*" element={<UserProfile readOnly={false} />} />
-            </Routes>
+            {HEAD_ROUTES({ userDetail })}
           </div>
         </div>
       ) : (

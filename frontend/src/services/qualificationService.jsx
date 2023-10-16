@@ -10,12 +10,13 @@ const fetchPostOptions = {
     "Access-Control-Allow-Headers": "Content-Type,Authorization",
   },
 };
+
 class UserService {
-  addPaper(data) {
+  addQualification(data) {
     return new Promise(function (resolve, reject) {
       fetchPostOptions.body = JSON.stringify(data);
       fetch(
-        process.env.REACT_APP_API_SERVER + "/api/publication/add-publication",
+        process.env.REACT_APP_API_SERVER + "/api/qualification/add-qualification",
         fetchPostOptions
       )
         .then((response) => {
@@ -41,12 +42,12 @@ class UserService {
         });
     });
   }
-  updatePaper(_id, data) {
+  updateQualification(_id, data) {
     return new Promise(function (resolve, reject) {
       fetchPostOptions.body = JSON.stringify(data);
       fetch(
         process.env.REACT_APP_API_SERVER +
-          "/api/publication/update-publication/" +
+          "/api/qualification/update-qualification/" +
           _id,
         fetchPostOptions
       )
@@ -74,22 +75,12 @@ class UserService {
     });
   }
 
-  getPaper(_id) {
+  getQualification(_id) {
     return new Promise(function (resolve, reject) {
-      const fetchPostOptions = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify({ _id: _id }),
-      };
+      fetchPostOptions.body=JSON.stringify({ _id: _id });
       fetch(
         process.env.REACT_APP_API_SERVER +
-          "/api/publication/publication/" +
+          "/api/qualification/qualification/" +
           _id,
         fetchPostOptions
       )
@@ -116,10 +107,10 @@ class UserService {
         });
     });
   }
-  getPapers() {
+  getQualifications() {
     return new Promise(function (resolve, reject) {
       fetch(
-        process.env.REACT_APP_API_SERVER + "/api/publication/publications",
+        process.env.REACT_APP_API_SERVER + "/api/qualification/qualifications",
         fetchPostOptions
       )
         .then((response) => {
@@ -148,13 +139,13 @@ class UserService {
         });
     });
   }
-  deletePaper(_id) {
+  deleteQualification(_id) {
     return new Promise(function (resolve, reject) {
       fetchPostOptions.body = JSON.stringify({ _id: _id });
 
       fetch(
         process.env.REACT_APP_API_SERVER +
-          "/api/publication/delete-publication/" +
+          "/api/qualification/delete-qualification/" +
           _id,
         fetchPostOptions
       )
@@ -187,7 +178,17 @@ class UserService {
 
   uploadReportOfEvent(formData) {
     return new Promise(function (resolve, reject) {
-      fetchPostOptions.body = formData;
+      const fetchPostOptions = {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          // "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type,Authorization",
+        },
+        body : formData,
+      };
       fetch(
         process.env.REACT_APP_API_SERVER + "/api/system/upload-reports",
         fetchPostOptions

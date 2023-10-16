@@ -5,7 +5,7 @@ const fileUploaderMiddleware = require('../middlewares/fileUploaderMiddleware');
 const { ROLES, AllRoles } = require('../utils/constants')
 const router = express.Router();
 
-router.route("/getAllVariables").post(authenticateRoles(AllRoles), getAllVariables);
+router.route("/getAllVariables").get(getAllVariables);
 
 router.route('/upload-reports')
     .post(

@@ -1,23 +1,25 @@
 import authService from "./authService";
 import { userProfile } from "../reduxStore/reducers/userDetailSlice";
 import { handleRejectResponse } from "./systemService";
+
+const fetchPostOptions = {
+  method: "POST",
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json;charset=UTF-8",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type,Authorization",
+  },
+};
+
 class UserService {
   updateProfile(data) {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify(data),
-      };
+      fetchPostOptions.body = JSON.stringify(data);
       fetch(
         process.env.REACT_APP_API_SERVER + "/api/profile/updateProfile",
-        options
+        fetchPostOptions
       )
         .then((response) => {
           console.log("fetch then response :", response);
@@ -44,20 +46,10 @@ class UserService {
   }
   getUserProfile(_id) {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-        body: JSON.stringify({ _id: _id }),
-      };
+      fetchPostOptions.body = JSON.stringify({ _id: _id });
       fetch(
         process.env.REACT_APP_API_SERVER + "/api/profile/getProfile",
-        options
+        fetchPostOptions
       )
         .then((response) => {
           console.log("fetch then response :", response);
@@ -84,20 +76,20 @@ class UserService {
   }
   uploadUserProfileImage(formData) {
     return new Promise(function (resolve, reject) {
-      const options = {
+      const fetchPostOptions = {
         method: "POST",
         credentials: "include",
         headers: {
-          // "Content-Type": "multipart/form-data",
+          // "Content-Type": "application/json;charset=UTF-8",
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type,Authorization",
         },
-        body: formData,
+        body : formData,
       };
       fetch(
         process.env.REACT_APP_API_SERVER + "/api/profile/upload-Profile-Image",
-        options
+        fetchPostOptions
       )
         .then((response) => {
           console.log(
@@ -128,20 +120,7 @@ class UserService {
 
   getAllVariables() {
     return new Promise(function (resolve, reject) {
-      const options = {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-      };
-      fetch(
-        process.env.REACT_APP_API_SERVER + "/api/system/getAllVariables",
-        options
-      )
+      fetch(process.env.REACT_APP_API_SERVER + "/api/system/getAllVariables")
         .then((response) => {
           console.log("fetch then response :", response);
           return response.json();

@@ -19,7 +19,7 @@ export const userDetailTemplate = {
       employeeId: "",
       aadharNumber: 0,
       panNumber: "",
-      dateOfBirth: new Date(),
+      dateOfBirth: "",
     },
     bankDetails: {
       accNumber: 0,
@@ -35,7 +35,7 @@ export const userDetailTemplate = {
       zip: "",
     },
     experience: 0,
-    joiningDate: new Date(),
+    joiningDate: "",
   };
   export const systemVariablesTemplate = {
     ROLES: {

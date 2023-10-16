@@ -24,7 +24,7 @@ exports.AddQualification = async (req, res) => {
         });
 
         await qualification.save();
-        res.status(200).json({ success: true, qualification });
+        res.status(200).json({ success: true, qualification , message:"qualification successfully added"});
 
 
     } catch (error) {
@@ -44,7 +44,6 @@ exports.GetQualifications = async (req, res) => {
             .populate('userId', 'firstName lastName designation')
             .exec();
 
-       
         res.status(200).json({ success: true, qualifications });
 
     } catch (error) {
@@ -67,7 +66,19 @@ exports.GetQualification = async (req, res) => {
                 .status(200)    
                 .json({ success: false, message: "Qualification details not found." });
         }
-        res.status(200).json({ success: true, qualification });
+
+        console.log("before : ",qualification);
+        const modifiedEvent = {
+            ...qualification._doc, // Copy other fields from the input object
+            certificates: qualification._doc.certificates.map((report) => {
+                const { title, url } = report;
+                return { title, url };
+            }),
+        };
+        console.log("before : ",modifiedEvent);
+
+
+        res.status(200).json({ success: true, qualification :modifiedEvent});
 
     } catch (error) {
         console.log(error);

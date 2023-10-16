@@ -1,9 +1,18 @@
 const joi = require('joi');
-const { QUALIFICATION_TYPE, QUALIFICATION_STATUS } = require('../utils/constants');
 
+const QUALIFICATION_STATUS = {
+    COMPLETED: 'completed',
+    PURSUING: 'pursuing'
+};
+
+const QUALIFICATION_TYPE = {
+    BTECH: "B. tech.",
+    MTECH: "M. tech.",
+    PHD: "PhD"
+}
 
 export const qualificationValidator = joi.object({
-    QUALIFICATION_TYPE: joi.string().valid(...Object.values(QUALIFICATION_TYPE)).required(),
+    qualificationType: joi.string().valid(...Object.values(QUALIFICATION_TYPE)).required(),
     thesisTitle: joi.string().when('QUALIFICATION_TYPE', {
         is: QUALIFICATION_TYPE.PHD,
         then: joi.string().required()
