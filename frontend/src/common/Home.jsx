@@ -126,7 +126,7 @@ export default function Home() {
             <></>
           )}
           <div className="MainComponents dark:bg-gray-600 ">
-            {STD_USER_ROUTES(userDetail)}
+            {STD_USER_ROUTES({userDetail})}
           </div>
         </div>
       ) : userDetail.role == SystemVariables.ROLES.HEAD ||

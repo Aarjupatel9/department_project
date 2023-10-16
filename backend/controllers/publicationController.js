@@ -61,12 +61,20 @@ exports.GetPublication = async (req, res) => {
       .populate("userId", "firstName lastName designation")
       .exec();
 
-    // if (!publication) {
-    //   return res
-    //     .status(404)
-    //     .json({ success: false, message: "Publication details not found." });
-    // }
-    res.status(200).json({ success: true, publication });
+    if (!publication) {
+      return res
+        .status(200)
+        .json({ success: false, message: "Publication details not found." });
+    }
+    const modifiedEvent = {
+      ...publication._doc, // Copy other fields from the input object
+      reports: publication._doc.reports.map((report) => {
+        const { title, url } = report;
+        return { title, url };
+      }),
+    };
+
+    res.status(200).json({ success: true, publication: modifiedEvent });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error." });

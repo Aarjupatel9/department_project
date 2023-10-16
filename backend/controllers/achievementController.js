@@ -44,9 +44,6 @@ exports.GetAchievements = async (req, res) => {
             .populate('userId', 'firstName lastName designation')
             .exec();
 
-        // const achievements = await Achievement.find({ userId: _id });
-
-      
         res.status(200).json({ success: true, achievements });
 
     } catch (error) {
@@ -72,7 +69,15 @@ exports.GetAchievement = async (req, res) => {
                 .status(200)
                 .json({ success: false, message: "Achievement not found." });
         }
-        res.status(200).json({ success: true, achievement });
+
+        const modifiedEvent = {
+            ...achievement._doc, // Copy other fields from the input object
+            certificates: achievement._doc.certificates.map((report) => {
+                const { title, url } = report;
+                return { title, url };
+            }),
+        };
+        res.status(200).json({ success: true, achievement:modifiedEvent });
 
     } catch (error) {
         console.log(error);
@@ -84,30 +89,17 @@ exports.GetAchievement = async (req, res) => {
 exports.EditAchievement = async (req, res) => {
 
     const { error } = achievementValidator.validate(req.body);
-
     if (error) {
         return res
             .status(400)
             .json({ success: false, error: error.details[0].message });
     }
-
     const { _id } = req.user;
     const achievementId = req.params._id
-
-
     const achievementData = req.body;
-
     try {
 
-        // const achievement = await Achievement
-        //     .findOneAndUpdate(
-        //         { _id: achievementId, userId: _id },
-        //         achievementData,
-        //         {
-        //             new: true
-        //         })
-        //     .select("userId achievementType description achievedOn");
-
+      
         const achievement = await Achievement
             .findOneAndUpdate(
                 { _id: achievementId, userId: _id },

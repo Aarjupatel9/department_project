@@ -13,7 +13,7 @@ import userService from "../services/userService";
 import authService from "../services/authService";
 import { defaultUserProfileImage } from "../services/constants";
 import { formatDateToDdMmYyyy } from "../utils/functions";
-
+import toast from "react-hot-toast";
 export const UserProfile = ({ readOnly }) => {
   const userDetail = useAppSelector(selectUserDetails);
 
@@ -26,9 +26,11 @@ export const UserProfile = ({ readOnly }) => {
 
   useEffect(() => {
     console.log("id : ", id);
+    var dataPromise;
     if (id) {
-      userService
-        .getUserProfile(id)
+      dataPromise = userService.getUserProfile(id);
+
+      dataPromise
         .then((unTypedRes) => {
           const res = unTypedRes;
           const userProfile = res.profile;
@@ -41,8 +43,9 @@ export const UserProfile = ({ readOnly }) => {
           console.log("error : ", error);
         });
     } else {
-      userService
-        .getUserProfile(authService.getCurrentUserId())
+      dataPromise = userService.getUserProfile(authService.getCurrentUserId());
+
+      dataPromise
         .then((unTypedRes) => {
           const res = unTypedRes;
           const userProfile = res.profile;
@@ -55,6 +58,27 @@ export const UserProfile = ({ readOnly }) => {
           console.log("error : ", error);
         });
     }
+    toast.promise(
+      dataPromise,
+      {
+        loading: "fetching data",
+        success: (data) => data.message,
+        error: (err) => err,
+      },
+      {
+        style: {
+          minWidth: "250px",
+        },
+        success: {
+          duration: 5,
+          icon: "🔥",
+        },
+        error: {
+          duration: 2000,
+          icon: "🔥",
+        },
+      }
+    );
   }, [id]);
 
   return (

@@ -52,7 +52,13 @@ exports.GetProfile = async (req, res) => {
 
 exports.EditProfile = async (req, res) => {
 
-    const { error } = profileValidator.validate(req.body);
+
+    const tmp = req.body;
+
+    const {profileImage , ...profileData}=tmp;
+
+
+    const { error } = profileValidator.validate(profileData);
 
     if (error) {
         return res
@@ -62,8 +68,7 @@ exports.EditProfile = async (req, res) => {
 
     const _id = req.user;
 
-    const profileData = req.body;
-
+    
     if (req.fileUrls && req.fileUrls.length > 0) {
         profileData.profileImage = req.fileUrls[0];
     }

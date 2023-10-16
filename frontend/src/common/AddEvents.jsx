@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import toast from "react-hot-toast";
 import { selectUserDetails } from "../reduxStore/reducers/userDetailSlice";
 import { selectSystemVariables } from "../reduxStore/reducers/systemVariables.jsx";
@@ -10,6 +10,9 @@ import { IEvent } from "../interfaces/interfaces";
 import { eventDetailValidator } from "../validator/eventValidator";
 import eventService from "../services/eventService";
 import authService from "../services/authService";
+
+import * as pdfjs from "pdfjs-dist/build/pdf";
+import "pdfjs-dist/build/pdf.worker.entry";
 
 export default function AddEvents() {
   const SystemVariables = useAppSelector(selectSystemVariables);
@@ -25,13 +28,13 @@ export default function AddEvents() {
   const [reportFormData, setReportFormData] = useState(null);
 
   const { id } = useParams();
+
   useEffect(() => {
     if (id != undefined) {
       var eventPromise = eventService.getEvent(id);
       eventPromise.then((res) => {
         var resEvent = res.event;
         console.log("getEvent : ", resEvent);
-        // const temp = resEvent.userId._id;
         resEvent.userId = resEvent.userId._id;
 
         setEventDetail(res.event);
@@ -241,9 +244,150 @@ export default function AddEvents() {
     }));
   }, []);
 
+  const handelEventDelete = () => {
+    if (id == undefined) {
+      toast.error("can not delete at this time");
+      return;
+    }
+    const _id = id;
+    const eventPromise = eventService.deleteEvent(_id);
+    eventPromise
+      .then((res) => {
+        console.log("users : ", res);
+        // const tmp = events.filter((event) => {
+        //   if (event._id != _id) {
+        //     return event;
+        //   }
+        // });
+        // setFilteredEvents(tmp);
+        navigate("/event");
+      })
+      .catch((error) => {
+        console.log("error : ", error);
+      });
+
+    toast.promise(
+      eventPromise,
+      {
+        loading: "please wait while we deleting event",
+        success: (data) => data.message,
+        error: (err) => err,
+      },
+      {
+        style: {
+          minWidth: "250px",
+        },
+        success: {
+          duration: 3000,
+          icon: "🔥",
+        },
+        error: {
+          duration: 4000,
+          icon: "🔥",
+        },
+      }
+    );
+  };
+
+  // const [previews, setPreviews] = useState([]);
+
+  // useEffect(() => {
+  //   console.log("eventDetails : ", eventDetail);
+  //   handleFilePreview();
+  // }, [eventDetail]);
+  // const handleFilePreview = () => {
+  //   const fileUrls = eventDetail.reports.map((r) => {
+  //     return r.url;
+  //   });
+
+  //   Promise.all(
+  //     fileUrls.map(async (url) => {
+  //       return new Promise((resolve) => {
+  //         if (url.toLowerCase().endsWith(".pdf")) {
+  //           pdfjs.getDocument(url).promise.then((pdf) => {
+  //             pdf.getPage(1).then((page) => {
+  //               const viewport = page.getViewport({ scale: 0.5 });
+  //               const canvas = document.createElement("canvas");
+  //               const context = canvas.getContext("2d");
+  //               canvas.width = viewport.width;
+  //               canvas.height = viewport.height;
+
+  //               const renderContext = {
+  //                 canvasContext: context,
+  //                 viewport: viewport,
+  //               };
+
+  //               page.render(renderContext).promise.then(() => {
+  //                 resolve(<div key={url}>{canvas}</div>);
+  //               });
+  //             });
+  //           });
+  //         } else if (url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/)) {
+  //           resolve(<img key={url} src={url} alt={url} />);
+  //         } else {
+  //           // Handle other file types or unsupported URLs as needed
+  //           resolve(null);
+  //         }
+  //       });
+  //     })
+  //   ).then((previews) => {
+  //     console.log("previes : ", previews);
+  //     setPreviews(previews.filter((preview) => preview !== null));
+  //   });
+  // };
+
+  const [previews, setPreviews] = useState([]);
+
   useEffect(() => {
-    console.log("eventDetails : ", eventDetail);
-  }, [eventDetail]);
+    const generatePreviews = async () => {
+      const previewElements = await Promise.all(
+        eventDetail.reports.map(async (report, index) => {
+          if (report.url.toLowerCase().endsWith(".pdf")) {
+            const pdf = await pdfjs.getDocument(report.url).promise;
+            const page = await pdf.getPage(1);
+            const viewport = page.getViewport({ scale: 0.3 });
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            const renderContext = {
+              canvasContext: context,
+              viewport: viewport,
+            };
+
+            await page.render(renderContext).promise;
+            const dataUrl = canvas.toDataURL(); // Convert canvas to data URL
+            return (
+              <img
+                className="w-48 h-48"
+                key={index}
+                src={dataUrl}
+                alt={`PDF Preview ${index + 1}`}
+                onClick={() => window.open(report.url, "_blank")}
+              />
+            );
+          } else if (report.url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/)) {
+            return (
+              <img
+                className="w-48 h-48"
+                key={index}
+                src={report.url}
+                alt={report.url}
+                onClick={() => window.open(report.url, "_blank")}
+              />
+            );
+          } else {
+            // Handle other file types or unsupported URLs as needed
+            return null;
+          }
+        })
+      );
+
+      setPreviews(previewElements.filter((preview) => preview !== null));
+    };
+
+    generatePreviews();
+  }, [eventDetail.reports]);
 
   return (
     <div className=" flex flex-col shadow-md sm:rounded-lg">
@@ -384,87 +528,47 @@ export default function AddEvents() {
           </div>
         </div>
 
-        {/* address */}
-        <div className="flex flex-col">
-          <h3 className="mt-4 mx-auto  text-xl font-medium text-gray-900 dark:text-white">
-            address
-          </h3>
-          <hr className="w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700" />
-          <div className="grid md:grid-cols-2 md:gap-6">
-            <div className="relative z-0 w-full mb-6 group">
-              <input
-                onChange={handleInputChange}
-                value={String(eventDetail.address.city)}
-                type="text"
-                name="address.city"
-                id="address.city"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-                required
-              />
-              <label
-                htmlFor="address.city"
-                className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                City
-              </label>
-            </div>
-            <div className="relative z-0 w-full mb-6 group">
-              <input
-                onChange={handleInputChange}
-                value={String(eventDetail.address.state)}
-                type="text"
-                name="address.state"
-                id="address.state"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-                required
-              />
-              <label
-                htmlFor="address.state"
-                className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                State{" "}
-              </label>
-            </div>
+        {/* date */}
+        <div className="mt-10 grid md:grid-cols-2 md:gap-6">
+          <div className="relative z-0 w-full mb-6 group">
+            <input
+              onChange={handleInputChange}
+              value={formatDateToDdMmYyyy(
+                String(eventDetail.eventDate.startDate)
+              )}
+              type="date"
+              name="eventDate.startDate"
+              id="eventDate.startDate"
+              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              required
+            />
+            <label
+              htmlFor="eventDate.startDate"
+              className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >
+              startDate
+            </label>
           </div>
-          <div className="grid md:grid-cols-2 md:gap-6">
-            <div className="relative z-0 w-full mb-6 group">
-              <input
-                onChange={handleInputChange}
-                value={String(eventDetail.address.country)}
-                type="text"
-                name="address.country"
-                id="address.country"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-                required
-              />
-              <label
-                htmlFor="address.country"
-                className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                country
-              </label>
-            </div>
-            <div className="relative z-0 w-full mb-6 group">
-              <input
-                onChange={handleInputChange}
-                value={String(eventDetail.address.zip)}
-                type="tel"
-                name="address.zip"
-                id="address.zip"
-                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-                required
-              />
-              <label
-                htmlFor="address.zip"
-                className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                zip Code{" "}
-              </label>
-            </div>
+          <div className="relative z-0 w-full mb-6 group">
+            <input
+              onChange={handleInputChange}
+              value={formatDateToDdMmYyyy(
+                String(eventDetail.eventDate.endDate)
+              )}
+              type="date"
+              name="eventDate.endDate"
+              id="eventDate.endDate"
+              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              required
+            />
+            <label
+              htmlFor="eventDate.endDate"
+              className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >
+              endDate
+            </label>
           </div>
         </div>
 
@@ -558,6 +662,90 @@ export default function AddEvents() {
           </div>
         </div>
 
+        {/* address */}
+        <div className="flex flex-col">
+          <h3 className="mt-4 mx-auto  text-xl font-medium text-gray-900 dark:text-white">
+            address
+          </h3>
+          <hr className="w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700" />
+          <div className="grid md:grid-cols-2 md:gap-6">
+            <div className="relative z-0 w-full mb-6 group">
+              <input
+                onChange={handleInputChange}
+                value={String(eventDetail.address.city)}
+                type="text"
+                name="address.city"
+                id="address.city"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+              />
+              <label
+                htmlFor="address.city"
+                className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >
+                City
+              </label>
+            </div>
+            <div className="relative z-0 w-full mb-6 group">
+              <input
+                onChange={handleInputChange}
+                value={String(eventDetail.address.state)}
+                type="text"
+                name="address.state"
+                id="address.state"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+              />
+              <label
+                htmlFor="address.state"
+                className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >
+                State{" "}
+              </label>
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 md:gap-6">
+            <div className="relative z-0 w-full mb-6 group">
+              <input
+                onChange={handleInputChange}
+                value={String(eventDetail.address.country)}
+                type="text"
+                name="address.country"
+                id="address.country"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+              />
+              <label
+                htmlFor="address.country"
+                className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >
+                country
+              </label>
+            </div>
+            <div className="relative z-0 w-full mb-6 group">
+              <input
+                onChange={handleInputChange}
+                value={String(eventDetail.address.zip)}
+                type="tel"
+                name="address.zip"
+                id="address.zip"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+              />
+              <label
+                htmlFor="address.zip"
+                className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >
+                zip Code{" "}
+              </label>
+            </div>
+          </div>
+        </div>
+
         {/* reports */}
         <div className="flex flex-col">
           <h3 className="mt-4 mx-auto  text-xl font-medium text-gray-900 dark:text-white">
@@ -599,16 +787,16 @@ export default function AddEvents() {
                 Add{" "}
               </button>
             </div>
-            <div className="w-full flex flex-col ">
-              {eventDetail.reports.map((report, index) => (
+            <div className="w-full flex flex-row  space-x-5 ">
+              {previews.map((preview, index) => (
                 <div
                   key={index}
-                  className="text-sm text-gray-900 dark:text-white"
+                  className="flex flex-col space-y-2 border-2 border-gray-200 dark:border-white-200 text-sm text-gray-900 dark:text-white"
                 >
-                  {index + 1}) title : {report.title} fileName : {report.url}
+                  <div className="cursor-pointer ">{preview}</div>
                   <button
                     onClick={() => handleRemoveReport(index)}
-                    className="ml-2 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
+                    className="bg-red-100   border-2 border-gray-200 dark:border-white-200 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
                   >
                     Remove
                   </button>
@@ -618,56 +806,23 @@ export default function AddEvents() {
           </div>
         </div>
 
-        <div className="mt-10 grid md:grid-cols-2 md:gap-6">
-          <div className="relative z-0 w-full mb-6 group">
-            <input
-              onChange={handleInputChange}
-              value={formatDateToDdMmYyyy(
-                String(eventDetail.eventDate.startDate)
-              )}
-              type="date"
-              name="eventDate.startDate"
-              id="eventDate.startDate"
-              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-            />
-            <label
-              htmlFor="eventDate.startDate"
-              className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              startDate
-            </label>
-          </div>
-          <div className="relative z-0 w-full mb-6 group">
-            <input
-              onChange={handleInputChange}
-              value={formatDateToDdMmYyyy(
-                String(eventDetail.eventDate.endDate)
-              )}
-              type="date"
-              name="eventDate.endDate"
-              id="eventDate.endDate"
-              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              required
-            />
-            <label
-              htmlFor="eventDate.endDate"
-              className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              endDate
-            </label>
-          </div>
+        <div className="flex flex-row justify-center space-x-5">
+          <button
+            type="button"
+            onClick={handelEventAdd}
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Save
+          </button>
+          <button
+            className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:text-red-500 dark:hover:bg-red-700 dark:focus:ring-red-800"
+            onClick={() => {
+              handelEventDelete();
+            }}
+          >
+            Delete
+          </button>
         </div>
-
-        <button
-          type="button"
-          onClick={handelEventAdd}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Save
-        </button>
       </div>
     </div>
   );

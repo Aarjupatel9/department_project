@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { IEvent } from "../interfaces/interfaces";
-
 import { Link } from "react-router-dom";
 import adminService from "../services/adminService";
 import eventService from "../services/eventService";
 import toast from "react-hot-toast";
+import { formatDateToDdMmYyyy } from "../utils/functions";
+import { getDocumentImagePreview } from "../utils/functions";
+import "pdfjs-dist/build/pdf.worker.entry";
 
 export default function Events() {
   const [searchInput, setSearchInput] = useState("");
@@ -60,52 +61,7 @@ export default function Events() {
     setFilteredEvents(tmp);
   }
 
-  function formatDateToDdMmYyyy(inputDateString) {
-    const date = new Date(inputDateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${year}-${month}-${day}`;
-  }
-
-  const handelEventDelete = (_id) => {
-    const eventPromise = eventService.deleteEvent(_id);
-    eventPromise
-      .then((res) => {
-        console.log("users : ", res);
-        const tmp = events.filter((event) => {
-          if (event._id != _id) {
-            return event;
-          }
-        });
-        setFilteredEvents(tmp);
-      })
-      .catch((error) => {
-        console.log("error : ", error);
-      });
-
-    toast.promise(
-      eventPromise,
-      {
-        loading: "please wait while we deleting event",
-        success: (data) => data.message,
-        error: (err) => err,
-      },
-      {
-        style: {
-          minWidth: "250px",
-        },
-        success: {
-          duration: 3000,
-          icon: "🔥",
-        },
-        error: {
-          duration: 4000,
-          icon: "🔥",
-        },
-      }
-    );
-  };
+  const [hoveredPreview, setHoveredPreview] = useState(null);
 
   return (
     <div>
@@ -203,13 +159,13 @@ export default function Events() {
                   scope="col"
                   className="px-6 py-3 bg-gray-100 dark:bg-gray-800"
                 >
-                  Event Title
+                  Event
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 dark:text-white dark:bg-gray-700"
                 >
-                  organizedUnder
+                  organizer
                 </th>
                 <th
                   scope="col"
@@ -221,7 +177,7 @@ export default function Events() {
                   scope="col"
                   className="px-6 py-3 dark:text-white dark:bg-gray-700"
                 >
-                  Organized under bvm
+                  Experts
                 </th>
                 <th
                   scope="col"
@@ -232,19 +188,20 @@ export default function Events() {
                 <th
                   scope="col"
                   className="px-6 py-3 dark:text-white dark:bg-gray-700"
-                >totalExpenses
+                >
+                  Expenses
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 bg-gray-100 dark:bg-gray-800"
                 >
-                  <span className="sr-only">Edit</span>
+                  Reports
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 dark:text-white  dark:bg-gray-700"
+                  className="px-6 py-3 dark:text-white dark:bg-gray-700"
                 >
-                  <span className="sr-only">Delete</span>
+                  <span className="sr-only">Edit</span>
                 </th>
               </tr>
             </thead>
@@ -270,7 +227,15 @@ export default function Events() {
                       )}
                     </td>
                     <td className="px-6 py-4 dark:text-white dark:bg-gray-700">
-                      {event.isOrganizedByBVM ? "Yes" : "No"}
+                      <ul>
+                        {event.experts ? (
+                          event.experts.map((report) => {
+                            return <li className="list-disc">{report}</li>;
+                          })
+                        ) : (
+                          <></>
+                        )}
+                      </ul>
                     </td>
                     <td className="px-6 py-4 bg-gray-100 dark:bg-gray-800">
                       {event.numberOfParticipants}
@@ -278,7 +243,45 @@ export default function Events() {
                     <td className="px-6 py-4 dark:text-white dark:bg-gray-700">
                       {event.totalExpenses}
                     </td>
-                    <td className="px-6 py-4 text-right dark:text-white bg-gray-100 dark:bg-gray-800">
+                    <td className="px-6 py-4 text-center dark:text-white bg-gray-100 dark:bg-gray-800">
+                      <ul>
+                        {event.reports ? (
+                          event.reports.map((report, index) => {
+                            return (
+                              <li className="list-disc">
+                                {/* <a
+                                  className=" border-blue-500 hover:border-b-2  "
+                                  target="_blank"
+                                  href={report.url}
+                                >
+                                  {report.title}
+                                </a> */}
+
+                                <div
+                                  key={index}
+                                  className="text-sm text-gray-900 dark:text-white relative"
+                                  onMouseEnter={() =>
+                                    getDocumentImagePreview(
+                                      report.url,
+                                      setHoveredPreview
+                                    )
+                                  }
+                                  onMouseLeave={() => setHoveredPreview(null)}
+                                >
+                                  <div className="myImageHove w-48 h-48 absolute left-[-300px] ">
+                                    {hoveredPreview}
+                                  </div>
+                                  {report.title}{" "}
+                                </div>
+                              </li>
+                            );
+                          })
+                        ) : (
+                          <></>
+                        )}
+                      </ul>
+                    </td>
+                    <td className="px-6 py-4 text-right dark:text-white dark:bg-gray-700">
                       <div
                         onClick={() => {
                           navigate("/editEvent/" + event._id);
@@ -286,16 +289,6 @@ export default function Events() {
                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                       >
                         Edit
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right dark:text-white dark:bg-gray-700">
-                      <div
-                        onClick={() => {
-                          handelEventDelete(event._id);
-                        }}
-                        className="font-medium text-red-600 dark:text-red-500 hover:underline"
-                      >
-                        Delete
                       </div>
                     </td>
                   </tr>

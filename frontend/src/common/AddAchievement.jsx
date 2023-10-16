@@ -39,6 +39,28 @@ const AddAchievement = () => {
 
         setAchievementInit(achievementData);
       });
+      toast.promise(
+        eventPromise,
+        {
+          loading: "fetching data",
+          success: (data) =>
+            data.message ? data.message : "fecthed",
+          error: (err) => err,
+        },
+        {
+          style: {
+            minWidth: "250px",
+          },
+          success: {
+            duration: 1,
+            icon: "🔥",
+          },
+          error: {
+            duration: 2000,
+            icon: "🔥",
+          },
+        }
+      );
     }
   }, [id]);
 
@@ -71,11 +93,11 @@ const AddAchievement = () => {
             minWidth: "250px",
           },
           success: {
-            duration: 5000,
+            duration: 2000,
             icon: "🔥",
           },
           error: {
-            duration: 5000,
+            duration: 3000,
             icon: "🔥",
           },
         }
@@ -101,11 +123,11 @@ const AddAchievement = () => {
             minWidth: "250px",
           },
           success: {
-            duration: 5000,
+            duration: 2000,
             icon: "🔥",
           },
           error: {
-            duration: 5000,
+            duration: 3000,
             icon: "🔥",
           },
         }
@@ -185,7 +207,7 @@ const AddAchievement = () => {
     <>
       <div className="flex flex-col shadow-md sm:rounded-lg">
         <h1 className="text-3xl  mx-auto  text-gray-900 font-bold dark:text-white">
-          Add Your Achievement
+          Achievement
         </h1>
         <hr className="mt-2" />
         <Formik
@@ -301,13 +323,20 @@ const AddAchievement = () => {
                         {reports.map((report, index) => (
                           <div
                             key={index}
-                            className="text-sm text-gray-900 dark:text-white"
+                            className="text-medium text-gray-900 dark:text-white"
                           >
-                            {index + 1}) title : {report.title} fileName :{" "}
-                            {report.url}
+                            {index + 1}) title :{" "}
+                            <a
+                              className=" border-blue-500 hover:border-b-2  "
+                              target="_blank"
+                              href={report.url}
+                            >
+                              {" "}
+                              {report.title}
+                            </a>
                             <button
                               onClick={() => handleRemoveReport(index)}
-                              className="ml-2 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
+                              className="ml-10 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
                             >
                               Remove
                             </button>

@@ -2,7 +2,16 @@ import authService from "./authService";
 import { userProfile } from "../reduxStore/reducers/userDetailSlice";
 import { handleRejectResponse } from "./systemService";
 
-import { fetchPostOptions } from "./constants";
+const fetchPostOptions = {
+  method: "POST",
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json;charset=UTF-8",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type,Authorization",
+  },
+};
 
 class UserService {
   updateProfile(data) {
@@ -67,7 +76,17 @@ class UserService {
   }
   uploadUserProfileImage(formData) {
     return new Promise(function (resolve, reject) {
-      fetchPostOptions.body = formData;
+      const fetchPostOptions = {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          // "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type,Authorization",
+        },
+        body : formData,
+      };
       fetch(
         process.env.REACT_APP_API_SERVER + "/api/profile/upload-Profile-Image",
         fetchPostOptions

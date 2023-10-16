@@ -1,6 +1,15 @@
 import { IEvent } from "../interfaces/interfaces";
 import { handleRejectResponse } from "./systemService";
-import { fetchPostOptions } from "./constants";
+const fetchPostOptions = {
+  method: "POST",
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json;charset=UTF-8",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type,Authorization",
+  },
+};
 
 class UserService {
   addAchievement(data) {
@@ -169,7 +178,17 @@ class UserService {
 
   uploadReportOfEvent(formData) {
     return new Promise(function (resolve, reject) {
-      fetchPostOptions.body = formData;
+      const fetchPostOptions = {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          // "Content-Type": "application/json;charset=UTF-8",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Method": "GET,POST,PUT,DELETE,OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type,Authorization",
+        },
+        body : formData,
+      };
       fetch(
         process.env.REACT_APP_API_SERVER + "/api/system/upload-reports",
         fetchPostOptions

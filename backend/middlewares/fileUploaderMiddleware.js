@@ -33,7 +33,7 @@ const fileUploaderMiddleware = (fileType, fieldName, maxCount) => {
         }
     });
 
-    const upload = multer({ storage });
+    const upload = multer({ storage,limits: { fileSize: 10 * 1024 * 1024 } });
 
     return (req, res, next) => {    
 

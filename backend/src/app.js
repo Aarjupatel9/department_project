@@ -5,7 +5,6 @@ const logger = require('morgan');
 const path = require('path');
 require("dotenv").config();
 
-
 // routes
 const authRoute = require('../routes/authRoute');
 const userRoute = require('../routes/userRoute');
@@ -28,7 +27,7 @@ app.use(cors({
 
 app.use(logger("dev")); // for logs 
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true}));
 app.use(express.json());
 
 // Serve static files from the 'uploads' folder -- temporary
@@ -70,7 +69,7 @@ app.get('*', (req, res) => {
 })
 
 app.use((err, req, res, next) => {
-    console.log(err);
+    console.log("errr " ,err);
     if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
         return res.status(400).json({ message: 'Invalid JSON payload' });
     }

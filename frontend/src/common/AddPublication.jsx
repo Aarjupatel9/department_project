@@ -40,7 +40,7 @@ const AddPublication = () => {
           publicationData.publicationDate.toString()
         );
         setPublicationType(publicationData.publicationType);
-
+        setReports(publicationData.reports)
         setPublicationInit(publicationData);
         // setFieldValue("title",res.event.title);
         // setEventDetail(res.event);
@@ -566,6 +566,7 @@ const AddPublication = () => {
                         </div>
 
                         <button
+                          type="button"
                           onClick={handleAddReport}
                           className=" right-2 h-10 p-2 rounded-lg focus:bg-gray-300 text-blue-700 dark:text-blue-500 hover:text-blue-900 dark:hover:text-blue-700 focus:outline-none"
                         >
@@ -578,8 +579,17 @@ const AddPublication = () => {
                             key={index}
                             className="text-sm text-gray-900 dark:text-white"
                           >
-                            {index + 1}) title : {report.title} fileName :{" "}
-                            {report.url}
+                            {/* {index + 1}) title : {report.title} fileName :{" "} */}
+                            {index + 1}) title :{" "}
+                            <a
+                              className=" border-blue-500 hover:border-b-2  "
+                              target="_blank"
+                              href={report.url}
+                            >
+                            
+                              {report.title}
+                            </a>
+                       
                             <button
                               onClick={() => handleRemoveReport(index)}
                               className="ml-2 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"

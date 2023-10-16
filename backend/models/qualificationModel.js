@@ -35,8 +35,8 @@ const qualificationSchema = mongoose.Schema({
     completionYear: {
         type: Number,
         required: true, 
-        min: 1,
-        max: 10
+        min:1900,
+        max:new Date().getFullYear(),
     },
     certificates: [{
         title: {

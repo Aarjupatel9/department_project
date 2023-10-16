@@ -30,12 +30,13 @@ const AddQualification = () => {
   useEffect(() => {
     if (id != undefined) {
       var eventPromise = qualificationService.getQualification(id);
-      eventPromise.then((res) => {
+      eventPromise.then(async (res) => {
         var qualificationData = res.qualification;
         console.log("useEffect qualificationData : ", qualificationData);
 
         qualificationData.userId = qualificationData.userId._id;
 
+        setReports(qualificationData.certificates);
         setQualificationInit(qualificationData);
       });
     }
@@ -43,7 +44,6 @@ const AddQualification = () => {
 
   function HandleAddQualification(values) {
     values.certificates = reports;
-    // values.userId = authService.getCurrentUserId();
     const { _id, __v, userId, ...data } = values;
     console.log("Values: ", values);
 
@@ -82,7 +82,7 @@ const AddQualification = () => {
         .then((res) => {
           console.log("res: ", res);
           //   toast.success("qualification is added");
-          navigate("/qualification")
+          navigate("/qualification");
         })
         .catch((error) => {
           //   toast.error("qualification is not added");
@@ -117,9 +117,8 @@ const AddQualification = () => {
           setQualificationInit({
             status: SystemVariables.QUALIFICATION_STATUS.COMPLETED,
             qualificationType: SystemVariables.QUALIFICATION_TYPE.BTECH,
-          })
-          navigate("/qualification")
-
+          });
+          navigate("/qualification");
         })
         .catch((error) => {
           //   toast.error("qualification is not added");
@@ -193,7 +192,7 @@ const AddQualification = () => {
     <>
       <div className="flex flex-col shadow-md sm:rounded-lg">
         <h1 className="text-3xl  mx-auto  text-gray-900 font-bold dark:text-white">
-          Add Your Qualification
+          Qualification
         </h1>
         <hr className="mt-2" />
         <Formik
@@ -346,7 +345,7 @@ const AddQualification = () => {
                   {/* certificates */}
                   <div className="flex flex-col">
                     <h3 className="mt-4 mx-auto  text-xl font-bold text-gray-900 dark:text-white">
-                      Upload Qualification
+                      Upload Certificates
                     </h3>
                     <hr className="w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700" />
                     <div className="my-6 mx-10 mb-4 px-10 w-full">
@@ -360,7 +359,7 @@ const AddQualification = () => {
                               name="report.title"
                               id="report.title"
                               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                              placeholder="Enter Qulification's Title"
+                              placeholder="Enter Certificates's name"
                             />
                           </div>
                           <div className=" z-0 w-full mb-6 group">
@@ -377,6 +376,7 @@ const AddQualification = () => {
                         </div>
 
                         <button
+                          type="button"
                           onClick={handleAddReport}
                           className=" right-2 h-10 p-2 rounded-lg focus:bg-gray-300 text-blue-700 dark:text-blue-500 hover:text-blue-900 dark:hover:text-blue-700 focus:outline-none"
                         >
@@ -389,8 +389,14 @@ const AddQualification = () => {
                             key={index}
                             className="text-sm text-gray-900 dark:text-white"
                           >
-                            {index + 1}) title : {report.title} fileName :{" "}
-                            {report.url}
+                            {index + 1}) title :{" "}
+                            <a
+                              className=" border-blue-500 hover:border-b-2  "
+                              target="_blank"
+                              href={report.url}
+                            >
+                              {report.title}
+                            </a>
                             <button
                               onClick={() => handleRemoveReport(index)}
                               className="ml-2 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"

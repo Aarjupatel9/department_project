@@ -238,6 +238,7 @@ const Achievement = () => {
                           <a
                             className="hover:text-blue-500 border-0 hover:border-b-2 border-blue-500 dark:border-blue-500"
                             href={achievement.certificates[0].url}
+                            target="_blank"
                           >
                             {achievement.certificates[0].title}
                           </a>
