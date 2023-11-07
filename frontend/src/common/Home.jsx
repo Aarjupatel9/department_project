@@ -125,7 +125,7 @@ export default function Home() {
           ) : (
             <></>
           )}
-          <div className="MainComponents dark:bg-gray-600 ">
+          <div id="MainComponents" className="MainComponents dark:bg-gray-600 ">
             {STD_USER_ROUTES({userDetail})}
           </div>
         </div>
@@ -138,7 +138,7 @@ export default function Home() {
             <></>
           )}
 
-          <div className="MainComponents  dark:bg-gray-600">
+          <div id="MainComponents" className="MainComponents  dark:bg-gray-600">
             {HEAD_ROUTES({ userDetail })}
           </div>
         </div>

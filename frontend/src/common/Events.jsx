@@ -11,6 +11,7 @@ import "pdfjs-dist/build/pdf.worker.entry";
 export default function Events() {
   const [searchInput, setSearchInput] = useState("");
   const [events, setEvents] = useState([]);
+  const [previewIndex, setPreviewIndex] = useState(-1);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
@@ -148,8 +149,8 @@ export default function Events() {
       </nav>
 
       <div className="flex flex-col pt-4 ">
-        <h1 className="mx-auto  text-2xl font-medium text-gray-900 dark:text-white">
-          Event Details
+        <h1 className="mx-auto text-2xl font-bold text-gray-900 dark:text-white">
+          Events
         </h1>
         <div className="mt-4 relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -206,7 +207,7 @@ export default function Events() {
               </tr>
             </thead>
             <tbody className="">
-              {filteredEvents.map((event) => {
+              {filteredEvents.map((event, index) => {
                 return (
                   <tr
                     key={event._id.toString()}
@@ -214,9 +215,16 @@ export default function Events() {
                   >
                     <th
                       scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800"
-                    >
-                      {event.title}
+                      className="px-6 py-4 font-bold text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800"
+                     >
+                      <div
+                        className=" cursor-pointer text-lg  hover:underline"
+                        onClick={() => {
+                          navigate("/eventview/" + event._id);
+                        }}
+                      >
+                        {event.title}
+                      </div>
                     </th>
                     <td className="px-6 py-4 dark:text-white dark:bg-gray-700">
                       {event.organizedUnder}
@@ -246,32 +254,38 @@ export default function Events() {
                     <td className="px-6 py-4 text-center dark:text-white bg-gray-100 dark:bg-gray-800">
                       <ul>
                         {event.reports ? (
-                          event.reports.map((report, index) => {
+                          event.reports.map((report, childIndex) => {
                             return (
                               <li className="list-disc">
-                                {/* <a
-                                  className=" border-blue-500 hover:border-b-2  "
-                                  target="_blank"
-                                  href={report.url}
-                                >
-                                  {report.title}
-                                </a> */}
-
                                 <div
-                                  key={index}
-                                  className="text-sm text-gray-900 dark:text-white relative"
-                                  onMouseEnter={() =>
+                                  key={childIndex}
+                                  className="cursor-pointer text-sm  text-gray-900 dark:text-white relative"
+                                  onMouseEnter={() => {
+                                    setPreviewIndex(index * 100 + childIndex);
                                     getDocumentImagePreview(
                                       report.url,
                                       setHoveredPreview
-                                    )
-                                  }
-                                  onMouseLeave={() => setHoveredPreview(null)}
+                                    );
+                                  }}
+                                  onMouseLeave={() => {
+                                    setPreviewIndex(-1);
+                                    setHoveredPreview(null);
+                                  }}
                                 >
-                                  <div className="myImageHove w-48 h-48 absolute left-[-300px] ">
-                                    {hoveredPreview}
-                                  </div>
-                                  {report.title}{" "}
+                                  {previewIndex == index * 100 + childIndex ? (
+                                    <div className="myImageHover zindex100 w-48 h-48 absolute top-[-100px] left-[-300px]  border-2 border-gray-900 ">
+                                      {hoveredPreview}
+                                    </div>
+                                  ) : (
+                                    <></>
+                                  )}
+                                  <a
+                                    className=" border-blue-500 hover:border-b-2  "
+                                    target="_blank"
+                                    href={report.url}
+                                  >
+                                    {report.title}
+                                  </a>
                                 </div>
                               </li>
                             );
@@ -286,7 +300,7 @@ export default function Events() {
                         onClick={() => {
                           navigate("/editEvent/" + event._id);
                         }}
-                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                        className="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline"
                       >
                         Edit
                       </div>

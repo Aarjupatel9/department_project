@@ -158,6 +158,7 @@ export default function EditUserProfile() {
             // dispatch(setUserDetail((prevData) => ({ ...prevData, profileImage: url })));
 
         }).catch((error) => {
+            console.log("image upload error : ", error);
         })
         toast.promise(
             imagePromise,

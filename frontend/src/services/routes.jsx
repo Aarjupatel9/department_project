@@ -17,228 +17,34 @@ import Qualification from "../common/Qualification";
 import Achievement from "../common/Achievement";
 import AddAchievement from "../common/AddAchievement";
 import { Login } from "../common/Login";
-// const ROLES = {
-//   HEAD: "head",
-//   SYSTEM_COORDINATOR: "system coordinator",
-//   STAFF: "staff",
-//   STD_USER: "standard user",
-// };
-// const routes = [
-//   {
-//     role: ROLES.HEAD,
-//     routes: [
-//       {
-//         path: "/",
-//         element: "<TmpCpm/>",
-//       },
-//       {
-//         path: "/qualification",
-//         element: "<Qualification/>",
-//       },
-//       {
-//         path: "/addQualification",
-//         element: "<AddQualification/>",
-//       },
-//       {
-//         path: "/editQualification/:id",
-//         element: "<AddQualification/>",
-//       },
-
-//       {
-//         path: "/achievement",
-//         element: "<Achievement/>",
-//       },
-//       {
-//         path: "/addAchievement",
-//         element: "<AddAchievement/>",
-//       },
-//       {
-//         path: "/editAchievement/:id",
-//         element: "AddAchievement/>",
-//       },
-
-//       {
-//         path: "/publication",
-//         element: "<Publication/>",
-//       },
-//       {
-//         path: "/addPublication",
-//         element: "<AddPublication/>",
-//       },
-//       {
-//         path: "/editPublication/:id",
-//         element: "AddPublication/>",
-//       },
-
-//       {
-//         path: "/event",
-//         element: "<Event/>",
-//       },
-//       {
-//         path: "/addEvent",
-//         element: "<AddEvent/>",
-//       },
-//       {
-//         path: "/editEvent/:id",
-//         element: "AddEvent/>",
-//       },
-
-//       {
-//         path: "/userAccounts",
-//         element: "<EditUserAccountRequest/>",
-//       },
-//       {
-//         path: "/userAccounts/:id",
-//         element: "<EditUserAccountRequest/>",
-//       },
-//       {
-//         path: "/editUserAccess/:id",
-//         element: "<EditUserAccess/>",
-//       },
-//       {
-//         path: "profile",
-//         element: "<UserProfile/>",
-//         readOnly: false,
-//       },
-//       {
-//         path: "/settings",
-//         element: "<Setting/>",
-//       },
-//       {
-//         path: "/editprofile",
-//         element: "<EditUserProfile/>",
-//       },
-//       {
-//         path: "/login",
-//         element: "<Login/>",
-//       },
-//       {
-//         path: "*",
-//         element: "<EditUserProfile/>",
-//         readOnly: false,
-//       },
-//     ],
-//   },
-//   {
-//     role: ROLES.STAFF,
-//     routes: [
-//       {
-//         path: "/",
-//         element: "<TmpCpm/>",
-//       },
-//       {
-//         path: "/profile",
-//         element: "<UserProfile/>",
-//       },
-//       {
-//         path: "/event",
-//         element: "<Events/>",
-//       },
-//       {
-//         path: "/addevent",
-//         element: "<AddEvents/>",
-//       },
-//       {
-//         path: "/settings",
-//         element: "<Setting/>",
-//       },
-//       {
-//         path: "/editprofile",
-//         element: "<EditUserProfile/>",
-//       },
-//     ],
-//   },
-//   {
-//     role: ROLES.SYSTEM_COORDINATOR,
-//     routes: [
-//       {
-//         path: "/",
-//         element: "<TmpCpm/>",
-//       },
-//       {
-//         path: "/event",
-//         element: "<Event/>",
-//       },
-//       {
-//         path: "/addevent",
-//         element: "<AddEvent/>",
-//       },
-//       {
-//         path: "/userAccounts",
-//         element: "<EditUserAccountRequest/>",
-//       },
-//       {
-//         path: "/userAccounts/:id",
-//         element: "<EditUserAccountRequest/>",
-//       },
-//       {
-//         path: "/editUserAccess/:id",
-//         element: "<EditUserAccess/>",
-//       },
-//       {
-//         path: "profile",
-//         element: "<UserProfile/>",
-//       },
-//       {
-//         path: "/settings",
-//         element: "<Setting/>",
-//       },
-//       {
-//         path: "/editprofile",
-//         element: "<EditUserProfile/>",
-//       },
-//     ],
-//   },
-//   {
-//     role: ROLES.STD_USER,
-//     routes: [
-//       {
-//         path: "/",
-//         element: "<TmpCpm/>",
-//       },
-//       {
-//         path: "/profile",
-//         element: "<UserProfile/>",
-//       },
-//       {
-//         path: "/event",
-//         element: "<Events/>",
-//       },
-//       {
-//         path: "/addevent",
-//         element: "<AddEvents/>",
-//       },
-//       {
-//         path: "/settings",
-//         element: "<Setting/>",
-//       },
-//       {
-//         path: "/editprofile",
-//         element: "<EditUserProfile/>",
-//       },
-//     ],
-//   },
-// ];
-
-
-
-
+import NormalEventView from "../common/NormalEventView";
+import NormalQualificationView from "../common/NormalQualificationView";
+import NormalAchievementView from "../common/NormalAchievementView";
+import NormalPublicationView from "../common/NormalPublicationView";
+import GenerateReport from "../adminComponents/GenerateReport";
+import SystemCoordinatorEventView from "../adminComponents/SystemCoordinatorEventView";
 
 const commonRoutes = (
   <>
     <Route path="/qualification" element={<Qualification />} />
     <Route path="/addQualification" element={<AddQualification />} />
     <Route path="/editQualification/:id" element={<AddQualification />} />
+    <Route path="/qualificationview/:id" element={<NormalQualificationView />} />
+
     <Route path="/achievement" element={<Achievement />} />
     <Route path="/addAchievement" element={<AddAchievement />} />
     <Route path="/editAchievement/:id" element={<AddAchievement />} />
+    <Route path="/achievementview/:id" element={<NormalAchievementView />} />
 
     <Route path="/publication" element={<Publication />} />
     <Route path="/addPublication" element={<AddPublication />} />
     <Route path="/editPublication/:id" element={<AddPublication />} />
+    <Route path="/publicationview/:id" element={<NormalPublicationView />} />
+    
     <Route path="/event" element={<Events />} />
     <Route path="/addEvent" element={<AddEvents />} />
     <Route path="/editEvent/:id" element={<AddEvents />} />
+    <Route path="/eventview/:id" element={<NormalEventView />} />
   </>
 );
 export const HEAD_ROUTES = (props) => {
@@ -261,7 +67,12 @@ export const HEAD_ROUTES = (props) => {
         ) : (
           <></>
         )}
-        \
+        
+        <Route path="/generateReport" element={<GenerateReport />} /> //new
+        <Route path="/systemCoordinatorEventView" element={<SystemCoordinatorEventView />} />
+
+
+
         <Route path="/profile" element={<UserProfile readOnly={false} />} />
         <Route path="/settings" element={<Setting />} />
         <Route path="/editProfile" element={<EditUserProfile />} />

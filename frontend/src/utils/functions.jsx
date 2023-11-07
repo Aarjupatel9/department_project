@@ -27,11 +27,11 @@ export async function getDocumentImagePreview(url, setHoveredPreview) {
     await page.render(renderContext).promise;
     const dataUrl = canvas.toDataURL();
     setHoveredPreview(
-      <img className="w-48 h-48 myImageHove" src={dataUrl} alt="PDF Preview" />
+      <img className="w-48 h-48 myImageHover" src={dataUrl} alt="PDF Preview" />
     );
   } else if (url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/)) {
     setHoveredPreview(
-      <img className="w-48 h-48 myImageHove" src={url} alt="Image Preview" />
+      <img className="w-48 h-48 myImageHover" src={url} alt="Image Preview" />
     );
   } else {
     // Handle other file types or unsupported URLs as needed
