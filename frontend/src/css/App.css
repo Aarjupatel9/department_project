@@ -38,6 +38,9 @@
   }
 }
 
-.myImageHove{
-  object-fit: cover;
+.myImageHover{
+  object-fit: fill;
+}
+.zindex100{
+  z-index: 100;
 }
