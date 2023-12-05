@@ -16,6 +16,7 @@ const publicationRoute = require("../routes/publicationRoute");
 
 const achievementRoute = require("../routes/achievementRoute");
 const qualificationRoute = require("../routes/qualificationRoute");
+const dataRoute = require("../routes/dataRoute");
 
 
 const app = express();
@@ -62,6 +63,7 @@ app.use("/api/event", eventRoute);
 app.use("/api/publication", publicationRoute);
 app.use("/api/achievement", achievementRoute);
 app.use("/api/qualification", qualificationRoute);
+app.use("/api/data", dataRoute);
 
 
 app.get('*', (req, res) => {
