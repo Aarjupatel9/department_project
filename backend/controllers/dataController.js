@@ -17,20 +17,25 @@ exports.DataFilter = async (req, res) => {
 
         if (startDate || endDate) {
 
+            let dateFilter = {};
+
             if (dateFieldMap[dataType] === 'completionYear' || dateFieldMap[dataType] === 'guidedYear') {
                 if (startDate)
-                    filter[dateFieldMap[dataType]] = { $gte: parseInt(startDate, 10) };
+                    dateFilter.$gte = parseInt(startDate, 10)
 
                 if (endDate)
-                    filter[dateFieldMap[dataType]] = { $lte: parseInt(endDate, 10) };
+                    dateFilter.$lte = parseInt(endDate, 10)
 
             }
             else {
                 if (startDate)
-                    filter[dateFieldMap[dataType]] = { $gte: new Date(startDate) }
+                    dateFilter.$gte = new Date(startDate)
                 if (endDate)
-                    filter[dateFieldMap[dataType]] = { $lte: new Date(endDate) }
+                    dateFilter.$lte = new Date(endDate)
             }
+
+            filter[dateFieldMap[dataType]] = dateFilter
+
         }
 
         for (const [key, value] of Object.entries(dynamicFilters)) {
@@ -61,9 +66,6 @@ exports.DataFilter = async (req, res) => {
         const data = await query
             .limit(parseInt(limit, 10))
             .skip(parseInt(skip, 10));
-
-        console.log('filter : ', filter);
-
 
         res.status(200).json({ success: true, data, totalDocuments: data.length });
     } catch (error) {
