@@ -14,6 +14,15 @@ const dataTypeModelMap = {
   patents: Patent
 };
 
+const dateFieldMap = {
+  achievements: "achievedOn",
+  events: "eventDate.startDate",
+  publications: "publicationDate",
+  qualifications: "completionYear",
+  guides: "guidedYear",
+  patents: "patentDate"
+}
+
 // Function to get metadata for a specific datatype
 function getMetadataOfDataType(dataType) {
   const Model = dataTypeModelMap[dataType];
@@ -42,5 +51,6 @@ function getMetadataOfDataType(dataType) {
 
 module.exports = {
   getMetadataOfDataType,
-  dataTypeModelMap
+  dataTypeModelMap,
+  dateFieldMap
 };
