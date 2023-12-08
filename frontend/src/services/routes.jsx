@@ -5,6 +5,7 @@ import Publication from "../common/Publications";
 import AddPublication from "../common/AddPublication";
 import Sidebar from "../components/Sidebar";
 import TmpCpm from "../common/TmpCpm";
+import Filters from "../common/Filters";
 import { UserProfile } from "../common/UserProfile";
 import EditUserAccountRequest from "../adminComponents/section/EditUserAccountRequest";
 import EditUserAccess from "../adminComponents/section/EditUserAccess";
@@ -35,7 +36,10 @@ const commonRoutes = (
     <Route path="/qualification" element={<Qualification />} />
     <Route path="/addQualification" element={<AddQualification />} />
     <Route path="/editQualification/:id" element={<AddQualification />} />
-    <Route path="/qualificationview/:id" element={<NormalQualificationView />} />
+    <Route
+      path="/qualificationview/:id"
+      element={<NormalQualificationView />}
+    />
 
     <Route path="/achievement" element={<Achievement />} />
     <Route path="/addAchievement" element={<AddAchievement />} />
@@ -46,12 +50,12 @@ const commonRoutes = (
     <Route path="/addPublication" element={<AddPublication />} />
     <Route path="/editPublication/:id" element={<AddPublication />} />
     <Route path="/publicationview/:id" element={<NormalPublicationView />} />
-    
+
     <Route path="/event" element={<Events />} />
     <Route path="/addEvent" element={<AddEvents />} />
     <Route path="/editEvent/:id" element={<AddEvents />} />
     <Route path="/eventview/:id" element={<NormalEventView />} />
-
+    <Route path="/filters" element={<Filters />} />
     <Route path="/patent" element={<Patent />} />
     <Route path="/addPatent" element={<AddPatent />} />
     <Route path="/editPatent/:id" element={<AddPatent />} />
@@ -64,51 +68,47 @@ const commonRoutes = (
   </>
 );
 export const HEAD_ROUTES = (props) => {
-  
-    return (
-      <Routes>
-        {props.userDetail.isProfile && props.userDetail.isApproved ? (
-          <>
-            <Route path="/" element={<TmpCpm />} />
-            {commonRoutes}
+  return (
+    <Routes>
+      {props.userDetail.isProfile && props.userDetail.isApproved ? (
+        <>
+          <Route path="/" element={<TmpCpm />} />
+          {commonRoutes}
 
-            {/* admin specific routes */}
-            <Route path="/userAccounts" element={<EditUserAccountRequest />} />
-            <Route
-              path="/userAccounts/:id"
-              element={<EditUserAccountRequest />}
-            />
-            <Route path="/editUserAccess/:id" element={<EditUserAccess />} />
-          </>
-        ) : (
-          <></>
-        )}
-        
-        <Route path="/generateReport" element={<GenerateReport />} /> //new
-        <Route path="/systemCoordinatorEventView" element={<SystemCoordinatorEventView />} />
-
-
-
-        <Route path="/profile" element={<UserProfile readOnly={false} />} />
-        <Route path="/settings" element={<Setting />} />
-        <Route path="/editProfile" element={<EditUserProfile />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<UserProfile readOnly={false} />} />
-      </Routes>
-    );
-
+          {/* admin specific routes */}
+          <Route path="/userAccounts" element={<EditUserAccountRequest />} />
+          <Route
+            path="/userAccounts/:id"
+            element={<EditUserAccountRequest />}
+          />
+          <Route path="/editUserAccess/:id" element={<EditUserAccess />} />
+        </>
+      ) : (
+        <></>
+      )}
+      <Route path="/generateReport" element={<GenerateReport />} /> //new
+      <Route
+        path="/systemCoordinatorEventView"
+        element={<SystemCoordinatorEventView />}
+      />
+      <Route path="/profile" element={<UserProfile readOnly={false} />} />
+      <Route path="/settings" element={<Setting />} />
+      <Route path="/editProfile" element={<EditUserProfile />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="*" element={<UserProfile readOnly={false} />} />
+    </Routes>
+  );
 };
 
 export const STD_USER_ROUTES = (props) => {
+  return (
+    <Routes>
+      {props.userDetail.isProfile && props.userDetail.isApproved ? (
+        <>
+          <Route path="/" element={<TmpCpm />} />
+          {commonRoutes}
 
-    return (
-      <Routes>
-        {props.userDetail.isProfile && props.userDetail.isApproved ? (
-          <>
-            <Route path="/" element={<TmpCpm />} />
-            {commonRoutes}
-
-{/* 
+          {/* 
             <Route path="/qualification" element={<Qualification />} />
             <Route path="/addQualification" element={<AddQualification />} />
             <Route
@@ -116,9 +116,9 @@ export const STD_USER_ROUTES = (props) => {
               element={<AddQualification />}
             />
 
-            <Route path="/achievement" element={<Achievement />} />
-            <Route path="/addAchievement" element={<AddAchievement />} />
-            <Route path="/editAchievement/:id" element={<AddAchievement />} />
+          <Route path="/achievement" element={<Achievement />} />
+          <Route path="/addAchievement" element={<AddAchievement />} />
+          <Route path="/editAchievement/:id" element={<AddAchievement />} />
 
             <Route path="/publication" element={<Publication />} />
             <Route path="/addPublication" element={<AddPublication />} />
@@ -127,16 +127,15 @@ export const STD_USER_ROUTES = (props) => {
             <Route path="/addEvent" element={<AddEvents />} />
             <Route path="/editEvent/:id" element={<AddEvents />} /> */}
 
-            <Route path="/profile" element={<UserProfile readOnly={false} />} />
-          </>
-        ) : (
-          <></>
-        )}
-        <Route path="/settings" element={<Setting />} />
-        <Route path="/editProfile" element={<EditUserProfile />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<UserProfile readOnly={false} />} />
-      </Routes>
-    );
-
+          <Route path="/profile" element={<UserProfile readOnly={false} />} />
+        </>
+      ) : (
+        <></>
+      )}
+      <Route path="/settings" element={<Setting />} />
+      <Route path="/editProfile" element={<EditUserProfile />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="*" element={<UserProfile readOnly={false} />} />
+    </Routes>
+  );
 };
