@@ -23,9 +23,12 @@
     max-height: 94vh;
     min-height: 92vh; */
     /* width: 100%; */
-    height: 94%;
+
+    /* height: 94%;
     width: 100%;
-    min-width: 100%;
+    min-width: 100%; */
+    flex: 1;
+    overflow-y: auto;
     /* max-height: 94%; */
     /* max-height: 100%;
     height: 100%; */
@@ -43,7 +46,7 @@
 }
 
 .MainComponents {
-    width:80%;
+    width: 80%;
     min-width: 80%;
     overflow: auto;
 }

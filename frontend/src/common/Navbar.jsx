@@ -5,7 +5,7 @@ import {
   selectUserDetails,
 } from "../reduxStore/reducers/userDetailSlice";
 import { useAppSelector, useAppDispatch } from "../reduxStore/hooks";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate , Link} from "react-router-dom";
 import authService from "../services/authService";
 import { userDetailTemplate } from "../interfaces/tamplates";
 import logo from "../logo192.png";
@@ -56,7 +56,7 @@ export default function Navbar() {
       <div className="px-3 lg:px-5 lg:pl-3">
         <div className="flex items-center justify-between">
           <div className=" flex items-center justify-start">
-            <a href="/" className="flex ml-2 md:mr-24">
+            <Link to={"/"} className="flex ml-2 md:mr-24">
               <img
                 src={logo}
                 className="h-8 mr-3"
@@ -65,7 +65,7 @@ export default function Navbar() {
               <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
                 Computer Department
               </span>
-            </a>
+            </Link>
           </div>
           <div className="flex items-center">
             <div className="flex items-center ml-3 space-x-4">

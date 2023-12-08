@@ -50,32 +50,32 @@ const publicationSchema = new mongoose.Schema({
     publisher: {
         type: String,
         required: function () {
-            return this.typeOfPublication === PUBLICATION_TYPE.JOURNALS;
+            return this.publicationType === PUBLICATION_TYPE.JOURNALS;
         },
     },
     volumeNo: {
         type: String,
         required: function () {
-            return this.typeOfPublication === PUBLICATION_TYPE.JOURNALS;
+            return this.publicationType === PUBLICATION_TYPE.JOURNALS;
         },
     },
     issueNo: {
         type: String,
         required: function () {
-            return this.typeOfPublication === PUBLICATION_TYPE.JOURNALS;
+            return this.publicationType === PUBLICATION_TYPE.JOURNALS;
         },
     },
     pageNoRange: {
         startPageNo: {
             type: Number,
             required: function () {
-                return this.typeOfPublication === PUBLICATION_TYPE.JOURNALS;
+                return this.publicationType === PUBLICATION_TYPE.JOURNALS;
             },
         },
         endPageNo: {
             type: Number,
             required: function () {
-                return this.typeOfPublication === PUBLICATION_TYPE.JOURNALS;
+                return this.publicationType === PUBLICATION_TYPE.JOURNALS;
             },
         },
     },
@@ -85,25 +85,25 @@ const publicationSchema = new mongoose.Schema({
         city: {
             type: String,
             required: function () {
-                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
+                return this.publicationType === PUBLICATION_TYPE.CONFERENCE;
             },
         },
         state: {
             type: String,
             required: function () {
-                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
+                return this.publicationType === PUBLICATION_TYPE.CONFERENCE;
             },
         },
         country: {
             type: String,
             required: function () {
-                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
+                return this.publicationType === PUBLICATION_TYPE.CONFERENCE;
             },
         },
         zip: {
             type: String,
             required: function () {
-                return this.typeOfPublication === PUBLICATION_TYPE.CONFERENCE;
+                return this.publicationType === PUBLICATION_TYPE.CONFERENCE;
             },
         },
     },

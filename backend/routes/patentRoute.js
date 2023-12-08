@@ -1,22 +1,24 @@
 const express = require('express');
-const { AddProfile, GetProfile, EditProfile, DeleteProfile } = require('../controllers/profileController');
+const { AddPatent, GetPatent, EditPatent, DeletePatent, GetPatents } = require('../controllers/patentController');
 const authenticateRoles = require('../middlewares/authMiddleware');
 const { AllRoles } = require('../utils/constants')
 const router = express.Router();
 
 // user specific operations
-router.route("/addProfile")
-    .post(authenticateRoles(AllRoles), AddProfile);
-router.route("/getProfile")
-    .get(authenticateRoles(AllRoles), GetProfile);
-router.route("/updateProfile")
-    .post(authenticateRoles(AllRoles), EditProfile);
-router.route("/deleteProfile")
-    .post(authenticateRoles(AllRoles), DeleteProfile);
+router.route("/addPatent")
+    .post(authenticateRoles(AllRoles), AddPatent);
+router.route("/getPatent")
+    .post(authenticateRoles(AllRoles), GetPatent);
+router.route("/getPatents")
+        .post(authenticateRoles(AllRoles), GetPatents);
+router.route("/updatePatent/:_id")
+    .post(authenticateRoles(AllRoles), EditPatent);
+router.route("/deletePatent/:_id")
+    .post(authenticateRoles(AllRoles), DeletePatent);
 
 
 // other operations
-router.route("/profile/:id").get(GetProfile); // public route to get user's profile details
+router.route("/patent/:_id").get(GetPatent); router.route("/patent/:_id").post(GetPatent); // public route to get user's patent details
 
 
 module.exports = router;
