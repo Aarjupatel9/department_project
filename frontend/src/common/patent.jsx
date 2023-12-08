@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import achievementService from "../services/achievementService";
+import patentService from "../services/patentService";
 
-const Achievement = () => {
+const Patent = () => {
   const [searchInput, setSearchInput] = useState("");
-  const [achievements, setAchievements] = useState([]);
+  const [patents, setPatents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
-    console.log(achievements);
+    console.log(patents);
     setSearchInput("");
-    setFilteredEvents(achievements);
-  }, [achievements]);
+    setFilteredEvents(patents);
+  }, [patents]);
 
   useEffect(() => {
-    const eventPromise = achievementService.getAchievements();
+    const patentPromise = patentService.getPatents();
     toast.promise(
-      eventPromise,
+      patentPromise,
       {
-        loading: "fetching Achievement details",
+        loading: "fetching Patent details",
         success: "",
         error: (err) => err,
       },
@@ -37,10 +37,10 @@ const Achievement = () => {
         },
       }
     );
-    eventPromise
+    patentPromise
       .then((res) => {
-        console.log("users : ", res.achievements);
-        setAchievements(res.achievements);
+        console.log("users : ", res.patents);
+        setPatents(res.patents);
       })
       .catch((error) => {
         console.log("error : ", error);
@@ -48,8 +48,8 @@ const Achievement = () => {
   }, []);
 
   function setFilterList(input) {
-    const tmp = achievements.filter((achievement) => {
-      return achievement;
+    const tmp = patents.filter((patent) => {
+      return patent;
     });
     setFilteredEvents(tmp);
   }
@@ -63,13 +63,13 @@ const Achievement = () => {
   }
 
   const handelEventDelete = (_id) => {
-    const eventPromise = achievementService.deleteAchievement(_id);
-    eventPromise
+    const patentPromise = patentService.deletePatent(_id);
+    patentPromise
       .then((res) => {
         console.log("users : ", res);
-        const tmp = achievements.filter((achievement) => {
-          if (achievement._id != _id) {
-            return achievement;
+        const tmp = patents.filter((patent) => {
+          if (patent._id != _id) {
+            return patent;
           }
         });
         setFilteredEvents(tmp);
@@ -79,9 +79,9 @@ const Achievement = () => {
       });
 
     toast.promise(
-      eventPromise,
+      patentPromise,
       {
-        loading: "please wait while we deleting achievement",
+        loading: "please wait while we deleting patent",
         success: (data) => data.message,
         error: (err) => err,
       },
@@ -111,11 +111,11 @@ const Achievement = () => {
           >
             <div className="mx-3">
               <Link
-                to={"/addAchievement"}
+                to={"/addPatent"}
                 className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
                 aria-current="page"
               >
-                Add Achievement
+                Add Patent
               </Link>
             </div>
           </div>
@@ -176,7 +176,7 @@ const Achievement = () => {
       {filteredEvents.length > 0 ? (
         <div className="flex flex-col pt-4 ">
           <h1 className="mx-auto  text-2xl font-medium text-gray-900 dark:text-white">
-            Achievement Details
+            Patent Details
           </h1>
           <div className="mt-4 relative overflow-x-auto shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -186,40 +186,46 @@ const Achievement = () => {
                     scope="col"
                     className="px-6 py-3 bg-gray-100 dark:bg-gray-800"
                   >
-                    Achievement type
+                    patent Title
                   </th>
                   <th
                     scope="col"
                     className="px-6 py-3 dark:text-white dark:bg-gray-700"
                   >
-                    Achievement Date
+                    patent Number
                   </th>
                   <th
                     scope="col"
                     className="px-6 py-3 bg-gray-100 dark:bg-gray-800"
                   >
-                    certificate
+                    published date
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 dark:text-white dark:bg-gray-700"
+                  >
+                    Author
                   </th>
 
                   <th
                     scope="col"
-                    className="px-6 py-3 dark:text-white  dark:bg-gray-700"
+                    className="px-6 py-3 bg-gray-100 dark:bg-gray-800"
                   >
                     <span className="sr-only">Edit</span>
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 bg-gray-100 dark:bg-gray-800"
+                    className="px-6 py-3 dark:text-white  dark:bg-gray-700"
                   >
                     <span className="sr-only">Delete</span>
                   </th>
                 </tr>
               </thead>
               <tbody className="">
-                {filteredEvents.map((achievement) => {
+                {filteredEvents.map((patent) => {
                   return (
                     <tr
-                      key={achievement._id}
+                      key={patent._id.toString()}
                       className="border-b border-gray-200 dark:border-gray-600"
                     >
                       <th
@@ -229,46 +235,40 @@ const Achievement = () => {
                         <div
                           className=" cursor-pointer text-lg  hover:underline"
                           onClick={() => {
-                            navigate("/achievementview/" + achievement._id);
+                            navigate("/patentview/" + patent._id);
                           }}
                         >
-                          {achievement.achievementType}
+                          {patent.title}
                         </div>
                       </th>
-                     
                       <td className="px-6 py-4 dark:text-white dark:bg-gray-700">
-                        {formatDateToDdMmYyyy(
-                          achievement.achievedOn.toString()
-                        )}
+                        {patent.patentNumber}
                       </td>
                       <td className="px-6 py-4 bg-gray-100 dark:bg-gray-800">
-                        {achievement.certificates[0] ? (
-                          <a
-                            className="hover:text-blue-500 border-0 hover:border-b-2 border-blue-500 dark:border-blue-500"
-                            href={achievement.certificates[0].url}
-                            target="_blank"
-                          >
-                            {achievement.certificates[0].title}
-                          </a>
-                        ) : (
-                          <div className="">-</div>
-                        )}
+                        {formatDateToDdMmYyyy(patent.patentDate.toString())}
                       </td>
-                      <td className="px-6 py-4 text-center dark:text-white dark:bg-gray-700">
+                      <td className="px-6 py-4 dark:text-white dark:bg-gray-700">
+                        <ul>
+                          {patent.inventors.map((author) => {
+                            return <li>{author}</li>;
+                          })}
+                        </ul>
+                      </td>
+
+                      <td className="px-6 py-4 text-center dark:text-white bg-gray-100 dark:bg-gray-800">
                         <div
                           onClick={() => {
-                            navigate("/editAchievement/" + achievement._id);
+                            navigate("/editPatent/" + patent._id);
                           }}
                           className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                         >
                           Edit
                         </div>
                       </td>
-
-                      <td className="px-6 py-4 text-center dark:text-white bg-gray-100 dark:bg-gray-800">
+                      <td className="px-6 py-4 text-center dark:text-white dark:bg-gray-700">
                         <div
                           onClick={() => {
-                            handelEventDelete(achievement._id);
+                            handelEventDelete(patent._id);
                           }}
                           className="font-medium text-red-600 dark:text-red-500 hover:underline"
                         >
@@ -285,7 +285,7 @@ const Achievement = () => {
       ) : (
         <div className="flex flex-col pt-4">
           <h1 className="mx-auto  text-2xl font-bold text-gray-900 dark:text-white">
-            There is no achievement Details
+            There is no patent Details
           </h1>
         </div>
       )}
@@ -293,4 +293,4 @@ const Achievement = () => {
   );
 };
 
-export default Achievement;
+export default Patent;

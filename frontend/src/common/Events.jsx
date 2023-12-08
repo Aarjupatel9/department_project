@@ -20,7 +20,7 @@ export default function Events() {
     setFilteredEvents(events);
   }, [events]);
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   useEffect(() => {
     const eventPromise = eventService.getEvents();
@@ -61,6 +61,51 @@ export default function Events() {
     });
     setFilteredEvents(tmp);
   }
+
+
+  const handelEventDelete = (_id) => {
+    if (_id == undefined) {
+      toast.error("can not delete at this time");
+      return;
+    }
+    const eventPromise = eventService.deleteEvent(_id);
+    eventPromise
+      .then((res) => {
+        console.log("users : ", res);
+        // const tmp = events.filter((event) => {
+        //   if (event._id != _id) {
+        //     return event;
+        //   }
+        // });
+        // setFilteredEvents(tmp);
+        navigate("/event");
+      })
+      .catch((error) => {
+        console.log("error : ", error);
+      });
+
+    toast.promise(
+      eventPromise,
+      {
+        loading: "please wait while we deleting event",
+        success: (data) => data.message,
+        error: (err) => err,
+      },
+      {
+        style: {
+          minWidth: "250px",
+        },
+        success: {
+          duration: 3000,
+          icon: "🔥",
+        },
+        error: {
+          duration: 4000,
+          icon: "🔥",
+        },
+      }
+    );
+  };
 
   const [hoveredPreview, setHoveredPreview] = useState(null);
 
@@ -204,6 +249,12 @@ export default function Events() {
                 >
                   <span className="sr-only">Edit</span>
                 </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-100 dark:bg-gray-800"
+                >
+                  <span className="sr-only">Edit</span>
+                </th>
               </tr>
             </thead>
             <tbody className="">
@@ -216,7 +267,7 @@ export default function Events() {
                     <th
                       scope="row"
                       className="px-6 py-4 font-bold text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800"
-                     >
+                    >
                       <div
                         className=" cursor-pointer text-lg  hover:underline"
                         onClick={() => {
@@ -303,6 +354,17 @@ export default function Events() {
                         className="cursor-pointer font-medium text-blue-600 dark:text-blue-500 hover:underline"
                       >
                         Edit
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 bg-gray-100 dark:bg-gray-800">
+                      <div
+                        onClick={() => {
+                          handelEventDelete(event._id);
+                        }}
+                        className="font-medium text-red-600 dark:text-red-500 hover:underline"
+                      >
+                        Delete
                       </div>
                     </td>
                   </tr>

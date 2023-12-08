@@ -44,148 +44,61 @@ export default function NormalEventView() {
     }));
   }, []);
 
-  const handelEventDelete = () => {
-    if (id == undefined) {
-      toast.error("can not delete at this time");
-      return;
-    }
-    const _id = id;
-    const eventPromise = eventService.deleteEvent(_id);
-    eventPromise
-      .then((res) => {
-        console.log("users : ", res);
-        // const tmp = events.filter((event) => {
-        //   if (event._id != _id) {
-        //     return event;
-        //   }
-        // });
-        // setFilteredEvents(tmp);
-        navigate("/event");
-      })
-      .catch((error) => {
-        console.log("error : ", error);
-      });
-
-    toast.promise(
-      eventPromise,
-      {
-        loading: "please wait while we deleting event",
-        success: (data) => data.message,
-        error: (err) => err,
-      },
-      {
-        style: {
-          minWidth: "250px",
-        },
-        success: {
-          duration: 3000,
-          icon: "🔥",
-        },
-        error: {
-          duration: 4000,
-          icon: "🔥",
-        },
-      }
-    );
-  };
-
-  // const [previews, setPreviews] = useState([]);
-
-  // useEffect(() => {
-  //   console.log("eventDetails : ", eventDetail);
-  //   handleFilePreview();
-  // }, [eventDetail]);
-  // const handleFilePreview = () => {
-  //   const fileUrls = eventDetail.reports.map((r) => {
-  //     return r.url;
-  //   });
-
-  //   Promise.all(
-  //     fileUrls.map(async (url) => {
-  //       return new Promise((resolve) => {
-  //         if (url.toLowerCase().endsWith(".pdf")) {
-  //           pdfjs.getDocument(url).promise.then((pdf) => {
-  //             pdf.getPage(1).then((page) => {
-  //               const viewport = page.getViewport({ scale: 0.5 });
-  //               const canvas = document.createElement("canvas");
-  //               const context = canvas.getContext("2d");
-  //               canvas.width = viewport.width;
-  //               canvas.height = viewport.height;
-
-  //               const renderContext = {
-  //                 canvasContext: context,
-  //                 viewport: viewport,
-  //               };
-
-  //               page.render(renderContext).promise.then(() => {
-  //                 resolve(<div key={url}>{canvas}</div>);
-  //               });
-  //             });
-  //           });
-  //         } else if (url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/)) {
-  //           resolve(<img key={url} src={url} alt={url} />);
-  //         } else {
-  //           // Handle other file types or unsupported URLs as needed
-  //           resolve(null);
-  //         }
-  //       });
-  //     })
-  //   ).then((previews) => {
-  //     console.log("previes : ", previews);
-  //     setPreviews(previews.filter((preview) => preview !== null));
-  //   });
-  // };
-
   const [previews, setPreviews] = useState([]);
 
   useEffect(() => {
     const generatePreviews = async () => {
       const previewElements = await Promise.all(
         eventDetail.reports.map(async (report, index) => {
-          if (report.url.toLowerCase().endsWith(".pdf")) {
-            const pdf = await pdfjs.getDocument(report.url).promise;
-            const page = await pdf.getPage(1);
-            const viewport = page.getViewport({ scale: 0.3 });
-            const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d");
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            const renderContext = {
-              canvasContext: context,
-              viewport: viewport,
-            };
+          try {
 
-            await page.render(renderContext).promise;
-            const dataUrl = canvas.toDataURL(); // Convert canvas to data URL
-            return {
-              div: (
-                <img
-                  className="w-48 h-48"
-                  key={index}
-                  src={dataUrl}
-                  alt={`PDF Preview ${index + 1}`}
-                  onClick={() => window.open(report.url, "_blank")}
-                />
-              ),
-              type: "pdf",
-              title: report.title,
-            };
-          } else if (report.url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/)) {
-            return {
-              div: (
-                <img
-                  className="w-48 h-48"
-                  key={index}
-                  src={report.url}
-                  alt={report.url}
-                  onClick={() => window.open(report.url, "_blank")}
-                />
-              ),
-              type: "image",
-              title: report.title,
-            };
-          } else {
-            // Handle other file types or unsupported URLs as needed
+            if (report.url.toLowerCase().endsWith(".pdf")) {
+              const pdf = await pdfjs.getDocument(report.url).promise;
+              const page = await pdf.getPage(1);
+              const viewport = page.getViewport({ scale: 0.3 });
+              const canvas = document.createElement("canvas");
+              const context = canvas.getContext("2d");
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
+              const renderContext = {
+                canvasContext: context,
+                viewport: viewport,
+              };
+
+              await page.render(renderContext).promise;
+              const dataUrl = canvas.toDataURL(); // Convert canvas to data URL
+              return {
+                div: (
+                  <img
+                    className="w-48 h-48"
+                    key={index}
+                    src={dataUrl}
+                    alt={`PDF Preview ${index + 1}`}
+                    onClick={() => window.open(report.url, "_blank")}
+                  />
+                ),
+                type: "pdf",
+                title: report.title,
+              };
+            } else if (report.url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/)) {
+              return {
+                div: (
+                  <img
+                    className="w-48 h-48"
+                    key={index}
+                    src={report.url}
+                    alt={report.url}
+                    onClick={() => window.open(report.url, "_blank")}
+                  />
+                ),
+                type: "image",
+                title: report.title,
+              };
+            } else {
+              // Handle other file types or unsupported URLs as needed
+              return null;
+            }
+          } catch (e) {
             return null;
           }
         })
@@ -338,6 +251,7 @@ export default function NormalEventView() {
           </div>
         </div>
 
+        {previews.length>0?
         <div className="flex flex-col justify-center items-center">
           <h3 className="mt-4 text-xl font-bold text-gray-900 dark:text-white">
             Reports
@@ -353,12 +267,18 @@ export default function NormalEventView() {
                     {preview.title} ( {preview.type} )
                   </button>
                   <div className="cursor-pointer ">{preview.div}</div>
-                  <button className="bg-red-100   border-2 border-gray-200 dark:border-white-200 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"></button>
                 </div>
               ))}
             </div>
           </div>
-        </div>
+          </div>
+          :
+          <div className="flex flex-col justify-center items-center">
+            <h3 className="mt-4 text-xl font-bold text-gray-900 dark:text-white">
+              There is no reports
+            </h3>
+          </div>
+        }
       </div>
     </div>
   );

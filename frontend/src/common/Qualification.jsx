@@ -228,11 +228,19 @@ const Qualification = () => {
                       key={qualification._id}
                       className="border-b border-gray-200 dark:border-gray-600"
                     >
+                  
                       <th
                         scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800"
+                        className="px-6 py-4 font-bold text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800"
                       >
-                        {qualification.qualificationType}
+                        <div
+                          className=" cursor-pointer text-lg  hover:underline"
+                          onClick={() => {
+                            navigate("/qualificationview/" + qualification._id);
+                          }}
+                        >
+                          {qualification.qualificationType}
+                        </div>
                       </th>
                       <td className="px-6 py-4 dark:text-white dark:bg-gray-700">
                         {qualification.completionYear}
@@ -244,7 +252,7 @@ const Qualification = () => {
                         {qualification.specialization}
                       </td>
 
-                      <td className="px-6 py-4 text-right dark:text-white bg-gray-100 dark:bg-gray-800">
+                      <td className="px-6 py-4 text-center dark:text-white bg-gray-100 dark:bg-gray-800">
                         <div
                           onClick={() => {
                             navigate("/editQualification/" + qualification._id);
@@ -254,7 +262,7 @@ const Qualification = () => {
                           Edit
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right dark:text-white dark:bg-gray-700">
+                      <td className="px-6 py-4 text-center dark:text-white dark:bg-gray-700">
                         <div
                           onClick={() => {
                             handelEventDelete(qualification._id);

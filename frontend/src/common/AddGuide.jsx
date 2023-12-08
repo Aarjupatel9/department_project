@@ -2,90 +2,71 @@ import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, FieldArray } from "formik";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
-import achievementService from "../services/achievementService";
+import guideService from "../services/guideService";
 import { selectSystemVariables } from "../reduxStore/reducers/systemVariables";
 import { useAppSelector } from "../reduxStore/hooks";
 import eventService from "../services/eventService";
 import authService from "../services/authService";
-import { achievementValidator } from "../validator/achievementValidator";
+import { guideValidator } from "../validator/guideValidator";
 import { formatDateToDdMmYyyy, generatePreviews } from "../utils/functions";
 
-const AddAchievement = () => {
+const AddGuide = () => {
   const SystemVariables = useAppSelector(selectSystemVariables);
-  const navigate = useNavigate();
   const [rowData, setRowData] = useState({
     experts: "",
     report: { title: "", url: "" },
   });
   const [reports, setReports] = useState([]);
   const [reportFormData, setReportFormData] = useState(null);
+  const [guideType, setGuideType] = useState(
+    SystemVariables.GUIDE_TYPE.PHD
+  );
 
-  const [achievementInit, setAchievementInit] = useState({});
+  const [guideInit, setGuideInit] = useState({});
 
+  const navigate = useNavigate();
   const { id } = useParams();
   useEffect(() => {
     if (id != undefined) {
-      var eventPromise = achievementService.getAchievement(id);
-      eventPromise.then((res) => {
-        var achievementData = res.achievement;
-        console.log("useEffect achievementData : ", achievementData);
+      setGuideType("");
+      var guidePromise = guideService.getGuide(id);
+      guidePromise.then((res) => {
+        var guideData = res.guide;
+        console.log("useEffect guideData : ", guideData);
         // const temp = resEvent.userId._id;
-        achievementData.userId = achievementData.userId._id;
-        achievementData.achievedOn = formatDateToDdMmYyyy(
-          achievementData.achievedOn.toString()
-        );
-        console.log("achievement data after odify : ", achievementData);
-        setReports(achievementData.certificates);
+        guideData.userId = guideData.userId._id;
 
-        setAchievementInit(achievementData);
+        setGuideType(guideData.guideType);
+        setReports(guideData.reports)
+        setGuideInit(guideData);
+        // setFieldValue("title",res.event.title);
+        // setEventDetail(res.event);
       });
-      toast.promise(
-        eventPromise,
-        {
-          loading: "fetching data",
-          success: (data) =>
-            data.message ? data.message : "fecthed",
-          error: (err) => err,
-        },
-        {
-          style: {
-            minWidth: "250px",
-          },
-          success: {
-            duration: 1,
-            icon: "🔥",
-          },
-          error: {
-            duration: 2000,
-            icon: "🔥",
-          },
-        }
-      );
     }
   }, [id]);
 
-  function HandleAddAchievement(values) {
-    values.certificates = reports;
+  function HandleAddGuide(values) {
+    values.guideType = guideType;
+    values.reports = reports;
     values.userId = authService.getCurrentUserId();
-    const { _id, __v, userId, ...data } = values;
+    const { _id, __v, ...data } = values;
     console.log("Values: ", values);
 
-    const { error } = achievementValidator.validate(data);
+    const { error } = guideValidator.validate(data);
     if (error) {
       toast.error(error.toString());
       return;
     }
     if (_id) {
-      const achievementPromise = achievementService.updateAchievement(
+      const guidePromise = guideService.updateGuide(
         _id,
         data
       );
       toast.promise(
-        achievementPromise,
+        guidePromise,
         {
-          loading: "please wait while adding achievement data",
-          success: (data) =>
-            data.message ? data.message : "achievemnet is updated",
+          loading: "please wait while adding guide data",
+          success: (data) => data.message,
           error: (err) => err,
         },
         {
@@ -93,29 +74,31 @@ const AddAchievement = () => {
             minWidth: "250px",
           },
           success: {
-            duration: 2000,
+            duration: 1500,
             icon: "🔥",
           },
           error: {
-            duration: 3000,
+            duration: 1500,
             icon: "🔥",
           },
         }
       );
-      achievementPromise
+      guidePromise
         .then((res) => {
           console.log("res: ", res);
-          navigate("/achievement");
+          navigate("/guide");
+          //   toast.success("guide is added");
         })
-        .catch((error) => {});
+        .catch((error) => {
+          //   toast.error("guide is not added");
+        });
     } else {
-      const achievementPromise = achievementService.addAchievement(data);
+      const guidePromise = guideService.addGuide(data);
       toast.promise(
-        achievementPromise,
+        guidePromise,
         {
-          loading: "please wait while adding achievement data",
-          success: (data) =>
-            data.message ? data.message : "achievemnet is added",
+          loading: "please wait while adding guide data",
+          success: (data) => data.message,
           error: (err) => err,
         },
         {
@@ -123,21 +106,24 @@ const AddAchievement = () => {
             minWidth: "250px",
           },
           success: {
-            duration: 2000,
+            duration: 1500,
             icon: "🔥",
           },
           error: {
-            duration: 3000,
+            duration: 1500,
             icon: "🔥",
           },
         }
       );
-      achievementPromise
+      guidePromise
         .then((res) => {
           console.log("res: ", res);
-          navigate("/achievement");
+          navigate("/guide");
+          //   toast.success("guide is added");
         })
-        .catch((error) => {});
+        .catch((error) => {
+          //   toast.error("guide is not added");
+        });
     }
   }
 
@@ -206,88 +192,123 @@ const AddAchievement = () => {
   const [previews, setPreviews] = useState([]);
   useEffect(() => {
     generatePreviews(reports, setPreviews);
-  }, [achievementInit.reports, reports]);
+  }, [guideInit.reports, reports]);
 
 
   return (
     <>
       <div className="flex flex-col shadow-md sm:rounded-lg">
         <h1 className="text-3xl  mx-auto  text-gray-900 font-bold dark:text-white">
-          Achievement
+          Add Your Guide
         </h1>
         <hr className="mt-2" />
         <Formik
-          initialValues={achievementInit}
+          initialValues={guideInit}
           enableReinitialize={true}
           onSubmit={(values, { setSubmitting }) => {
-            HandleAddAchievement(values);
+            HandleAddGuide(values);
             setSubmitting(false);
           }}
         >
           {({ values, setFieldValue }) => (
             <>
               <Form>
-                <div className="p-10 m-10 flex flex-col">
+                <div className="mt-4 mb-6 flex items-center justify-center">
+                  <Field
+                    as="select"
+                    name="guideType"
+                    className="bg-gray-50 h-8 py-0 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-900 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:font-bold dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    onChange={(e) => {
+                      setGuideType(e.target.value);
+                    }}
+                  >
+                    <option value={SystemVariables.PUBLICATION_TYPE.MTECH}>
+                      {SystemVariables.GUIDE_TYPE.MTECH}
+                    </option>
+                    <option value={SystemVariables.PUBLICATION_TYPE.PHD}>
+                      {SystemVariables.GUIDE_TYPE.PHD}
+                    </option>
+                  </Field>
+                </div>
+                <div className="mt-10 m-10 flex flex-col">
                   {/* Event Details */}
                   <div className="flex flex-col">
                     <div className="mt-2 grid md:grid-cols-2 md:gap-6">
                       <div className="relative z-0 w-full mb-6 group">
                         <Field
-                          type="text"
-                          name="achievementType"
-                          id="achievementType"
+                          name="dissertationTitle"
+                          id="dissertationTitle"
                           className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300  appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                           placeholder=" "
                           required
                         />
                         <label
-                          htmlFor="achievementType"
+                          htmlFor="dissertationTitle"
                           className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
-                          Achievement Type
+                          Dissertation Title
                         </label>
                       </div>
                       <div className="relative z-0 w-full mb-6 group">
                         <Field
-                          type="date"
-                          name="achievedOn"
-                          id="achievedOn"
+                          type="number"
+                          name="guidedYear"
+                          id="guidedYear"
                           className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300  appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                           placeholder=""
                           required
                         />
                         <label
-                          htmlFor="achievedOn"
+                          htmlFor="guidedYear"
                           className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
-                          Aachievement Date
+                          Guide Year
                         </label>
                       </div>
                     </div>
-                    <div className="mt-2 grid md:grid-cols-1 md:gap-6">
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="mt-2 grid md:grid-cols-2 md:gap-6">
                       <div className="relative z-0 w-full mb-6 group">
                         <Field
-                          as="textarea"
-                          name="description"
-                          id="description"
+                          type="text"
+                          name="studentDetails.name"
+                          id="studentDetails.name"
                           className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300  appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                          placeholder=" "
+                          placeholder=""
                           required
                         />
                         <label
-                          htmlFor="description"
+                          htmlFor="studentDetails.name"
                           className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
-                          Description
+                          Student Name
+                        </label>
+                      </div>
+                      <div className="relative z-0 w-full mb-6 group">
+                        <Field
+                          type="text"
+                          name="studentDetails.idNumber"
+                          id="studentDetails.idNumber"
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300  appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=""
+                          required
+                        />
+                        <label
+                          htmlFor="studentDetails.idNumber"
+                          className="peer-focus:font-medium absolute  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Student's Id Number
                         </label>
                       </div>
                     </div>
                   </div>
 
-                  {/* certificates */}
+
+                  {/* reports */}
                   <div className="flex flex-col">
                     <h3 className="mt-4 mx-auto  text-xl font-bold text-gray-900 dark:text-white">
-                      Upload Achievement
+                      Upload Report
                     </h3>
                     <hr className="w-48 h-1 mx-auto bg-gray-300 border-0 rounded md:mt-2 md:mb-4 dark:bg-gray-700" />
                     <div className="my-6 mx-10 mb-4 px-10 w-full">
@@ -301,7 +322,7 @@ const AddAchievement = () => {
                               name="report.title"
                               id="report.title"
                               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-blue-600 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                              placeholder="Enter Acievement file's Title"
+                              placeholder="Enter Report's Title"
                             />
                           </div>
                           <div className=" z-0 w-full mb-6 group">
@@ -365,4 +386,4 @@ const AddAchievement = () => {
   );
 };
 
-export default AddAchievement;
+export default AddGuide;

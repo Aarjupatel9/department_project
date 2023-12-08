@@ -8,7 +8,7 @@ import { useAppSelector } from "../reduxStore/hooks";
 import eventService from "../services/eventService";
 import authService from "../services/authService";
 import { qualificationValidator } from "../validator/qualificationValidator";
-import { formatDateToDdMmYyyy } from "../utils/functions";
+import { formatDateToDdMmYyyy, generatePreviews } from "../utils/functions";
 
 const AddQualification = () => {
   const SystemVariables = useAppSelector(selectSystemVariables);
@@ -187,6 +187,13 @@ const AddQualification = () => {
       }));
     }
   };
+
+  const [previews, setPreviews] = useState([]);
+  useEffect(() => {
+    generatePreviews(reports, setPreviews);
+  }, [qualificationInit.reports, reports]);
+
+
 
   return (
     <>
@@ -383,23 +390,21 @@ const AddQualification = () => {
                           Add
                         </button>
                       </div>
-                      <div className="w-full flex flex-col ">
-                        {reports.map((report, index) => (
+                      <div className="w-full flex flex-row  space-x-5 ">
+                        {previews.map((preview, index) => (
                           <div
                             key={index}
-                            className="text-sm text-gray-900 dark:text-white"
+                            className="flex flex-col space-y-2 border-2 border-gray-200 dark:border-white-200 text-sm text-gray-900 dark:text-white"
                           >
-                            {index + 1}) title :{" "}
-                            <a
-                              className=" border-blue-500 hover:border-b-2  "
-                              target="_blank"
-                              href={report.url}
+                            <div
+                              className="bg-red-100 text-center  border-2 border-gray-200 dark:border-white-200 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
                             >
-                              {report.title}
-                            </a>
+                              {preview.title} ({preview.doc_type})
+                            </div>
+                            <div className="cursor-pointer ">{preview.element}</div>
                             <button
-                              onClick={() => handleRemoveReport(index)}
-                              className="ml-2 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
+                              type="button" onClick={() => handleRemoveReport(index)}
+                              className="bg-red-100   border-2 border-gray-200 dark:border-white-200 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
                             >
                               Remove
                             </button>
