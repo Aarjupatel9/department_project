@@ -1,11 +1,10 @@
-const { dataTypeModelMap, getMetadataOfDataType } = require("../utils/dataFilter");
+const { dataTypeModelMap, getMetadataOfDataType, dateFieldMap } = require("../utils/dataFilter");
 
 exports.DataFilter = async (req, res) => {
 
     try {
         const { userId, dataType, startDate, endDate, sortBy, limit, skip, ...dynamicFilters } = req.query;
 
-        console.log(dataType);
         if (!dataTypeModelMap[dataType]) {
             return res.status(400).json({ success: false, error: "Invalid dataType" });
         }
@@ -16,8 +15,27 @@ exports.DataFilter = async (req, res) => {
             filter = { userId };
         }
 
-        if (startDate && endDate) {
-            filter.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+        if (startDate || endDate) {
+
+            let dateFilter = {};
+
+            if (dateFieldMap[dataType] === 'completionYear' || dateFieldMap[dataType] === 'guidedYear') {
+                if (startDate)
+                    dateFilter.$gte = parseInt(startDate, 10)
+
+                if (endDate)
+                    dateFilter.$lte = parseInt(endDate, 10)
+
+            }
+            else {
+                if (startDate)
+                    dateFilter.$gte = new Date(startDate)
+                if (endDate)
+                    dateFilter.$lte = new Date(endDate)
+            }
+
+            filter[dateFieldMap[dataType]] = dateFilter
+
         }
 
         for (const [key, value] of Object.entries(dynamicFilters)) {
@@ -49,8 +67,7 @@ exports.DataFilter = async (req, res) => {
             .limit(parseInt(limit, 10))
             .skip(parseInt(skip, 10));
 
-
-        res.status(200).json({ success: true, data ,totalDocuments:data.length});
+        res.status(200).json({ success: true, data, totalDocuments: data.length });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error." });
