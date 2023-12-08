@@ -2,7 +2,6 @@ const joi = require('joi');
 
 exports.patentValidator = joi.object({
     userId: joi.string().required(),
-
     title: joi.string().min(5).max(300).required(),
     summary: joi.string().min(5).max(500).required(),
     inventors: joi.array().items(joi.string().min(3).max(60)),

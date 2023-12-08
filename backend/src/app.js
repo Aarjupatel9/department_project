@@ -12,6 +12,8 @@ const profileRoute = require("../routes/profileRoute");
 const supportRoute = require('../routes/supportRoute');
 const systemRoute = require('../routes/systemRoute');
 const eventRoute = require("../routes/eventRoute");
+const patentRoute = require("../routes/patentRoute");
+const guideRoute = require("../routes/guideRoute");
 const publicationRoute = require("../routes/publicationRoute");
 
 const achievementRoute = require("../routes/achievementRoute");
@@ -22,7 +24,7 @@ const dataRoute = require("../routes/dataRoute");
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://cp.bvmengineering.com:3000',],
     credentials: true
 }));
 
@@ -60,6 +62,8 @@ app.use("/api/profile", profileRoute);
 app.use("/api/support", supportRoute);
 app.use("/api/system", systemRoute);
 app.use("/api/event", eventRoute);
+app.use("/api/patent", patentRoute);
+app.use("/api/guide", guideRoute);
 app.use("/api/publication", publicationRoute);
 app.use("/api/achievement", achievementRoute);
 app.use("/api/qualification", qualificationRoute);

@@ -54,11 +54,11 @@ export function Login() {
           minWidth: "250px",
         },
         success: {
-          duration: 6000,
+          duration: 1500,
           icon: "🔥",
         },
         error: {
-          duration: 6000,
+          duration: 1500,
           icon: "❌",
         },
       }

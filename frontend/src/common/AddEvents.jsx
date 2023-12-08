@@ -4,13 +4,12 @@ import { selectUserDetails } from "../reduxStore/reducers/userDetailSlice";
 import { selectSystemVariables } from "../reduxStore/reducers/systemVariables.jsx";
 import { useAppDispatch, useAppSelector } from "../reduxStore/hooks";
 import { useNavigate, useParams } from "react-router-dom";
-import { formatDateToDdMmYyyy } from "../utils/functions";
+import { formatDateToDdMmYyyy, generatePreviews } from "../utils/functions";
 import { IEventTemplate } from "../reduxStore/reducers/eventsSlice";
 import { IEvent } from "../interfaces/interfaces";
 import { eventDetailValidator } from "../validator/eventValidator";
 import eventService from "../services/eventService";
 import authService from "../services/authService";
-
 import * as pdfjs from "pdfjs-dist/build/pdf";
 import "pdfjs-dist/build/pdf.worker.entry";
 
@@ -61,11 +60,12 @@ export default function AddEvents() {
     }
     eventPromise
       .then((res) => {
+        navigate("/event");
         if (!id) {
           setEventDetail(IEventTemplate);
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
     toast.promise(
       eventPromise,
       {
@@ -244,149 +244,11 @@ export default function AddEvents() {
     }));
   }, []);
 
-  const handelEventDelete = () => {
-    if (id == undefined) {
-      toast.error("can not delete at this time");
-      return;
-    }
-    const _id = id;
-    const eventPromise = eventService.deleteEvent(_id);
-    eventPromise
-      .then((res) => {
-        console.log("users : ", res);
-        // const tmp = events.filter((event) => {
-        //   if (event._id != _id) {
-        //     return event;
-        //   }
-        // });
-        // setFilteredEvents(tmp);
-        navigate("/event");
-      })
-      .catch((error) => {
-        console.log("error : ", error);
-      });
-
-    toast.promise(
-      eventPromise,
-      {
-        loading: "please wait while we deleting event",
-        success: (data) => data.message,
-        error: (err) => err,
-      },
-      {
-        style: {
-          minWidth: "250px",
-        },
-        success: {
-          duration: 3000,
-          icon: "🔥",
-        },
-        error: {
-          duration: 4000,
-          icon: "🔥",
-        },
-      }
-    );
-  };
-
-  // const [previews, setPreviews] = useState([]);
-
-  // useEffect(() => {
-  //   console.log("eventDetails : ", eventDetail);
-  //   handleFilePreview();
-  // }, [eventDetail]);
-  // const handleFilePreview = () => {
-  //   const fileUrls = eventDetail.reports.map((r) => {
-  //     return r.url;
-  //   });
-
-  //   Promise.all(
-  //     fileUrls.map(async (url) => {
-  //       return new Promise((resolve) => {
-  //         if (url.toLowerCase().endsWith(".pdf")) {
-  //           pdfjs.getDocument(url).promise.then((pdf) => {
-  //             pdf.getPage(1).then((page) => {
-  //               const viewport = page.getViewport({ scale: 0.5 });
-  //               const canvas = document.createElement("canvas");
-  //               const context = canvas.getContext("2d");
-  //               canvas.width = viewport.width;
-  //               canvas.height = viewport.height;
-
-  //               const renderContext = {
-  //                 canvasContext: context,
-  //                 viewport: viewport,
-  //               };
-
-  //               page.render(renderContext).promise.then(() => {
-  //                 resolve(<div key={url}>{canvas}</div>);
-  //               });
-  //             });
-  //           });
-  //         } else if (url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/)) {
-  //           resolve(<img key={url} src={url} alt={url} />);
-  //         } else {
-  //           // Handle other file types or unsupported URLs as needed
-  //           resolve(null);
-  //         }
-  //       });
-  //     })
-  //   ).then((previews) => {
-  //     console.log("previes : ", previews);
-  //     setPreviews(previews.filter((preview) => preview !== null));
-  //   });
-  // };
-
   const [previews, setPreviews] = useState([]);
 
   useEffect(() => {
-    const generatePreviews = async () => {
-      const previewElements = await Promise.all(
-        eventDetail.reports.map(async (report, index) => {
-          if (report.url.toLowerCase().endsWith(".pdf")) {
-            const pdf = await pdfjs.getDocument(report.url).promise;
-            const page = await pdf.getPage(1);
-            const viewport = page.getViewport({ scale: 0.3 });
-            const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d");
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            const renderContext = {
-              canvasContext: context,
-              viewport: viewport,
-            };
-
-            await page.render(renderContext).promise;
-            const dataUrl = canvas.toDataURL(); // Convert canvas to data URL
-            return (
-              <img
-                className="w-48 h-48"
-                key={index}
-                src={dataUrl}
-                alt={`PDF Preview ${index + 1}`}
-                onClick={() => window.open(report.url, "_blank")}
-              />
-            );
-          } else if (report.url.toLowerCase().match(/\.(jpeg|jpg|png|gif)$/)) {
-            return (
-              <img
-                className="w-48 h-48"
-                key={index}
-                src={report.url}
-                alt={report.url}
-                onClick={() => window.open(report.url, "_blank")}
-              />
-            );
-          } else {
-            // Handle other file types or unsupported URLs as needed
-            return null;
-          }
-        })
-      );
-
-      setPreviews(previewElements.filter((preview) => preview !== null));
-    };
-
-    generatePreviews();
+  
+    generatePreviews(eventDetail.reports, setPreviews);
   }, [eventDetail.reports]);
 
   return (
@@ -793,7 +655,12 @@ export default function AddEvents() {
                   key={index}
                   className="flex flex-col space-y-2 border-2 border-gray-200 dark:border-white-200 text-sm text-gray-900 dark:text-white"
                 >
-                  <div className="cursor-pointer ">{preview}</div>
+                  <div
+                    className="bg-red-100 text-center  border-2 border-gray-200 dark:border-white-200 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
+                  >
+                    {preview.title} ({preview.doc_type})
+                  </div>
+                  <div className="cursor-pointer ">{preview.element}</div>
                   <button
                     onClick={() => handleRemoveReport(index)}
                     className="bg-red-100   border-2 border-gray-200 dark:border-white-200 text-red-700 dark:text-red-500 hover:text-red-900 dark:hover:text-red-700 focus:outline-none"
@@ -814,14 +681,7 @@ export default function AddEvents() {
           >
             Save
           </button>
-          <button
-            className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:text-red-500 dark:hover:bg-red-700 dark:focus:ring-red-800"
-            onClick={() => {
-              handelEventDelete();
-            }}
-          >
-            Delete
-          </button>
+       
         </div>
       </div>
     </div>

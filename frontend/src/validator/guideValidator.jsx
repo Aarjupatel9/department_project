@@ -1,5 +1,8 @@
 const joi = require('joi');
-const { GUIDE_TYPE } = require('../utils/constants');
+const GUIDE_TYPE = {
+    MTECH: "M tech",
+    PHD: "PhD",
+}
 
 exports.guideValidator = joi.object({
     userId: joi.string().required(),
@@ -8,7 +11,7 @@ exports.guideValidator = joi.object({
     guidedYear: joi.number().required(),
     studentDetails: joi.object({
         name: joi.string().min(3).max(60).required(),
-        idNumber: joi.string().length(7)
+        idNumber: joi.string().length(7),
     }),
     reports: joi.array().items(
         joi.object({

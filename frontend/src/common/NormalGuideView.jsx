@@ -5,94 +5,57 @@ import { selectSystemVariables } from "../reduxStore/reducers/systemVariables.js
 import { useAppDispatch, useAppSelector } from "../reduxStore/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatDateToDdMmYyyy, generatePreviews } from "../utils/functions";
-import { IQualification } from "../interfaces/interfaces";
-import { qualificationDetailValidator } from "../validator/qualificationValidator";
-import qualificationService from "../services/qualificationService";
+import { IGuide } from "../interfaces/interfaces";
+import { guideDetailValidator } from "../validator/guideValidator";
+import guideService from "../services/guideService";
 import authService from "../services/authService";
 
 import * as pdfjs from "pdfjs-dist/build/pdf";
 import "pdfjs-dist/build/pdf.worker.entry";
 
-export default function NormalQualificationView() {
+export default function NormalGuideView() {
   const SystemVariables = useAppSelector(selectSystemVariables);
   const userDetail = useAppSelector(selectUserDetails);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [qualificationDetail, setQualificationDetail] = useState({});
+  const [guideDetail, setGuideDetail] = useState({ studentDetails: {} });
 
   const { id } = useParams();
 
   useEffect(() => {
     if (id != undefined) {
-      var qualificationPromise = qualificationService.getQualification(id);
-      qualificationPromise.then((res) => {
-        var resQualification = res.qualification;
-        console.log("getQualification : ", resQualification);
-        resQualification.userId = resQualification.userId._id;
+      var guidePromise = guideService.getGuide(id);
+      guidePromise.then((res) => {
+        var resGuide = res.guide;
+        console.log("getGuide : ", resGuide);
+        resGuide.userId = resGuide.userId._id;
 
-        setQualificationDetail(res.qualification);
+        setGuideDetail(res.guide);
       });
-      setQualificationDetail((prevData) => ({ ...prevData, _id: id }));
+      setGuideDetail((prevData) => ({ ...prevData, _id: id }));
     }
   }, [id]);
 
   useEffect(() => {
-    setQualificationDetail((prevData) => ({
+    setGuideDetail((prevData) => ({
       ...prevData,
       userId: authService.getCurrentUserId(),
     }));
   }, []);
 
-  const handelQualificationDelete = () => {
-    if (id == undefined) {
-      toast.error("can not delete at this time");
-      return;
-    }
-    const _id = id;
-    const qualificationPromise = qualificationService.deleteQualification(_id);
-    qualificationPromise
-      .then((res) => {
-        console.log("users : ", res);
-
-        navigate("/qualification");
-      })
-      .catch((error) => {
-        console.log("error : ", error);
-      });
-
-    toast.promise(
-      qualificationPromise,
-      {
-        loading: "please wait while we deleting qualification",
-        success: (data) => data.message,
-        error: (err) => err,
-      },
-      {
-        style: {
-          minWidth: "250px",
-        },
-        success: {
-          duration: 3000,
-          icon: "🔥",
-        },
-        error: {
-          duration: 4000,
-          icon: "🔥",
-        },
-      }
-    );
-  };
+ 
 
 
   const [previews, setPreviews] = useState([]);
   useEffect(() => {
+    
+    generatePreviews(guideDetail.reports, setPreviews);
+  }, [guideDetail]);
 
-    generatePreviews(qualificationDetail.certificates, setPreviews);
-  }, [qualificationDetail]);
   return (
     <div className="flex flex-col shadow-md sm:rounded-lg">
       <h1 className="text-3xl mx-auto font-bold text-gray-900 dark:text-white">
-        Qualification
+        Guide
       </h1>
       <hr className="mt-2" />
 
@@ -100,69 +63,59 @@ export default function NormalQualificationView() {
         <div className="grid md:grid-cols-2 md:gap-6">
           <div className="mb-6">
             <label className="text-gray-700 dark:text-white font-bold">
-              Qualification Type
+              guideType
             </label>
             <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {qualificationDetail.qualificationType}
+              {guideDetail.guideType}
             </div>
           </div>
-          {qualificationDetail.qualificationType === SystemVariables.QUALIFICATION_TYPE.PHD ?
-            <div className="mb-6">
-              <label className="text-gray-700 dark:text-white font-bold">
-                thesisTitle
-              </label>
-              <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-                {qualificationDetail.thesisTitle}
-              </div>
-            </div> : <></>}
+          <div className="mb-6">
+            <label className="text-gray-700 dark:text-white font-bold">
+              guidedYear
+            </label>
+            <div className="mt-2 ml-2 text-gray-900 dark:text-white">
+              {guideDetail.guidedYear}
+            </div>
+          </div>
+          {/* Add more fields here */}
+        </div>
+
+        <div className="grid md:grid-cols-2 md:gap-6">
+
+          <div className="mb-6">
+            <label className="text-gray-700 dark:text-white font-bold">
+              dissertationTitle
+            </label>
+            <div className="mt-2 ml-2 text-gray-900 dark:text-white">
+              {guideDetail.dissertationTitle}
+            </div>
+          </div>
+
         </div>
 
         <div className="grid md:grid-cols-2 md:gap-6">
           <div className="mb-6">
             <label className="text-gray-700 dark:text-white font-bold">
-              specialization
+              Student Name
             </label>
             <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {qualificationDetail.specialization}
+              {guideDetail.studentDetails.name}
             </div>
           </div>
           <div className="mb-6">
             <label className="text-gray-700 dark:text-white font-bold">
-              institute
+              Student Id Number
             </label>
             <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {qualificationDetail.institute}
+              {guideDetail.studentDetails.idNumber}
             </div>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 md:gap-6">
-          <div className="mb-6">
-            <label className="text-gray-700 dark:text-white font-bold">
-              status
-            </label>
-            <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {qualificationDetail.status}
-            </div>
-          </div>
-          <div className="mb-6">
-            <label className="text-gray-700 dark:text-white font-bold">
-              completionYear
-            </label>
-            <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {qualificationDetail.completionYear}
-            </div>
-          </div>
-        </div>
-
-
-
-      
-      
-{previews.length? 
+        {previews.length>0?
         <div className="flex flex-col justify-center items-center">
           <h3 className="mt-4 text-xl font-bold text-gray-900 dark:text-white">
-            certificates
+            Reports
           </h3>
           <div className="my-6">
             <div className="w-full flex flex-row  space-x-5 ">
@@ -175,6 +128,7 @@ export default function NormalQualificationView() {
                     {preview.title} ( {preview.doc_type} )
                   </button>
                   <div className="cursor-pointer ">{preview.element}</div>
+                 
                 </div>
               ))}
             </div>
@@ -183,7 +137,7 @@ export default function NormalQualificationView() {
           :
           <div className="flex flex-col justify-center items-center">
             <h3 className="mt-4 text-xl font-bold text-gray-900 dark:text-white">
-              There is no certificates
+              There is no reports
             </h3>
           </div>
         }

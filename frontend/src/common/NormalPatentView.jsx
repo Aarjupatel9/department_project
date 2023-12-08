@@ -5,94 +5,52 @@ import { selectSystemVariables } from "../reduxStore/reducers/systemVariables.js
 import { useAppDispatch, useAppSelector } from "../reduxStore/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatDateToDdMmYyyy, generatePreviews } from "../utils/functions";
-import { IQualification } from "../interfaces/interfaces";
-import { qualificationDetailValidator } from "../validator/qualificationValidator";
-import qualificationService from "../services/qualificationService";
+import { patentDetailValidator } from "../validator/patentValidator";
+import patentService from "../services/patentService";
 import authService from "../services/authService";
 
 import * as pdfjs from "pdfjs-dist/build/pdf";
 import "pdfjs-dist/build/pdf.worker.entry";
 
-export default function NormalQualificationView() {
+export default function NormalPatentView() {
   const SystemVariables = useAppSelector(selectSystemVariables);
   const userDetail = useAppSelector(selectUserDetails);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [qualificationDetail, setQualificationDetail] = useState({});
+  const [patentDetail, setPatentDetail] = useState({ inventors :[], });
 
   const { id } = useParams();
 
   useEffect(() => {
     if (id != undefined) {
-      var qualificationPromise = qualificationService.getQualification(id);
-      qualificationPromise.then((res) => {
-        var resQualification = res.qualification;
-        console.log("getQualification : ", resQualification);
-        resQualification.userId = resQualification.userId._id;
+      var patentPromise = patentService.getPatent(id);
+      patentPromise.then((res) => {
+        var resPatent = res.patent;
+        console.log("getPatent : ", resPatent);
+        resPatent.userId = resPatent.userId._id;
 
-        setQualificationDetail(res.qualification);
+        setPatentDetail(res.patent);
       });
-      setQualificationDetail((prevData) => ({ ...prevData, _id: id }));
+      setPatentDetail((prevData) => ({ ...prevData, _id: id }));
     }
   }, [id]);
 
   useEffect(() => {
-    setQualificationDetail((prevData) => ({
+    setPatentDetail((prevData) => ({
       ...prevData,
       userId: authService.getCurrentUserId(),
     }));
   }, []);
 
-  const handelQualificationDelete = () => {
-    if (id == undefined) {
-      toast.error("can not delete at this time");
-      return;
-    }
-    const _id = id;
-    const qualificationPromise = qualificationService.deleteQualification(_id);
-    qualificationPromise
-      .then((res) => {
-        console.log("users : ", res);
-
-        navigate("/qualification");
-      })
-      .catch((error) => {
-        console.log("error : ", error);
-      });
-
-    toast.promise(
-      qualificationPromise,
-      {
-        loading: "please wait while we deleting qualification",
-        success: (data) => data.message,
-        error: (err) => err,
-      },
-      {
-        style: {
-          minWidth: "250px",
-        },
-        success: {
-          duration: 3000,
-          icon: "🔥",
-        },
-        error: {
-          duration: 4000,
-          icon: "🔥",
-        },
-      }
-    );
-  };
-
-
   const [previews, setPreviews] = useState([]);
   useEffect(() => {
 
-    generatePreviews(qualificationDetail.certificates, setPreviews);
-  }, [qualificationDetail]);
+    generatePreviews(patentDetail.reports, setPreviews);
+  }, [patentDetail]);
   return (
     <div className="flex flex-col shadow-md sm:rounded-lg">
       <h1 className="text-3xl mx-auto font-bold text-gray-900 dark:text-white">
-        Qualification
+        Patent
       </h1>
       <hr className="mt-2" />
 
@@ -100,38 +58,46 @@ export default function NormalQualificationView() {
         <div className="grid md:grid-cols-2 md:gap-6">
           <div className="mb-6">
             <label className="text-gray-700 dark:text-white font-bold">
-              Qualification Type
+              Patent Title
             </label>
             <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {qualificationDetail.qualificationType}
+              {patentDetail.title}
             </div>
           </div>
-          {qualificationDetail.qualificationType === SystemVariables.QUALIFICATION_TYPE.PHD ?
-            <div className="mb-6">
-              <label className="text-gray-700 dark:text-white font-bold">
-                thesisTitle
-              </label>
-              <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-                {qualificationDetail.thesisTitle}
-              </div>
-            </div> : <></>}
+          <div className="mb-6">
+            <label className="text-gray-700 dark:text-white font-bold">
+              summary
+            </label>
+            <div className="mt-2 ml-2 text-gray-900 dark:text-white">
+              {patentDetail.summary}
+            </div>
+          </div>
+        
         </div>
 
         <div className="grid md:grid-cols-2 md:gap-6">
           <div className="mb-6">
             <label className="text-gray-700 dark:text-white font-bold">
-              specialization
+              patentNumber
             </label>
             <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {qualificationDetail.specialization}
+              {patentDetail.patentNumber}
             </div>
           </div>
           <div className="mb-6">
             <label className="text-gray-700 dark:text-white font-bold">
-              institute
+              applicationNumber
             </label>
             <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {qualificationDetail.institute}
+              {patentDetail.applicationNumber}
+            </div>
+          </div>
+          <div className="mb-6">
+            <label className="text-gray-700 dark:text-white font-bold">
+              patentDate
+            </label>
+            <div className="mt-2 ml-2 text-gray-900 dark:text-white">
+              {formatDateToDdMmYyyy(patentDetail.patentDate)}
             </div>
           </div>
         </div>
@@ -139,30 +105,57 @@ export default function NormalQualificationView() {
         <div className="grid md:grid-cols-2 md:gap-6">
           <div className="mb-6">
             <label className="text-gray-700 dark:text-white font-bold">
-              status
+              filingDate
             </label>
             <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {qualificationDetail.status}
+              {patentDetail.filingDate}
             </div>
           </div>
           <div className="mb-6">
             <label className="text-gray-700 dark:text-white font-bold">
-              completionYear
+              grantDate
             </label>
             <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {qualificationDetail.completionYear}
+              {patentDetail.grantDate}
             </div>
           </div>
         </div>
 
+        <div className="grid md:grid-cols-1 md:gap-6">
+          <div className="mb-6">
+            <label className="text-gray-700 dark:text-white font-bold">
+              description
+            </label>
+            <div className="mt-2 ml-2 text-gray-900 dark:text-white">
+              {patentDetail.description}
+            </div>
+          </div>
+        </div>
 
+       
 
-      
-      
-{previews.length? 
+        <div className="grid md:grid-cols-2 md:gap-6">
+          <div className="mb-6">
+            <label className="text-gray-700 dark:text-white font-bold">
+              inventors
+            </label>
+            <div className="mt-2 ml-2 text-gray-900 dark:text-white">
+              {patentDetail.inventors.map((expert, index) => (
+                <div
+                  key={index}
+                  className="text-medium text-gray-900 dark:text-white"
+                >
+                  {index + 1}) {expert}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+      {previews.length>0?
         <div className="flex flex-col justify-center items-center">
           <h3 className="mt-4 text-xl font-bold text-gray-900 dark:text-white">
-            certificates
+            Reports
           </h3>
           <div className="my-6">
             <div className="w-full flex flex-row  space-x-5 ">
@@ -179,13 +172,13 @@ export default function NormalQualificationView() {
               ))}
             </div>
           </div>
-          </div>
-          :
-          <div className="flex flex-col justify-center items-center">
-            <h3 className="mt-4 text-xl font-bold text-gray-900 dark:text-white">
-              There is no certificates
-            </h3>
-          </div>
+        </div>:
+        
+        <div className="flex flex-col justify-center items-center">
+          <h3 className="mt-4 text-xl font-bold text-gray-900 dark:text-white">
+            There is no reports
+          </h3>
+        </div>
         }
       </div>
     </div>
