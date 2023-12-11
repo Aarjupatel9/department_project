@@ -210,6 +210,7 @@ export default function AddEvents() {
         })
         .catch((error) => {
           // setReportFormData(null);
+          toast.error(error);
         });
     }
   };

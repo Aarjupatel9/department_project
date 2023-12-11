@@ -24,13 +24,13 @@ const dataRoute = require("../routes/dataRoute");
 const app = express();
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://cp.bvmengineering.com:3000',],
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000','http://localhost:62867', 'http://cp.bvmengineering.com:3000', 'http://cp.bvmengineering.com:80',],
     credentials: true
 }));
 
 app.use(logger("dev")); // for logs 
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Serve static files from the 'uploads' folder -- temporary
@@ -75,7 +75,7 @@ app.get('*', (req, res) => {
 })
 
 app.use((err, req, res, next) => {
-    console.log("errr " ,err);
+    console.log("errr ", err);
     if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
         return res.status(400).json({ message: 'Invalid JSON payload' });
     }

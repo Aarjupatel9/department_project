@@ -27,7 +27,12 @@ export default function NormalPublicationView() {
       publicationPromise.then((res) => {
         var resPublication = res.publication;
         console.log("getPublication : ", resPublication, SystemVariables.PUBLICATION_TYPE.JOURNALS);
-        resPublication.userId = resPublication.userId._id;
+        if (resPublication.userId) {
+          resPublication.userId = resPublication.userId._id;          
+        } else {
+          resPublication.userId = null;
+        }
+
 
         setPublicationDetail(res.publication);
       });

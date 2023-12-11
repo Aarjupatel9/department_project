@@ -188,11 +188,11 @@ class UserService {
             resolve(res);
           } else {
             handleRejectResponse(res.message);
-            if (typeof res.message == String) {
+            // if (typeof res.message == String) {
               reject(res.message);
-            } else {
-              reject("server error");
-            }
+            // } else {
+            //   reject("server error");
+            // }
           }
         })
         .catch((e) => {

@@ -4,7 +4,7 @@ const GUIDE_TYPE = {
     PHD: "PhD",
 }
 
-exports.guideValidator = joi.object({
+export const guideValidator = joi.object({
     userId: joi.string().required(),
     guideType: joi.string().valid(...Object.values(GUIDE_TYPE)).required(),
     dissertationTitle: joi.string().min(5).max(300),
