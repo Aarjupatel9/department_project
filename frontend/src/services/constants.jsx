@@ -21,17 +21,39 @@ export const dataTypes = [
   "patents",
 ];
 
+export const dataTypesMapper = {
+  "achievements": { route: "achievementview" },
+  "events": {
+    route: "eventview"
+  },
+  "publications": {
+    route: "publicationview"
+  },
+  "qualifications": {
+    route: "qualificationview"
+  },
+  "guides": {
+    route: "guideview"
+  },
+  "patents": {
+    route: "patentview"
+  }
+}
+
 export const tableHeadings = {
-  achievements: ["achievementType", "achievedOn"],
-  events: ["title", "isOrganizedByBVM", "eventType", "totalExpenses"],
-  publications: ["title", "authors", "publicationType", "publicationDate"],
+  achievements: ["achievementType", "achievedOn", "certificates"],
+  events: ["title", "isOrganizedByBVM", "eventType", "totalExpenses", "reports"],
+  publications: ["title", "authors", "publicationType", "publicationDate", "reports"],
   qualifications: [
     "qualificationType",
-    "thesisTitle",
     "specialization",
     "institute",
     "status",
+    "certificates"
   ],
-  guides: ["guideType", "dissertationTitle", "guidedYear"],
-  patents: ["title", "patentNumber", "patentDate", "inventors"],
+  guides: ["guideType", "dissertationTitle", "guidedYear", "reports"],
+  patents: ["title", "patentNumber", "patentDate", "inventors", "reports"],
 };
+
+export const dateTypeVar = ["achievedOn", "publicationDate","patentDate"]
+export const fileTypeField = [ "reports", "certificates"]

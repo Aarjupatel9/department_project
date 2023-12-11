@@ -55,7 +55,9 @@ const commonRoutes = (
     <Route path="/addEvent" element={<AddEvents />} />
     <Route path="/editEvent/:id" element={<AddEvents />} />
     <Route path="/eventview/:id" element={<NormalEventView />} />
+    
     <Route path="/filters" element={<Filters />} />
+
     <Route path="/patent" element={<Patent />} />
     <Route path="/addPatent" element={<AddPatent />} />
     <Route path="/editPatent/:id" element={<AddPatent />} />

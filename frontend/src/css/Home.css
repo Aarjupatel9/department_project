@@ -50,3 +50,8 @@
     min-width: 80%;
     overflow: auto;
 }
+
+.filter-main-div {
+    max-width: 100%;
+    width: 100%;
+}

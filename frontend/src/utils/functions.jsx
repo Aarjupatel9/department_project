@@ -2,8 +2,8 @@ import * as pdfjs from "pdfjs-dist/build/pdf";
 
 
 export function formatDateToDdMmYyyy(inputDateString) {
+  console.log("formateDate function run");
   const date = new Date(inputDateString);
-
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();

@@ -33,16 +33,20 @@ const fileUploaderMiddleware = (fileType, fieldName, maxCount) => {
         }
     });
 
-    const upload = multer({ storage,limits: { fileSize: 10 * 1024 * 1024 } });
+    const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
-    return (req, res, next) => {    
+    return (req, res, next) => {
 
         console.log(directory + " " + req.user._id + "  " + fieldName);
 
         upload.array(fieldName, maxCount)(req, res, (err) => {
             if (err) {
                 console.error("Error in middleware: " + err);
-                return res.status(400).json({ success: false, message: 'File upload failed' });
+                if (err == "MulterError: File too large") {
+                    return res.status(200).json({ success: false, message: 'File is to big' });
+                } else {
+                    return res.status(400).json({ success: false, message: 'File upload failed' });
+                }
             }
 
             if (!req.files || req.files.length === 0) {
