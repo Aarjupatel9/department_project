@@ -42,18 +42,21 @@ export const dataTypesMapper = {
 
 export const tableHeadings = {
   achievements: ["achievementType", "achievedOn", "certificates"],
-  events: ["title", "isOrganizedByBVM", "eventType", "totalExpenses", "reports"],
-  publications: ["title", "authors", "publicationType", "publicationDate", "reports"],
+  events: ["title", "isOrganizedByBVM", "eventType", "numberOfParticipants", "eventDate", "totalExpenses"],
+  publications: ["title", "authors", "publicationType", "publicationDate"],
   qualifications: [
     "qualificationType",
     "specialization",
     "institute",
     "status",
-    "certificates"
   ],
-  guides: ["guideType", "dissertationTitle", "guidedYear", "reports"],
-  patents: ["title", "patentNumber", "patentDate", "inventors", "reports"],
+  guides: ["guideType", "dissertationTitle", "guidedYear",],
+  patents: ["title", "patentNumber", "patentDate", "inventors"],
 };
 
-export const dateTypeVar = ["achievedOn", "publicationDate","patentDate"]
-export const fileTypeField = [ "reports", "certificates"]
+export const dateTypeVar = ["achievedOn", "publicationDate", "patentDate", "startDate", "endDate",]
+export const fileFieldByType = ["object", "Array", "ObjectId"]
+export const fileFieldByName = ["description", "userId", "_id", "address",]
+export const fileFieldByNameInField = ["description", "userId", "_id", "address", "volumeNo", "issueNo",]
+
+export const FieldToRemoveInXl = ["reports", "certificates", "description", "_id", "userId"]

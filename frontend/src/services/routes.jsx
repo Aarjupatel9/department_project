@@ -5,7 +5,7 @@ import Publication from "../common/Publications";
 import AddPublication from "../common/AddPublication";
 import Sidebar from "../components/Sidebar";
 import TmpCpm from "../common/TmpCpm";
-import Filters from "../common/Filters";
+import Filters from "../adminComponents/Filters";
 import { UserProfile } from "../common/UserProfile";
 import EditUserAccountRequest from "../adminComponents/section/EditUserAccountRequest";
 import EditUserAccess from "../adminComponents/section/EditUserAccess";
@@ -56,7 +56,6 @@ const commonRoutes = (
     <Route path="/editEvent/:id" element={<AddEvents />} />
     <Route path="/eventview/:id" element={<NormalEventView />} />
     
-    <Route path="/filters" element={<Filters />} />
 
     <Route path="/patent" element={<Patent />} />
     <Route path="/addPatent" element={<AddPatent />} />
@@ -97,6 +96,8 @@ export const HEAD_ROUTES = (props) => {
       <Route path="/settings" element={<Setting />} />
       <Route path="/editProfile" element={<EditUserProfile />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/filters" element={<Filters />} />
+
       <Route path="*" element={<UserProfile readOnly={false} />} />
     </Routes>
   );

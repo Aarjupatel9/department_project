@@ -32,7 +32,7 @@ export default function Sidebar() {
   return (
     <aside
       id="AppSideBar"
-      className="AppSideBar  w-64 h-screen pt-3 transition-transform -translate-x-full bg-stone-300 dark:bg-slate-950 border-r border-gray-200 sm:translate-x-0 dark:bg-slate-950 dark:border-gray-700"
+      className="AppSideBar  w-64 h-screen pt-3 transition-transform -translate-x-full bg-gray-300 dark:bg-slate-950 border-r border-gray-200 sm:translate-x-0 dark:bg-slate-950 dark:border-gray-700"
       aria-label="Sidebar"
     >
       {/* <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar"> */}
@@ -150,7 +150,7 @@ export default function Sidebar() {
                 <path d="M16 10.53c-.29-.29-.77-.29-1.06 0l-4.35 4.35L9 13.29c-.29-.29-.77-.29-1.06 0-.29.29-.29.77 0 1.06l1.94 1.94c.39.39 1.02.39 1.41 0l4.7-4.7c.3-.29.3-.77.01-1.06zM19 3h-1V2c0-.55-.45-1-1-1s-1 .45-1 1v1H8V2c0-.55-.45-1-1-1s-1 .45-1 1v1H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H6c-.55 0-1-.45-1-1V8h14v10c0 .55-.45 1-1 1z"></path>
               </svg>
               {isSidebar ? (
-                <span className="flex-1 ml-3 whitespace-nowrap">Search</span>
+                <span className="flex-1 ml-3 whitespace-nowrap">Dashboard</span>
               ) : (
                 <></>
               )}
@@ -276,7 +276,7 @@ export default function Sidebar() {
               to="/guide"
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             >
-              
+
               <svg
                 className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -295,7 +295,7 @@ export default function Sidebar() {
             </Link>
           </li>
 
-          <li>
+          {/* <li>
             <Link
               to="/"
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -326,7 +326,7 @@ export default function Sidebar() {
                 <></>
               )}
             </Link>
-          </li>
+          </li> */}
 
 
         </ul>
