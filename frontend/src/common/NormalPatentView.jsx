@@ -108,7 +108,7 @@ export default function NormalPatentView() {
               filingDate
             </label>
             <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {patentDetail.filingDate}
+              {formatDateToDdMmYyyy(patentDetail.filingDate)}
             </div>
           </div>
           <div className="mb-6">
@@ -116,7 +116,7 @@ export default function NormalPatentView() {
               grantDate
             </label>
             <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {patentDetail.grantDate}
+              {formatDateToDdMmYyyy(patentDetail.grantDate)}
             </div>
           </div>
         </div>
