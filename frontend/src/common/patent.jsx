@@ -119,7 +119,7 @@ const Patent = () => {
               </Link>
             </div>
           </div>
-          <div className="flex md:order-2">
+          {/* <div className="flex md:order-2">
             <button
               type="button"
               data-collapse-toggle="navbar-search"
@@ -170,7 +170,7 @@ const Patent = () => {
                 placeholder="Search..."
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </nav>
       {filteredEvents.length > 0 ? (

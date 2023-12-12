@@ -24,7 +24,7 @@ const dataRoute = require("../routes/dataRoute");
 const app = express();
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000','http://localhost:62867', 'http://cp.bvmengineering.com:3000', 'http://cp.bvmengineering.com:80',],
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000','http://localhost:3001', 'http://cp.bvmengineering.com:3000', 'http://cp.bvmengineering.com:80',],
     credentials: true
 }));
 

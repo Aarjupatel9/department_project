@@ -138,7 +138,7 @@ export default function Events() {
                             </div>
                         </div> */}
           </div>
-          <div className="flex md:order-2">
+          {/* <div className="flex md:order-2">
             <button
               type="button"
               data-collapse-toggle="navbar-search"
@@ -189,7 +189,7 @@ export default function Events() {
                 placeholder="Search..."
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </nav>
 
