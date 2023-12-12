@@ -416,7 +416,7 @@ const Filters = () => {
       {data.length > 0 ?
         <div className="flex flex-col pt-4 ">
           <h1 className="mx-auto  text-2xl font-medium text-gray-900 dark:text-white">
-            Patent Details
+            Search Data
           </h1>
           {/* <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400"> */}
           <div id="printable_report_data" ref={tablref} className=" print:block mt-4 relative overflow-x-auto shadow-md sm:rounded-lg">

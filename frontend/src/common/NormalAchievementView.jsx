@@ -70,7 +70,7 @@ export default function NormalAchievementView() {
               achievedOn
             </label>
             <div className="mt-2 ml-2 text-gray-900 dark:text-white">
-              {achievementDetail.achievedOn}
+              {formatDateToDdMmYyyy(achievementDetail.achievedOn)}
             </div>
           </div>
           {/* Add more fields here */}
